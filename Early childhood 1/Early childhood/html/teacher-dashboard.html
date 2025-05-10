@@ -2,30 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Teacher Dashboard</title>
-  <link rel="stylesheet" href="../css/dashboard.css">
+  <title>Early Childhood Teacher App</title>
+  <link rel="stylesheet" href="../css/teacher-dashboard.css">
 </head>
 <body>
-  <div class="dashboard-container">
-    <header>
-      <img src="../img/logo.png" alt="Child Care Logo" class="logo">
-      <h1>Teacher Dashboard</h1>
-    </header>
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>DASHBOARD</h2>
+      <hr>
 
-    <main>
-      <p>Welcome, Teacher! 📚</p>
-      <p>Here you can review student submissions and give feedback.</p>
+      <!-- Clickable heading -->
+      <h3>
+        <a href="student-dashboard.html" class="sidebar-link">
+          CHILDREN Profiles
+        </a>
+      </h3>
+      <hr>
 
-      <div class="actions">
-        <a href="#" class="dashboard-button">Review Student Reports</a>
-        <a href="#" class="dashboard-button">Give Feedback</a>
-      </div>
-    </main>
+      <!-- The rest of your nav links -->
+      <nav class="nav-links">
+        <a href="#">View profile</a>
+        <a href="#">Create profile</a>
+      </nav>
 
-    <footer>
-      <a href="login.html" class="logout-link">Logout</a>
-    </footer>
+      <h3>REPORTS</h3>
+      <hr>
+      <nav class="nav-links">
+        <a href="#">Development Checklist</a>
+        <a href="#">Anecdotal Observation</a>
+        <a href="#">Summative Assessments</a>
+        <a href="#">Work Sample Observation</a>
+        <a href="#">Learning Story</a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main">
+      <!-- Top bar -->
+      <header class="topnav">
+        <img src="logo.png" alt="Child Care Logo" class="logo">
+        <h1>Early Childhood Teacher App</h1>
+        <div class="user-area">
+          <span>Welcome Back, User!</span>
+          <div class="profile-circle">U</div>
+        </div>
+      </header>
+
+      <!-- Dashboard panels -->
+      <section class="content">
+        <div class="panel large panel-profiles">
+          <h2>Children Profiles</h2>
+        </div>
+        <div class="panel large panel-reports">
+          <h2>Reports</h2>
+        </div>
+        <div class="panel placeholder"></div>
+      </section>
+    </div>
   </div>
 </body>
 </html>

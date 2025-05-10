@@ -1,0 +1,179 @@
+/* 1. Global reset & box-sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. Overall page grid */
+.wrapper {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  height: 100vh;
+  gap: 16px;
+  padding: 16px;
+  background: #f0f0f0;
+}
+
+/* 3. Sidebar */
+.sidebar {
+  background: #ccc;
+  border: 3px solid #000;
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+}
+.sidebar h2,
+.sidebar h3 {
+  color: #000;
+  margin-bottom: 8px;
+}
+.sidebar hr {
+  border: none;
+  border-top: 2px solid #888;
+  margin: 8px 0 12px;
+}
+
+/* 4. Sidebar links & headings as links */
+.sidebar-link,
+.nav-links a {
+  /* text styling */
+  text-decoration: none;
+  color: #000;
+  font-size: 0.95rem;
+
+  /* enable shadow & lift */
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.sidebar-link {
+  /* inherit the exact h3 margin-bottom */
+  margin-bottom: 8px;
+}
+.sidebar-link:hover,
+.nav-links a:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* 5. Nav-links container */
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+/* 6. Main column */
+.main {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 7. Top navigation bar */
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ccc;
+  border: 3px solid #000;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-family: sans-serif;
+}
+.topnav .logo {
+  width: 48px;
+  height: auto;
+  border-radius: 8px;
+}
+.topnav h1 {
+  font-size: 1.5rem;
+  color: #000;
+}
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #000;
+  font-size: 0.95rem;
+}
+.profile-circle {
+  width: 2rem;
+  height: 2rem;
+  background: #999;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* 8. Content grid */
+.content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr) 1fr;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* 9. Large grass panels */
+.panel.large {
+  grid-column: 1 / 3;
+  border: 3px solid #000;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 16px;
+  color: #000;
+  font-family: sans-serif;
+}
+.panel-profiles {
+  grid-row: 1;
+  background: url('grass.jpg') center/cover no-repeat;
+}
+.panel-reports {
+  grid-row: 2;
+  background: url('grass.jpg') center/cover no-repeat;
+}
+.panel.large h2 {
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+/* 10. Placeholder box with “X” */
+.placeholder {
+  grid-row: 1 / span 2;
+  grid-column: 3;
+  background: #ccc;
+  border: 3px solid #000;
+  border-radius: 20px;
+  position: relative;
+}
+.placeholder::before,
+.placeholder::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 3px;
+  height: 100%;
+  background: #000;
+}
+.placeholder::before {
+  transform: translateX(-50%) rotate(45deg);
+}
+.placeholder::after {
+  transform: translateX(-50%) rotate(-45deg);
+}
