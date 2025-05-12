@@ -53,7 +53,7 @@
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .sidebar-link {
-  /* inherit the exact h3 margin-bottom */
+  /* match h3 spacing */
   margin-bottom: 8px;
 }
 .sidebar-link:hover,
@@ -138,7 +138,15 @@
   padding: 16px;
   color: #000;
   font-family: sans-serif;
+
+  /* new: smooth hover transition */
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
+.panel.large:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
 .panel-profiles {
   grid-row: 1;
   background: url('grass.jpg') center/cover no-repeat;
@@ -159,6 +167,7 @@
   background: #ccc;
   border: 3px solid #000;
   border-radius: 20px;
+  overflow: hidden;  /* clips the X inside the rounded box */
   position: relative;
 }
 .placeholder::before,
