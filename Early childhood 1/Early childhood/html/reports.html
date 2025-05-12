@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reports – Early Childhood Teacher App</title>
+  <link rel="stylesheet" href="../css/reports.css">
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- Sidebar (unchanged) -->
+    <aside class="sidebar">
+      <h2>DASHBOARD</h2>
+      <hr>
+      <h3><a href="student-dashboard.html" class="sidebar-link">CHILDREN Profiles</a></h3>
+      <hr>
+      <nav class="nav-links">
+        <a href="#">View profile</a>
+        <a href="#">Create profile</a>
+      </nav>
+      <h3><a href="reports.html" class="sidebar-link">REPORTS</a></h3>
+      <hr>
+      <nav class="nav-links">
+        <a href="#">Development Checklist</a>
+        <a href="#">Anecdotal Observation</a>
+        <a href="#">Summative Assessments</a>
+        <a href="#">Work Sample Observation</a>
+        <a href="#">Learning Story</a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main">
+      <header class="topnav">
+        <img src="logo.png" class="logo" alt="Child Care Logo">
+        <h1>Early Childhood Teacher App</h1>
+        <div class="user-area">
+          <span>Welcome Back, User!</span>
+          <div class="profile-circle">U</div>
+        </div>
+      </header>
+
+      <section class="page-header">
+        <h1>Reports</h1>
+        <p class="breadcrumb">Dashboard / Children Profiles</p>
+      </section>
+
+      <section class="report-content">
+        <!-- Left: report form -->
+        <div class="report-form panel">
+          <!-- Native dropdown -->
+          <select class="dropdown-select">
+            <option value="development-checklist">Development Checklist</option>
+            <option value="anecdotal-observation">Anecdotal Observation</option>
+            <option value="summative-assessments">Summative Assessments</option>
+            <option value="work-sample-observation">Work Sample Observation</option>
+            <option value="learning-story">Learning Story</option>
+          </select>
+
+          <input type="text" class="input-short" placeholder="">
+          <input type="text" class="input-short" placeholder="">
+          <textarea class="input-large" placeholder=""></textarea>
+
+          <button class="btn-save">Save Report</button>
+        </div>
+
+        <!-- Right: export & feedback -->
+        <div class="side-panel panel">
+          <input type="text" class="input-short" placeholder="Export">
+          <textarea class="input-large" placeholder="Feedback"></textarea>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
