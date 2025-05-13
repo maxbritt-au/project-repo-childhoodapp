@@ -7,32 +7,25 @@
 </head>
 <body>
   <div class="wrapper">
+
     <!-- Sidebar -->
     <aside class="sidebar">
       <h2>DASHBOARD</h2>
       <hr>
 
-      <!-- Clickable CHILDREN Profiles heading -->
       <h3>
-        <a href="student-dashboard.html" class="sidebar-link">
-          CHILDREN Profiles
-        </a>
+        <a href="student-dashboard.html" class="sidebar-link">Student Profiles</a>
       </h3>
       <hr>
-
       <nav class="nav-links">
         <a href="#">View profile</a>
         <a href="#">Create profile</a>
       </nav>
 
-      <!-- Clickable REPORTS heading -->
       <h3>
-        <a href="reports.html" class="sidebar-link">
-          REPORTS
-        </a>
+        <a href="reports.html" class="sidebar-link">REPORTS</a>
       </h3>
       <hr>
-
       <nav class="nav-links">
         <a href="#">Development Checklist</a>
         <a href="#">Anecdotal Observation</a>
@@ -44,7 +37,6 @@
 
     <!-- Main content -->
     <div class="main">
-      <!-- Top bar -->
       <header class="topnav">
         <img src="logo.png" alt="Child Care Logo" class="logo">
         <h1>Early Childhood Teacher App</h1>
@@ -54,14 +46,17 @@
         </div>
       </header>
 
-      <!-- Dashboard panels -->
       <section class="content">
-        <div class="panel large panel-profiles">
-          <h2>Children Profiles</h2>
-        </div>
-        <div class="panel large panel-reports">
+        <!-- Now links to student-dashboard.html and says Student Profiles -->
+        <a href="student-dashboard.html" class="panel large panel-profiles">
+          <h2>Student Profiles</h2>
+        </a>
+
+        <!-- Reports remains unchanged -->
+        <a href="reports.html" class="panel large panel-reports">
           <h2>Reports</h2>
-        </div>
+        </a>
+
         <div class="panel placeholder"></div>
       </section>
     </div>

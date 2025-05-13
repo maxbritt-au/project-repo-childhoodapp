@@ -8,11 +8,11 @@
 <body>
   <div class="wrapper">
 
-    <!-- Sidebar (unchanged) -->
+    <!-- Sidebar -->
     <aside class="sidebar">
       <h2>DASHBOARD</h2>
       <hr>
-      <h3><a href="student-dashboard.html" class="sidebar-link">CHILDREN Profiles</a></h3>
+      <h3><a href="student-dashboard.html" class="sidebar-link">Student Profiles</a></h3>
       <hr>
       <nav class="nav-links">
         <a href="#">View profile</a>
@@ -40,27 +40,27 @@
         </div>
       </header>
 
+      <!-- Page header with clickable Dashboard -->
       <section class="page-header">
         <h1>Reports</h1>
-        <p class="breadcrumb">Dashboard / Children Profiles</p>
+        <p class="breadcrumb">
+          <a href="teacher-dashboard.html">Dashboard</a> / Reports
+        </p>
       </section>
 
       <section class="report-content">
         <!-- Left: report form -->
         <div class="report-form panel">
-          <!-- Native dropdown -->
           <select class="dropdown-select">
-            <option value="development-checklist">Development Checklist</option>
-            <option value="anecdotal-observation">Anecdotal Observation</option>
-            <option value="summative-assessments">Summative Assessments</option>
-            <option value="work-sample-observation">Work Sample Observation</option>
-            <option value="learning-story">Learning Story</option>
+            <option>Development Checklist</option>
+            <option>Anecdotal Observation</option>
+            <option>Summative Assessments</option>
+            <option>Work Sample Observation</option>
+            <option>Learning Story</option>
           </select>
-
           <input type="text" class="input-short" placeholder="">
           <input type="text" class="input-short" placeholder="">
           <textarea class="input-large" placeholder=""></textarea>
-
           <button class="btn-save">Save Report</button>
         </div>
 
