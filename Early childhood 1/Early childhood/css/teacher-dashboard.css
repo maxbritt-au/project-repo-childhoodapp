@@ -1,4 +1,4 @@
-/* 1. Global reset & box-sizing */
+/* 1. RESET & BOX-SIZING */
 *,
 *::before,
 *::after {
@@ -7,25 +7,30 @@
   padding: 0;
 }
 
-/* 2. Page grid */
+/* 1a. GLOBAL FONT (match sidebar) */
+body {
+  font-family: sans-serif;
+}
+
+/* 2. PAGE WRAPPER GRID (auto height) */
 .wrapper {
   display: grid;
   grid-template-columns: 240px 1fr;
-  height: 100vh;
   gap: 16px;
   padding: 16px;
   background: #f0f0f0;
+  /* auto height wraps content */
 }
 
-/* 3. Sidebar */
+/* 3. SIDEBAR */
 .sidebar {
   background: #ccc;
   border: 3px solid #000;
   border-radius: 20px;
   padding: 16px;
+  font-family: inherit; /* inherits sans-serif from body */
   display: flex;
   flex-direction: column;
-  font-family: sans-serif;
 }
 .sidebar h2,
 .sidebar h3 {
@@ -37,39 +42,34 @@
   border-top: 2px solid #888;
   margin: 8px 0 12px;
 }
-
-/* 4. Sidebar links & headings */
-.sidebar-link,
-.nav-links a {
-  text-decoration: none;
-  color: #000;
-  font-size: 0.95rem;
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-.sidebar-link:hover,
-.nav-links a:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-}
-
-/* 5. Nav-links container */
 .nav-links {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 12px;
 }
+.sidebar-link,
+.nav-links a {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #000;
+  font-size: 0.95rem;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  font-family: inherit; /* ensure same font */
+}
+.sidebar-link:hover,
+.nav-links a:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
 
-/* 6. Main column */
+/* 4. MAIN COLUMN & TOP NAV */
 .main {
   display: flex;
   flex-direction: column;
 }
-
-/* 7. Top navigation bar */
 .topnav {
   display: flex;
   align-items: center;
@@ -78,91 +78,89 @@
   border: 3px solid #000;
   border-radius: 20px;
   padding: 8px 16px;
-  font-family: sans-serif;
+  font-family: inherit; /* same as sidebar */
+  margin-bottom: 16px;
 }
 .topnav .logo {
   width: 48px;
-  height: auto;
   border-radius: 8px;
 }
 .topnav h1 {
   font-size: 1.5rem;
   color: #000;
+  font-family: inherit;
 }
 .user-area {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #000;
   font-size: 0.95rem;
+  font-family: inherit;
 }
 .profile-circle {
   width: 2rem;
   height: 2rem;
   background: #999;
   border-radius: 50%;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  color: #fff;
+  font-family: inherit;
 }
 
-/* 8. Dashboard grid */
+/* 5. CONTENT GRID WITH FIXED ROW HEIGHTS */
 .content {
-  flex: 1;
   display: grid;
-  grid-template-columns: repeat(2, 1fr) 1fr;
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: 2fr 1fr;   /* left wide, right narrow */
+  grid-template-rows: 310px 310px;  /* two panels, each 310px tall */
   gap: 16px;
-  margin-top: 48px;
 }
 
-/* 9. Panels with placeholder1.jpg */
-.panel.large,
-.placeholder {
+/* 6. PANEL BASE & HOVER */
+.panel {
+  position: relative;
+  overflow: hidden;
   border: 3px solid #000;
   border-radius: 20px;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 16px;
-  background: url('placeholder1.jpg') center/cover no-repeat;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
-  text-decoration: none;
-  color: #000;
 }
-.panel.large:hover,
-.placeholder:hover {
+.panel:hover {
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   transform: translateY(-2px);
 }
 
-/* specific grid placement */
+/* 7. PANEL HEADING OVERLAY */
+.panel h2 {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 1.6rem;
+  color: #000000;
+  background: rgba(0,0,0,0.3);
+  border-radius: 4px;
+  z-index: 1;
+  font-family: inherit; /* match sidebar */
+}
+
+/* 8. LEFT PANELS WITH BACKGROUNDS */
 .panel-profiles {
-  grid-column: 1 / 3;
+  grid-column: 1;
   grid-row: 1;
+  background: url('../img/placeholder1.jpg') center/cover no-repeat;
 }
 .panel-reports {
-  grid-column: 1 / 3;
+  grid-column: 1;
   grid-row: 2;
+  background: url('../img/placeholder1.jpg') center/cover no-repeat;
 }
+
+/* 9. RIGHT PLACEHOLDER SPANS BOTH ROWS */
 .placeholder {
-  grid-column: 3;
+  grid-column: 2;
   grid-row: 1 / span 2;
-}
-
-/* remove the old X */
-.placeholder::before,
-.placeholder::after {
-  display: none;
-}
-
-/* 10. Headings inside panels */
-.panel.large h2 {
-  font-size: 1.6rem;
-  line-height: 1.2;
-  margin: 0;
+  background: #ccc;
 }

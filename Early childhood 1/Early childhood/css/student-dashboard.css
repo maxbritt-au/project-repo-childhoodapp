@@ -1,3 +1,5 @@
+/* student-dashboard.css */
+
 /* Overall Body */
 body {
   margin: 0;
@@ -37,10 +39,18 @@ body {
   font-size: 18px;
   border-right: 1px solid black;
   padding-right: 20px;
+  /* enable smooth hover transitions */
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .nav-menu a:last-child {
   border-right: none;
+}
+
+/* Hover effect for top nav links */
+.nav-menu a:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .profile-circle {
@@ -71,6 +81,13 @@ body {
   width: 220px;
   border-radius: 12px;
   text-align: center;
+  /* lift on hover */
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.profile-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .avatar {
@@ -99,8 +116,11 @@ h3 {
   margin: 5px 0;
   border-radius: 20px;
   font-size: 14px;
+  /* smooth hover */
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .btn:hover {
   background-color: #0033cc;
+  transform: translateY(-2px);
 }
