@@ -3,12 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <title>Reports – Early Childhood Teacher App</title>
+
+  <!-- match teacher-dashboard font loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
   <link rel="stylesheet" href="../css/reports.css">
 </head>
 <body>
   <div class="wrapper">
 
-    <!-- Sidebar -->
+    <!-- page header -->
+    <section class="page-header">
+      <h1>Reports</h1>
+      <p class="breadcrumb">
+        <a href="teacher-dashboard.html">Dashboard</a> / Reports
+      </p>
+    </section>
+
+    <!-- top nav -->
+    <header class="topnav">
+      <img src="../img/childhood.png" class="logo" alt="Child Care Logo">
+      <h1>Early Childhood Teacher App</h1>
+      <div class="user-area">
+        <span>Welcome Back, User!</span>
+        <div class="profile-circle">U</div>
+      </div>
+    </header>
+
+    <!-- sidebar -->
     <aside class="sidebar">
       <h2>DASHBOARD</h2>
       <hr>
@@ -29,48 +56,31 @@
       </nav>
     </aside>
 
-    <!-- Main content -->
+    <!-- main content -->
     <div class="main">
-      <header class="topnav">
-        <img src="logo.png" class="logo" alt="Child Care Logo">
-        <h1>Early Childhood Teacher App</h1>
-        <div class="user-area">
-          <span>Welcome Back, User!</span>
-          <div class="profile-circle">U</div>
-        </div>
-      </header>
-
-      <!-- Page header with clickable Dashboard -->
-      <section class="page-header">
-        <h1>Reports</h1>
-        <p class="breadcrumb">
-          <a href="teacher-dashboard.html">Dashboard</a> / Reports
-        </p>
-      </section>
-
       <section class="report-content">
-        <!-- Left: report form -->
         <div class="report-form panel">
-          <select class="dropdown-select">
-            <option>Development Checklist</option>
-            <option>Anecdotal Observation</option>
-            <option>Summative Assessments</option>
-            <option>Work Sample Observation</option>
-            <option>Learning Story</option>
-          </select>
+          <div class="select-wrapper">
+            <select class="dropdown-select">
+              <option>Development Checklist</option>
+              <option>Anecdotal Observation</option>
+              <option>Summative Assessments</option>
+              <option>Work Sample Observation</option>
+              <option>Learning Story</option>
+            </select>
+          </div>
           <input type="text" class="input-short" placeholder="">
           <input type="text" class="input-short" placeholder="">
           <textarea class="input-large" placeholder=""></textarea>
           <button class="btn-save">Save Report</button>
         </div>
-
-        <!-- Right: export & feedback -->
         <div class="side-panel panel">
-          <input type="text" class="input-short" placeholder="Export">
+          <button class="btn-export">Export</button>
           <textarea class="input-large" placeholder="Feedback"></textarea>
         </div>
       </section>
     </div>
+
   </div>
 </body>
 </html>
