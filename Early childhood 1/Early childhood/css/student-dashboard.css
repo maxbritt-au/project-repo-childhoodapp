@@ -20,11 +20,11 @@ body {
 .nav-title h2 {
   margin: 0;
   font-size: 24px;
-  color: #1f1f9d;
+  color: rgb(8, 8, 255);
 }
 
 .nav-title small {
-  color: #666;
+  color: rgb(8, 8, 255);
 }
 
 .nav-menu {

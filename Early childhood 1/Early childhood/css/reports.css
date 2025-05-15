@@ -32,15 +32,15 @@ body {
 }
 .page-header h1 {
   font-size: 2rem;
-  color: #112;
+  color: rgb(8, 8, 255);
 }
 .breadcrumb {
   font-size: 0.9rem;
-  color: #555;
+  color: rgb(8, 8, 255);
   margin-top: 4px;
 }
 .breadcrumb a {
-  color: #555;
+  color: rgb(8, 8, 255);
   text-decoration: none;
   border-bottom: 1px dashed #555;
 }
