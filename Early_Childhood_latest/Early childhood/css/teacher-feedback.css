@@ -155,8 +155,8 @@ body, html {
   font-size: 16px;
   border-radius: 8px;
   position: absolute;
-  bottom:80px;
-  left:380px;
+  bottom:200px;
+  left:500px;
   float: right;
   cursor: pointer;
 }
