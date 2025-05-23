@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Profile Page</title>
+  <link rel="stylesheet" href="../css/student-profile.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>DASHBOARD</h2>
+    <div class="section">
+      <h3>CHILDREN Profiles</h3>
+      <a href="#">View profile</a>
+      <a href="#">Create profile</a>
+    </div>
+    <div class="section">
+      <h3>REPORTS</h3>
+      <a href="#">Development Checklist</a>
+      <a href="#">Anecdotal Observation</a>
+      <a href="#">Summative Assessments</a>
+      <a href="#">Work Sample Observation</a>
+      <a href="#">Learning Story</a>
+    </div>
+  </aside>
+
+  <!-- Main Page -->
+  <div class="main-container">
+
+    <!-- Top Navigation -->
+    <nav class="topnav">
+      <div class="top-links">
+        <a href="#">Dashboard</a>
+        <a href="#">Reports</a>
+      </div>
+      <div class="profile-circle">U</div>
+    </nav>
+
+    <!-- Profile Section -->
+    <section class="profile-header">
+      <img src="../img/avatar.png" alt="Profile Picture" class="avatar">
+      <h1 id="studentName">Student Name</h1>
+    </section>
+
+    <!-- Completed Reports Section -->
+    <section class="completed-reports">
+      <h2>Completed Reports</h2>
+      <div class="report-grid">
+        <div class="report-box"></div>
+        <div class="report-box"></div>
+        <div class="report-box"></div>
+        <div class="report-box"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="../js/student-profile.js" defer></script>
+</body>
+</html>

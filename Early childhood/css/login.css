@@ -1,0 +1,119 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.form-container {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  width: 360px;
+  text-align: center;
+}
+
+.logo {
+  width: 70px;
+  margin-bottom: 10px;
+}
+
+h1 {
+  color: darkgreen;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.login-title {
+  color: blue;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+form {
+  text-align: left;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.logo {
+  width: 120px;    /* Try 150px or 180px if needed */
+  height: auto;
+  margin: 20px auto;
+  display: block;
+}
+
+
+.input-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #d3d3d3;
+  border-radius: 5px;
+}
+
+.input-icon input {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+}
+
+.input-icon .icon {
+  position: absolute;
+  left: 10px;
+  font-size: 18px;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.options label {
+  margin: 0;
+}
+
+.forgot-password {
+  color: #0288d1;
+  text-decoration: none;
+}
+
+
+.login-btn {
+  background-color: #1a2874;
+  color: white;
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background-color: #0f2ccc;
+}
+
+.create-account {
+  margin-top: 20px;
+  color: red;
+}
+
+.create-account a {
+  color: blue;
+  text-decoration: none;
+}
