@@ -1,0 +1,145 @@
+/* Body Background */
+body, html {
+  margin-top:70px;
+  padding: 0;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background: url('../img/background-1.avif') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form wrapper */
+.container {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  padding:30px;
+}
+
+.form-container {
+  background: rgb(255, 255, 255);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 10px 40px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  color: #002b5c;
+  text-align: center;
+  
+}
+
+.logo {
+  width: 130px;
+  
+}
+
+h1, h2, h3 {
+  margin: 5px 0;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+}
+h2 {
+  font-size: 18px;
+}
+h3 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.field {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 15px;
+  background-color: #f9f9f9;
+  transition: border 0.3s;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+  border-color: #0077cc;
+  outline: none;
+}
+
+/* ✅ Checkbox: text left, checkbox right */
+.terms {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.terms input[type="checkbox"] {
+  transform: scale(1.2);
+  cursor: pointer;
+  margin: 0;
+}
+
+.terms a {
+  color: #004080;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.terms a:hover {
+  text-decoration: underline;
+}
+
+/* Signup Button */
+.signup-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #002b5c;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.signup-btn:hover {
+  background-color: #004080;
+}
+
+.login-link {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.login-link a {
+  color: #004080;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}

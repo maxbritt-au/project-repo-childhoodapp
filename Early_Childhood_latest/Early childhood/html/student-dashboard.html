@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="../css/student-dashboard.css" />
+  <script defer src="../js/student-dashboard.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="logo">
+        <img src="../img/logo-2.png" alt="Logo" />
+      </div>
+      <ul class="nav-links">
+        <li><a href="student-dashboard.html">Dashboard</a></li>
+        <li><a href="/html/student-report.html">Report</a></li>
+      <li class="profile-menu" onclick="toggleDropdown(event)">
+  <i class="fas fa-user-circle fa-lg"></i>
+  <ul class="dropdown-menu" id="dropdownMenu">
+    <li><a href="login.html" class="logout-btn">Logout</a></li>
+  </ul>
+</li>
+
+      </ul>
+    </nav>
+
+    <!-- Title under navbar -->
+    <h1 class="page-title">Student Dashboard</h1>
+
+    <!-- Main Section -->
+    <div class="main-section">
+      <!-- Left: Student Image & Basic Info -->
+      <div class="left-panel">
+        <img src="../img/student-1.jpeg" alt="Student" class="student-img"/>
+        <div class="student-info">
+          <p><strong>Name:</strong> Younus Foisal</p>
+          <p><strong>ID:</strong> 30434157</p>
+          <p><strong>Course:</strong> Early Childhood Education and Care</p>
+        </div>
+      </div>
+
+      <!-- Right: Buttons and Dynamic Info -->
+      <div class="right-panel">
+        <div class="buttons">
+          <button onclick="toggleSection('profile')">View Profile Details</button>
+          <button onclick="toggleSection('edit')">Edit Profile</button>
+          <button onclick="toggleSection('report')">View Reports</button>
+          <button onclick="location.href='student-report.html'">Submit Report</button>
+        </div>
+        <div id="info-display" class="info-display"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

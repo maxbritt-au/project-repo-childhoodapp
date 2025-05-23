@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Early Childhood Teacher App - Login</title>
+  <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+  <div class="form-container">
+    <img src="../img/childhood.png" alt="Child Care Logo" class="logo">
+    <h1>Early Childhood  App</h1>
+    <h2 class="login-title">Log In</h2>
+
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <div class="input-icon">
+        <span class="icon">📧</span>
+        <input type="email" id="email" placeholder="abc@gmail.com" required>
+      </div>
+
+      <label for="password">Password</label>
+      <div class="input-icon">
+        <span class="icon">🔒</span>
+        <input type="password" id="password" placeholder="********" required>
+      </div>
+
+      <div class="options">
+        <label><input type="checkbox" id="rememberMe"> Remember me</label>
+        <a href="#" class="forgot-password">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="login-btn">Login</button>
+    </form>
+
+    <div class="create-account">
+      Don’t have an account? <a href="signup.html">Create an account</a>
+    </div>
+  </div>
+
+  <script src="../js/login.js" defer></script>
+</body>
+</html>

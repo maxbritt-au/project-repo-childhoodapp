@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Report</title>
+  <link rel="stylesheet" href="../css/student-report.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="../img/logo-2.png" alt="Logo" />
+    </div>
+    <div class="nav-title">Student Profile Dashboard</div>
+    <ul class="nav-links">
+      <li><a href="student-dashboard.html">Dashboard</a></li>
+      <li><a href="/html/student-report.html">Report</a></li>
+      <li><i class="fas fa-user-circle fa-lg" id="profileIcon"></i>
+        <div class="dropdown" id="dropdownMenu">
+          <a href="login.html" class="logout-btn">Logout</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <!-- Left Column -->
+    <div class="column left">
+      <h2>Your Dashboard</h2>
+      <img src="../img/student-1.jpeg" alt="Student" />
+      <p><strong>Name:</strong> Younus Foial</p>
+      <p><strong>Student ID:</strong> 30434157</p>
+      <button id="viewProfileBtn">View Profile Details</button>
+      <div id="profileDetails" class="hidden">
+        <p><strong>Course:</strong> Early Childhood Education and Care</p>
+        <p><strong>Major:</strong> Child Development</p>
+        <p><strong>GPA:</strong> 6.0</p>
+        <p><strong>Admission Year:</strong> 2024</p>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="column right">
+      <h2>Select the report you would like to submit</h2>
+      <select id="feedbackTitle">
+        <option value="Development Checklist">Anecdotal Observation</option>
+        <option value="Summative Assessments">Summative Assessments</option>
+        <option value="Work Sample Ovservation">Work Sample Ovservation</option>
+        <option value="Learning Story">Learning Story</option>
+      </select>
+
+      <h2>Description</h2>
+      <textarea id="description" placeholder="Write down your report here..."></textarea>
+
+      <button id="submitBtn">Submit</button>
+    </div>
+  </div>
+
+  <script src="../js/student-report.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Feedback</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/teacher-feedback.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="logo">
+        <img src="../img/logo-2.png" alt="Logo" />
+      </div>
+      <div class="nav-title">Teacher Feedback Dashboard</div>
+      <ul class="nav-links">
+        <li><a href="/html/teacher-dashboard.html">Dashboard</a></li>
+        <li><a href="teacher-feedback.html">Feedback</a></li>
+        <li class="profile-dropdown">
+          <i class="fas fa-user-circle fa-lg" id="profileIcon"></i>
+          <div class="dropdown" id="dropdownMenu">
+            <button onclick="location.href='login.html'">Logout</button>
+          </div>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="feedback-container">
+      <!-- Left Column -->
+      <div class="left-column">
+        <h2>Student Report</h2>
+        <img src="../img/student-1.jpeg" alt="Student" />
+        <p><strong>Name:</strong> Younus Foisal</p>
+        <p><strong>ID:</strong> 30434157</p>
+        <p><strong>Course:</strong> Early Childhood Education and Care</p>
+
+        <h3>Anecdotal Observation on Social Interaction</h3>
+        <p>
+          During free play, a child named Younus initiated a puzzle activity and invited two peers to join. She demonstrated turn-taking and used encouraging language, such as “You try this one!” This spontaneous interaction highlighted her developing social and communication skills. Mia remained engaged for 15 minutes, showing persistence and cooperation. This observation indicates progress in her interpersonal development and ability to work collaboratively in group settings.
+        </p>
+
+        <!-- Export Student Report Button -->
+        <button id="export-student-btn">Export Student Report</button>
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        <label for="feedback-title">Write the Title of Submitted Report of the Student</label>
+        <input type="text" id="feedback-title" placeholder="Enter feedback title..." />
+
+        <label for="feedback-description">Description</label>
+        <textarea id="feedback-description" placeholder="Enter feedback details..."></textarea>
+
+        <div class="button-group">
+          <button onclick="submitFeedback()">Submit</button>
+          <button onclick="exportPDF()">Export</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/teacher-feedback.js"></script>
+</body>
+</html>
