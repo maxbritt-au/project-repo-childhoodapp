@@ -78,7 +78,7 @@ function appendAddFeedbackButton() {
   button.id = "add-feedback-button";
   button.textContent = "Add Feedback";
   button.onclick = () => {
-    location.href = "/html/teacher-feedback.html";  // ✅ Updated path
+    location.href = "teacher-feedback.html"; 
   };
   button.style.marginTop = "20px";
   button.style.padding = "10px 20px";
