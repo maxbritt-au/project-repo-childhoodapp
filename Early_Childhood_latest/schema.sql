@@ -42,9 +42,11 @@ CREATE TABLE feedbacks (
 
 -- Insert Users
 INSERT INTO users (name, email, password, role) VALUES
-('Alice', 'alice@student.com', 'password1', 'student'),
-('Bob', 'bob@teacher.com', 'password2', 'teacher'),
-('Carol', 'carol@parent.com', 'password3', 'parent');
+('Alice Smith', 'alice.smith@test.com', 'abc12', 'student'),
+('Ben Johnson', 'ben.johnson@test.com', 'abc12', 'student'),
+('Chloe Lee', 'chloe.lee@test.com', 'abc12', 'student'),
+('David Wright', 'david.wright@test.com', 'abc12', 'student'),
+('Emily Turner', 'emily.turner@test.com', 'abc12', 'student');
 
 -- Insert Template
 INSERT INTO templates (title, content, created_by) VALUES
