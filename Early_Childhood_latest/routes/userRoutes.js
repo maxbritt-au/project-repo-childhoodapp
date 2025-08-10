@@ -1,15 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../models/db');
+const userController = require('../controllers/userController');
 
-router.get('/users', (req,res)=>{
-    db.query('SELECT * FROM users', (err, result)=>{
-        if(err){
-            console.error('Error fetching users:', err.stack);            
-            return res.status(500).send('Database Error');
-        }
-        res.json(result);
-    })
-})
+// Routes
+router.get('/users', userController.getAllUsers);
+router.post('/login', userController.loginUser);
+router.post('/users', userController.createUser);
 
 module.exports = router;

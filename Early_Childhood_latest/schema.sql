@@ -1,5 +1,5 @@
 -- 1. Users Table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -9,17 +9,17 @@ CREATE TABLE users (
 );
 
 -- 2. Templates Table 
-CREATE TABLE templates (
+CREATE TABLE IF NOT EXISTS templates (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,  -
+    content TEXT NOT NULL,  
     created_by INT,        
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
 -- 3. Reports Table 
-CREATE TABLE reports (
+CREATE TABLE IF NOT EXISTS reports (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT NOT NULL, 
     template_id INT NOT NULL, 
@@ -30,7 +30,7 @@ CREATE TABLE reports (
 );
 
 -- 4. Feedback Table
-CREATE TABLE feedbacks (
+CREATE TABLE IF NOT EXISTS feedbacks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     report_id INT NOT NULL, 
     teacher_id INT NOT NULL, 
