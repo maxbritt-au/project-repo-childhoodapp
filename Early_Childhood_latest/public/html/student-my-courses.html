@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student My Courses</title>
+  <link rel="stylesheet" href="../css/student-my-courses.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="../js/student-my-courses.js"></script>
+</head>
+<body class="light-mode">
+  <div class="dashboard-container">
+    <nav class="navbar">
+      <div class="navbar-left">
+        <img src="../img/logo-2.png" alt="Logo" class="logo" />
+      </div>
+      <div class="navbar-center">
+        <ul class="nav-links">
+          <li><a href="student-dashboard.html">Dashboard</a></li>
+          <li><a href="student-my-courses.html" class="active">My Courses</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="student-report.html">Submit Report</a></li>
+        </ul>
+      </div>
+      <div class="navbar-right">
+        <i class="fas fa-bell notification-icon"></i>
+        <div class="theme-icons">
+          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
+          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
+        </div>
+        <button id="open-logout-modal" class="logout-link">Logout</button>
+      </div>
+    </nav>
+
+    <div class="main-content">
+      <div class="page-header">
+        <h1 class="page-title">My Courses</h1>
+      </div>
+      
+      <div class="courses-grid" id="courses-grid">
+        </div>
+    </div>
+  </div>
+  
+  <div id="logout-modal" class="modal">
+    <div class="modal-content">
+      <h3>Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

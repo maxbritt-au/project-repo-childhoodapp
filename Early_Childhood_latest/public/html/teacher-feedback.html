@@ -4,65 +4,79 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Teacher Feedback</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <link rel="stylesheet" href="../css/teacher-feedback.css"/>
+  <link rel="stylesheet" href="../css/teacher-feedback.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer src="../js/teacher-feedback.js"></script>
 </head>
-<body>
+<body class="light-mode">
   <div class="dashboard-container">
-    <!-- Navbar -->
     <nav class="navbar">
-      <div class="logo">
-        <img src="../img/logo-2.png" alt="Logo" />
+      <div class="navbar-left">
+        <img src="../img/logo-2.png" alt="Logo" class="logo" />
       </div>
-      <div class="nav-title">Teacher Feedback Dashboard</div>
-      <ul class="nav-links">
-        <li><a href="teacher-dashboard.html">Dashboard</a></li>
-        <li><a href="teacher-feedback.html">Feedback</a></li>
-        <li class="profile-dropdown">
-          <i class="fas fa-user-circle fa-lg" id="profileIcon"></i>
-          <div class="dropdown" id="dropdownMenu">
-            <button onclick="location.href='login.html'">Logout</button>
+      <div class="navbar-center">
+        <ul class="nav-links">
+          <li><a href="teacher-dashboard.html">Dashboard</a></li>
+          <li><a href="teacher-feedback.html" class="active">Feedback</a></li>
+          <li><a href="teacher-my-courses.html">My Courses</a></li>
+          <li><a href="#">Messages</a></li>
+        </ul>
+      </div>
+      <div class="navbar-right">
+        <i class="fas fa-bell notification-icon"></i>
+        <div class="theme-icons">
+          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
+          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
+        </div>
+        <button id="open-logout-modal" class="logout-link">Logout</button>
+      </div>
+  </nav>
+
+    <div class="main-content">
+      <div class="feedback-grid">
+        <div class="report-viewer card">
+          <div class="report-header">
+            <h3 class="report-title">Student Report</h3>
+            <p class="student-info">Nesar Uddin (ID: 30436982)</p>
           </div>
-        </li>
-      </ul>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="feedback-container">
-      <!-- Left Column -->
-      <div class="left-column">
-        <h2>Student Report</h2>
-        <img src="../img/student-1.jpeg" alt="Student" />
-        <p><strong>Name:</strong> Younus Foisal</p>
-        <p><strong>ID:</strong> 30434157</p>
-        <p><strong>Course:</strong> Early Childhood Education and Care</p>
-
-        <h3>Anecdotal Observation on Social Interaction</h3>
-        <p>
-          During free play, a child named Younus initiated a puzzle activity and invited two peers to join. She demonstrated turn-taking and used encouraging language, such as “You try this one!” This spontaneous interaction highlighted her developing social and communication skills. Younus remained engaged for 15 minutes, showing persistence and cooperation. This observation indicates progress in her interpersonal development and ability to work collaboratively in group settings.
-        </p>
-
-        <!-- Export Student Report Button -->
-        <button id="export-student-btn">Export Student Report</button>
-      </div>
-
-      <!-- Right Column -->
-      <div class="right-column">
-        <label for="feedback-title">Write the Title of Submitted Report of the Student</label>
-        <input type="text" id="feedback-title" placeholder="Enter report title..." />
-
-        <label for="feedback-description">Description</label>
-        <textarea id="feedback-description" placeholder="Enter feedback details..."></textarea>
-
-        <div class="button-group">
-          <button onclick="submitFeedback()">Submit</button>
-          <button onclick="exportPDF()">Export</button>
+          <div class="report-body">
+            <h4 class="report-sub-title">Anecdotal Observation on Social Interaction</h4>
+            <p class="report-text">
+              During free play, a boy named Nesar initiated a puzzle activity and invited two peers to join. He demonstrated turn-taking and used encouraging language, such as “You try this one!” This spontaneous interaction highlighted his developing social and communication skills. Nesar remained engaged for 15 minutes, showing persistence and cooperation. This observation indicates progress in his interpersonal development and ability to work collaboratively in group settings.
+            </p>
+          </div>
+        </div>
+        
+        <div class="feedback-form card">
+          <h3 class="form-title">Submit Feedback</h3>
+          <form id="feedbackForm">
+            <div class="form-group">
+              <label for="feedback-title">Feedback Title</label>
+              <input type="text" id="feedback-title" placeholder="e.g., Progress Report - Social Skills">
+            </div>
+            <div class="form-group">
+              <label for="feedback-description">Feedback Details</label>
+              <textarea id="feedback-description" placeholder="Write your feedback here..."></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="submit-btn">Submit</button>
+              <button type="button" class="export-btn" onclick="exportPDF()">Export to PDF</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="../js/teacher-feedback.js"></script>
+  <div id="logout-modal" class="modal">
+    <div class="modal-content">
+      <h3>Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

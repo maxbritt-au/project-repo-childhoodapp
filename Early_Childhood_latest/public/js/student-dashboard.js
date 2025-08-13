@@ -1,74 +1,68 @@
 
 function toggleDropdown(event) {
-  event.stopPropagation(); // Prevent click bubbling
-  const menu = event.currentTarget;
-  menu.classList.toggle('active');
+  event.stopPropagation();
+  const menu = event.currentTarget.querySelector('.dropdown-menu');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
 }
 
-// Close dropdown if clicked outside
-document.addEventListener('click', () => {
-  const dropdown = document.querySelector('.profile-menu');
-  dropdown.classList.remove('active');
+document.addEventListener('click', (event) => {
+  const profileMenu = document.querySelector('.profile-menu');
+  if (profileMenu && !profileMenu.contains(event.target)) {
+    const dropdown = profileMenu.querySelector('.dropdown-menu');
+    if (dropdown) {
+      dropdown.style.display = 'none';
+    }
+  }
 });
 
 
-let currentSection = '';
+const themeToggle = document.querySelector('.theme-icons');
+const body = document.body;
 
-function toggleSection(section) {
-  const display = document.getElementById('info-display');
-
-  if (currentSection === section) {
-    display.innerHTML = '';
-    currentSection = '';
-    return;
-  }
-
-  currentSection = section;
-
-  switch (section) {
-    case 'profile':
-      display.innerHTML = `
-        <h3>Student Profile</h3>
-        <p><strong>Name:</strong> Younus</p>
-        <p><strong>ID:</strong> 30434157</p>
-        <p><strong>Course:</strong> Early Childhood Education and Care</p>
-        <p><strong>GPA:</strong> 6.0</p>
-        <p><strong>Major:</strong> Children Development</p>
-        <p><strong>Admission Year:</strong> 2024</p>
-      `;
-      break;
-
-    case 'edit':
-      display.innerHTML = `
-        <h3>Edit Profile</h3>
-        <p><strong>Mobile Number:</strong> +618983....</p>
-        <p><strong>Email:</strong> yfoisal@students.federation.edu.au</p>
-        <p><strong>Birth Year:</strong> 2008</p>
-      `;
-      break;
-
-    case 'report':
-      display.innerHTML = `
-         <h3>Title: Anecdotal Observation on Social Interaction</h3>
-    <p><strong>Description:</strong><br>
-    During free play, a child named ${name} Foisal initiated a puzzle activity and invited two peers to join.
-    She demonstrated turn-taking and used encouraging language, such as “You try this one!”
-    This spontaneous interaction highlighted her developing social and communication skills.
-    She remained engaged for 15 minutes, showing persistence and cooperation.
-    This observation indicates progress in her interpersonal development and ability to work collaboratively in group settings.
-    </p>
-      `;
-      break;
-  }
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme) {
+  body.classList.add(currentTheme);
+} else {
+  body.classList.add('light-mode');
 }
 
-// Close info when clicking outside
-document.addEventListener('click', function (event) {
-  const infoBox = document.getElementById('info-display');
-  const buttons = document.querySelector('.buttons');
+themeToggle.addEventListener('click', () => {
+  if (body.classList.contains('light-mode')) {
+    body.classList.remove('light-mode');
+    body.classList.add('dark-mode');
+    localStorage.setItem('theme', 'dark-mode');
+  } else {
+    body.classList.remove('dark-mode');
+    body.classList.add('light-mode');
+    localStorage.setItem('theme', 'light-mode');
+  }
+});
 
-  if (!infoBox.contains(event.target) && !buttons.contains(event.target)) {
-    infoBox.innerHTML = '';
-    currentSection = '';
+// Logout Modal Logic
+const logoutModal = document.getElementById('logout-modal');
+const openLogoutBtn = document.getElementById('open-logout-modal');
+const cancelLogoutBtn = document.getElementById('cancel-logout-btn');
+const confirmLogoutBtn = document.getElementById('confirm-logout-btn');
+
+// Open the modal
+openLogoutBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  logoutModal.style.display = 'flex';
+});
+
+// Close the modal
+cancelLogoutBtn.addEventListener('click', () => {
+  logoutModal.style.display = 'none';
+});
+
+// Redirect on confirm
+confirmLogoutBtn.addEventListener('click', () => {
+  window.location.href = 'login.html'; // This line redirects the user
+});
+
+// Close modal if clicked outside
+window.addEventListener('click', (event) => {
+  if (event.target === logoutModal) {
+    logoutModal.style.display = 'none';
   }
 });

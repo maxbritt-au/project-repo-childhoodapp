@@ -1,60 +1,80 @@
-<!-- teacher-dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Teacher Dashboard</title>
-  <link rel="stylesheet" href="../css/teacher-dashboard.css"/>
+  <link rel="stylesheet" href="../css/teacher-dashboard.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="../js/teacher-dashboard.js"></script>
 </head>
-<body>
+<body class="light-mode">
   <div class="dashboard-container">
-    <!-- Navbar -->
     <nav class="navbar">
-      <div class="logo">
-        <img src="../img/logo-2.png" alt="Logo" />
+      <div class="navbar-left">
+        <img src="../img/logo-2.png" alt="Logo" class="logo" />
       </div>
-
-      <div class="nav-title">Teacher Dashboard</div>
-
-      <ul class="nav-links">
-        <li><a href="teacher-dashboard.html">Dashboard</a></li>
-        <li><a href="teacher-feedback.html">Feedback</a></li>
-        <li class="profile-dropdown">
-          <i class="fas fa-user-circle fa-2x" id="profileIcon"></i>
-          <div id="dropdownMenu" class="dropdown-menu">
-            <button onclick="location.href='login.html'">Logout</button>
-          </div>
-        </li>
-      </ul>
+      <div class="navbar-center">
+        <ul class="nav-links">
+          <li><a href="teacher-dashboard.html" class="active">Dashboard</a></li>
+          <li><a href="teacher-feedback.html">Feedback</a></li>
+          <li><a href="teacher-my-courses.html">My Courses</a></li>
+          <li><a href="#">Messages</a></li>
+        </ul>
+      </div>
+      <div class="navbar-right">
+        <i class="fas fa-bell notification-icon"></i>
+        <div class="theme-icons">
+          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
+          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
+        </div>
+        <button id="open-logout-modal" class="logout-link">Logout</button>
+      </div>
     </nav>
 
-    <!-- Main Section -->
-    <div class="main-section">
-      <!-- Column 1: Student List -->
-      <div class="column student-list">
-        <h2>Students</h2>
-        <div id="students"></div>
-      </div>
-
-      <!-- Column 2: Results -->
-      <div class="column student-results">
-        <h2>Student Report</h2>
-        <div id="result-section" class="info-box">Select a student to view report.</div>
-        <div class="feedback-button-wrapper">
-          <button class="feedback-button" onclick="location.href='teacher-feedback.html'"></button>
+    <div class="main-content">
+      <div class="teacher-dashboard-grid">
+        <div class="card student-list-card">
+          <h3>Students</h3>
+          <ul class="student-list" id="students">
+            </ul>
         </div>
-      </div>
 
-      <!-- Column 3: Profile -->
-      <div class="column student-profile">
-        <h2>Student Profile</h2>
-        <div id="profile-section" class="info-box">Select a student to view profile.</div>
+        <div class="card student-info-card">
+          <div class="info-header">
+            <h3 class="info-title">Student Profile</h3>
+            <span class="info-subtitle" id="info-subtitle">Select a student to view details.</span>
+          </div>
+          <div class="info-display-area" id="info-display-area">
+            <p class="placeholder-text">Click on a student's name to view their profile or reports.</p>
+          </div>
+        </div>
+
+        <div class="card quick-actions-card">
+          <h3>Quick Actions</h3>
+          <div class="action-grid">
+            <a href="teacher-feedback.html" id="add-feedback-btn">
+              <i class="fas fa-comment-medical"></i>
+              <span>Add Feedback</span>
+            </a>
+            <a href="#">
+              <i class="fas fa-file-export"></i>
+              <span>Export Report</span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <script src="../js/teacher-dashboard.js"></script>
+  <div id="logout-modal" class="modal">
+    <div class="modal-content">
+      <h3>Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

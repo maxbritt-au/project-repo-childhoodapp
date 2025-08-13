@@ -1,23 +1,50 @@
-// Toggle profile dropdown
-const profileIcon = document.getElementById("profileIcon");
-const dropdownMenu = document.getElementById("dropdownMenu");
+const themeToggle = document.querySelector('.theme-icons');
+const body = document.body;
 
-profileIcon.addEventListener("click", (e) => {
-  dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-  e.stopPropagation();
-});
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme) {
+  body.classList.add(currentTheme);
+} else {
+  body.classList.add('light-mode');
+}
 
-window.addEventListener("click", (e) => {
-  if (!dropdownMenu.contains(e.target) && e.target !== profileIcon) {
-    dropdownMenu.style.display = "none";
+themeToggle.addEventListener('click', () => {
+  if (body.classList.contains('light-mode')) {
+    body.classList.remove('light-mode');
+    body.classList.add('dark-mode');
+    localStorage.setItem('theme', 'dark-mode');
+  } else {
+    body.classList.remove('dark-mode');
+    body.classList.add('light-mode');
+    localStorage.setItem('theme', 'light-mode');
   }
 });
 
-function submitFeedback() {
-  alert("Feedback submitted successfully!");
-}
+const logoutModal = document.getElementById('logout-modal');
+const openLogoutBtn = document.getElementById('open-logout-modal');
+const cancelLogoutBtn = document.getElementById('cancel-logout-btn');
+const confirmLogoutBtn = document.getElementById('confirm-logout-btn');
 
-async function exportPDF() {
+openLogoutBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  logoutModal.style.display = 'flex';
+});
+
+cancelLogoutBtn.addEventListener('click', () => {
+  logoutModal.style.display = 'none';
+});
+
+confirmLogoutBtn.addEventListener('click', () => {
+  window.location.href = 'login.html';
+});
+
+window.addEventListener('click', (event) => {
+  if (event.target === logoutModal) {
+    logoutModal.style.display = 'none';
+  }
+});
+
+function exportPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
@@ -44,25 +71,7 @@ async function exportPDF() {
   doc.save("teacher_feedback.pdf");
 }
 
-document.getElementById("export-student-btn").addEventListener("click", () => {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  doc.setFont("Helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text("Student Report", 20, 20);
-
-  doc.setFont("Helvetica", "normal");
-  doc.setFontSize(12);
-  doc.text("Name: Younus Foisal", 20, 40);
-  doc.text("ID: 30434157", 20, 50);
-  doc.text("Course: Information Technology", 20, 60);
-
-  const observation = `During free play, a child named Mia initiated a puzzle activity and invited two peers to join. She demonstrated turn-taking and used encouraging language, such as “You try this one!” This spontaneous interaction highlighted her developing social and communication skills. Mia remained engaged for 15 minutes, showing persistence and cooperation. This observation indicates progress in her interpersonal development and ability to work collaboratively in group settings.`;
-
-  const lines = doc.splitTextToSize(observation, 170);
-  doc.text("Observation:", 20, 80);
-  doc.text(lines, 20, 90);
-
-  doc.save("student_report.pdf");
+document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    alert('Feedback submitted successfully!');
 });

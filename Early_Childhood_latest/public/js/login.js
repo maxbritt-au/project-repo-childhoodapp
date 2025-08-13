@@ -1,51 +1,36 @@
-// public/js/login.js
-document.getElementById('loginForm').addEventListener('submit', async (event) => {
+document.getElementById('loginForm').addEventListener('submit', function(event) {
   event.preventDefault();
 
-  const email = document.getElementById('email').value.trim();
+  const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const rememberMe = document.getElementById('rememberMe').checked;
 
-  try {
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+  const user = JSON.parse(localStorage.getItem('user'));
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || 'Invalid login credentials');
-    }
-
-    const data = await res.json(); // expects: { role, name }
-
+  if (user && user.email === email && user.password === password) {
+    alert('Login successful!');
     if (rememberMe) {
       localStorage.setItem('rememberedEmail', email);
     } else {
       localStorage.removeItem('rememberedEmail');
     }
-
-    // Redirect based on role
-    if (data.role === 'teacher') {
-      window.location.href = '/html/teacher-dashboard.html';
-    } else if (data.role === 'student') {
-      window.location.href = '/html/student-dashboard.html';
-    } else if (data.role === 'parent') {
-      window.location.href = '/html/parent-dashboard.html';
-    } else {
-      window.location.href = '/html/dashboard.html';
+    if (user.role === 'teacher') {
+      window.location.href = 'teacher-dashboard.html';
+    } else if (user.role === 'student') {
+      window.location.href = 'student-dashboard.html';
+    } else if (user.role === 'parent') {
+      window.location.href = 'parent-dashboard.html';
     }
-  } catch (err) {
-    alert(err.message);
+  } else {
+    alert('Invalid login credentials!');
   }
 });
 
-// Autofill email
-window.addEventListener('DOMContentLoaded', () => {
+
+window.onload = function() {
   const rememberedEmail = localStorage.getItem('rememberedEmail');
   if (rememberedEmail) {
     document.getElementById('email').value = rememberedEmail;
     document.getElementById('rememberMe').checked = true;
   }
-});
+};

@@ -5,28 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Early Childhood Teacher App - Login</title>
   <link rel="stylesheet" href="../css/login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <div class="form-container">
-    <img src="../img/childhood.png" alt="Child Care Logo" class="logo">
-    <h1>Early Childhood  App</h1>
-    <h2 class="login-title">Log In</h2>
+    <div class="header-section">
+      <div class="logo-container">
+        <img src="../img/logo-2.png" alt="App Logo" class="logo">
+      </div>
+      <div class="header-text">
+        <h1 class="app-title">Early Childhood Teacher App</h1>
+        <h2>Welcome Back!</h2>
+        <h3>Log In to your account</h3>
+      </div>
+    </div>
 
     <form id="loginForm">
-      <label for="email">Email</label>
-      <div class="input-icon">
-        <span class="icon">📧</span>
-        <input type="email" id="email" placeholder="abc@gmail.com" required>
+      <div class="field">
+        <label for="email">Email</label>
+        <div class="input-with-icon">
+          <i class="fas fa-envelope icon"></i>
+          <input type="email" id="email" placeholder="abc@gmail.com" required>
+        </div>
       </div>
 
-      <label for="password">Password</label>
-      <div class="input-icon">
-        <span class="icon">🔒</span>
-        <input type="password" id="password" placeholder="********" required>
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-with-icon">
+          <i class="fas fa-lock icon"></i>
+          <input type="password" id="password" placeholder="********" required>
+        </div>
       </div>
 
       <div class="options">
-        <label><input type="checkbox" id="rememberMe"> Remember me</label>
+        <label class="remember-me-label"><input type="checkbox" id="rememberMe"> Remember me</label>
         <a href="#" class="forgot-password">Forgot password?</a>
       </div>
 
@@ -38,6 +50,6 @@
     </div>
   </div>
 
-  <script src="/js/login.js" defer></script>
+  <script src="../js/login.js" defer></script>
 </body>
 </html>

@@ -1,125 +1,262 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  --text-charcoal: #373a40;
+  --text-muted: #68728a;
+  --accent-sage: #81c784;
+  --accent-blue: #5c6bc0;
+  --accent-deep-purple: #5C2B6A;
+  --accent-deep-blue: #3A69A1;
+  --bg-creamy-light: #fefefe;
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
 body, html {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  height: 100vh;
-  background: url('../img/background-1.avif') no-repeat center center fixed;
-  background-size: cover;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-charcoal);
   display: flex;
   justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  background: url('../img/ECA_Background(Nes).jpg') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+  overflow-y: auto;
+}
+
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-creamy-light);
+  opacity: 0.88;
+  backdrop-filter: blur(2px);
+  z-index: -1;
 }
 
 .form-container {
-  background-color: rgba(255, 255, 255, 0.942);
-  backdrop-filter: blur(20px);
-  padding: 40px 30px;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 40px;
+  border-radius: 40px;
   width: 100%;
-  max-width: 400px;
-  color: #002b5c;
+  max-width: 420px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-subtle);
   text-align: center;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  margin: 40px auto;
+}
+
+.form-container:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.header-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 25px;
+  gap: 10px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
 .logo {
-  width: 100px;
+  width: 50px;
   height: auto;
-  margin-bottom: 20px;
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #002b5c;
+.app-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-charcoal);
+  margin: 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
 }
 
-.login-title {
-  font-size: 20px;
-  margin-bottom: 25px;
+.header-text h2 {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-charcoal);
+  margin-bottom: 5px;
+}
+
+.header-text h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-deep-purple);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.field {
+  margin-bottom: 18px;
+  text-align: left;
+  width: 100%;
 }
 
 label {
   display: block;
-  text-align: left;
-  margin: 10px 0 5px;
-  font-weight: 500;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-charcoal);
 }
 
-.input-icon {
+.input-with-icon {
   display: flex;
   align-items: center;
-  background: rgba(208, 207, 207, 0.8);
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 16px;
+  position: relative;
 }
 
-.input-icon .icon {
-  margin-right: 11px;
-  font-size: 18px;
-}
-
-.input-icon input {
-  border: none;
-  outline: none;
-  background: transparent;
-  width: 100%;
+.input-with-icon .icon {
+  position: absolute;
+  left: 15px;
+  color: var(--text-muted);
   font-size: 16px;
-  color: #002b5c;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px 18px 12px 45px;
+  border: 1px solid var(--glass-border);
+  border-radius: 15px;
+  font-size: 15px;
+  background: var(--glass-bg);
+  color: var(--text-charcoal);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+}
+
+input::placeholder {
+  color: rgba(55, 58, 64, 0.5);
+}
+
+input:focus, select:focus {
+  border-color: var(--accent-sage);
+  box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.3);
+  outline: none;
 }
 
 .options {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 15px 0;
+  margin: 15px 0 25px;
   font-size: 14px;
 }
 
 .options input {
+  width: auto;
   margin-right: 5px;
 }
 
-.forgot-password {
-  color: #28b576;
-  text-decoration: none;
-  font-weight: 500;
+.remember-me-label {
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
-.forgot-password:hover {
+.options a {
+  color: var(--accent-deep-blue);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.options a:hover {
+  color: var(--accent-blue);
+  text-decoration: underline;
+}
+
+.create-account {
+  margin-top: 30px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.create-account a {
+  color: var(--accent-deep-blue);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.create-account a:hover {
+  color: var(--accent-blue);
   text-decoration: underline;
 }
 
 .login-btn {
   width: 100%;
-  padding: 12px;
-  background-color: #002b5c;
+  padding: 15px;
+  background-color: var(--accent-blue);
   color: white;
   border: none;
-  border-radius: 10px;
-  font-size: 16px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 20px rgba(92, 107, 192, 0.3);
 }
 
 .login-btn:hover {
-  background-color: #004080;
+  background-color: #4b5ab0;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(92, 107, 192, 0.4);
 }
 
-.create-account {
-  margin-top: 20px;
-  font-size: 14px;
+@media (max-width: 768px) {
+  .form-container {
+    padding: 30px 25px;
+    margin: 20px 15px;
+    max-width: 95%;
+    border-radius: 30px;
+  }
 }
 
-.create-account a {
-  color: #004080;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.create-account a:hover {
-  text-decoration: underline;
+@media (max-width: 480px) {
+  .form-container {
+    padding: 25px 20px;
+    border-radius: 25px;
+  }
+  .app-title {
+    font-size: 20px;
+  }
+  h2 {
+    font-size: 14px;
+  }
+  h3 {
+    font-size: 13px;
+  }
+  .login-btn {
+    font-size: 16px;
+    padding: 12px;
+  }
 }

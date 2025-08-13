@@ -5,18 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Early Childhood Teacher App - Sign Up</title>
   <link rel="stylesheet" href="../css/signup.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <div class="form-container">
-  <img src="../img/logo-2.png" alt="App Logo" class="logo">
-  <h1>Early Childhood Teacher App</h1>
-  <h2>Welcome Back!</h2>
-  <h3>Create your account</h3>
+    <div class="header-section">
+      <div class="logo-container">
+        <img src="../img/logo-2.png" alt="App Logo" class="logo">
+      </div>
+      <div class="header-text">
+        <h1 class="app-title">Early Childhood Teacher App</h1>
+        <h2>Welcome to the App!</h2>
+        <h3>Create your account</h3>
+      </div>
+    </div>
 
-
-      <form id="signupForm">
-        <div class="field">
-          <label for="role">Role</label>
+    <form id="signupForm">
+      <div class="field">
+        <label for="role">Role</label>
+        <div class="input-with-icon">
+          <i class="fas fa-user-tag icon"></i>
           <select id="role" required>
             <option value="">Choose……</option>
             <option value="student">Student</option>
@@ -24,46 +32,54 @@
             <option value="parent">Parent</option>
           </select>
         </div>
+      </div>
 
-        <div class="field">
-          <label for="name">Name *</label>
+      <div class="field">
+        <label for="name">Name *</label>
+        <div class="input-with-icon">
+          <i class="fas fa-signature icon"></i>
           <input type="text" id="name" required>
         </div>
+      </div>
 
-        <div class="field">
-          <label for="email">Email *</label>
+      <div class="field">
+        <label for="email">Email *</label>
+        <div class="input-with-icon">
+          <i class="fas fa-envelope icon"></i>
           <input type="email" id="email" required>
         </div>
+      </div>
 
-        <div class="field">
-          <label for="password">Password *</label>
+      <div class="field">
+        <label for="password">Password *</label>
+        <div class="input-with-icon">
+          <i class="fas fa-lock icon"></i>
           <input type="password" id="password" required>
         </div>
+      </div>
 
-        <div class="field">
-          <label for="confirmPassword">Confirm password *</label>
+      <div class="field">
+        <label for="confirmPassword">Confirm password *</label>
+        <div class="input-with-icon">
+          <i class="fas fa-lock icon"></i>
           <input type="password" id="confirmPassword" required>
         </div>
-
-        <div class="field">
-          <label for="securityAnswer">Security Answer</label>
-          <input type="text" id="securityAnswer" placeholder="Who is your favourite teacher?" required>
-        </div>
-
-        <!-- ✅ Fixed checkbox layout (text left, checkbox right) -->
-        <div class="terms">
-          <label for="agree">I agree and accept the <a href="#">terms and conditions</a></label>
-          <input type="checkbox" id="agree" required>
-        </div>
-
-        <button type="submit" class="signup-btn">Signup</button>
-      </form>
-
-      <div class="login-link">
-        Already Registered? <a href="login.html">Log In</a>
       </div>
+
+      <div class="terms">
+        <label for="agree">
+          <input type="checkbox" id="agree" required>
+          I agree and accept the <a href="#">terms and conditions</a>
+        </label>
+      </div>
+
+      <button type="submit" class="signup-btn">Signup</button>
+    </form>
+
+    <div class="login-link">
+      Already Registered? <a href="login.html">Log In</a>
     </div>
-  
+  </div>
 
   <script src="../js/signup.js" defer></script>
 </body>
