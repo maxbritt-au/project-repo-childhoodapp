@@ -15,11 +15,11 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
       localStorage.removeItem('rememberedEmail');
     }
     if (user.role === 'teacher') {
-      window.location.href = 'teacher-dashboard.html';
+      window.location.href = '/teacher-dashboard';
     } else if (user.role === 'student') {
-      window.location.href = 'student-dashboard.html';
+      window.location.href = '/student-dashboard';
     } else if (user.role === 'parent') {
-      window.location.href = 'parent-dashboard.html';
+      window.location.href = '/parent-dashboard';
     }
   } else {
     alert('Invalid login credentials!');

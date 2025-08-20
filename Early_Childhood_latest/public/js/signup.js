@@ -9,7 +9,7 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
   localStorage.setItem('user', JSON.stringify(user));
 
   alert('Signup successful! Please login now.');
-  window.location.href = 'login.html';
+  window.location.href = '/';
 });
 
 
