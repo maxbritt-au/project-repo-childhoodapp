@@ -1,15 +1,27 @@
-document.getElementById('signupForm').addEventListener('submit', function(event) {
-  event.preventDefault();
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
 
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const role = document.getElementById('role').value;
+  const userData = {
+    role: document.getElementById('role').value,
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    password: document.getElementById('password').value,
+    confirmPassword: document.getElementById('confirmPassword').value
+  };
 
-  const user = { email, password, role };
-  localStorage.setItem('user', JSON.stringify(user));
+  // Send data to backend
+  const res = await fetch('/api/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData)
+  });
 
-  alert('Signup successful! Please login now.');
-  window.location.href = '/';
+  const result = await res.json();
+  if (result.success) {
+    window.location.href = '/';
+  } else {
+    alert(result.message || 'Signup failed');
+  }
 });
 
 

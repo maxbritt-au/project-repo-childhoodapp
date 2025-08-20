@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel');
+const db = require("../config/db"); // Your MySQL connection
 
 exports.getAllUsers = (req, res) => {
   userModel.getAll((err, rows) => {
@@ -33,20 +34,14 @@ exports.loginUser = (req, res) => {
 };
 
 exports.createUser = (req, res) => {
-  const { name, email, password, role } = req.body;
-
-  if (!name || !email || !password || !role) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
-  userModel.create({ name, email, password, role }, (err, result) => {
-    if (err) {
-      if (err.code === 'ER_DUP_ENTRY') {
-        return res.status(409).json({ message: 'Email already registered' });
-      }
-      console.error('Error inserting user:', err);
-      return res.status(500).json({ message: 'Database error' });
+  const { role, name, email, password } = req.body;
+  // Add validation as needed
+  db.query(
+    'INSERT INTO users (role, name, email, password) VALUES (?, ?, ?, ?)',
+    [role, name, email, password],
+    (err, results) => {
+      if (err) return res.json({ success: false, message: 'Error creating user' });
+      res.json({ success: true });
     }
-    res.status(201).json({ message: 'User created successfully' });
-  });
+  );
 };
