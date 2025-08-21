@@ -4,7 +4,7 @@ const db = mysql.createConnection({
     host: '127.0.0.1',
     user: 'root',
     password: 'Andrew21062005@',
-    database: 'early_childhood_edu_app'
+    database: 'early_childhood_education_app'
 });
 
 db.connect((err)=>{

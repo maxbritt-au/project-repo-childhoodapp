@@ -26,6 +26,22 @@ app.get('/signup', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'html', 'signup.html'));
 });
 
+app.get('/student-report', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'html', 'student-report.html'));
+});
+
+app.get('/student-dashboard', (req, res) => { 
+  res.sendFile(path.join(__dirname,'public', 'html', 'student-dashboard.html'));
+})
+
+app.get('/teacher-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname,'public', 'html', 'teacher-dashboard.html'));
+})
+
+app.get('/teacher-feedback', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'html', 'teacher-feedback.html'));
+})
+
 // --- Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
