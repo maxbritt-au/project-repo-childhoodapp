@@ -19,6 +19,7 @@
           <li><a href="/teacher-dashboard" class="active">Dashboard</a></li>
           <li><a href="/teacher-feedback">Feedback</a></li>
           <li><a href="/teacher-my-courses">My Courses</a></li>
+          <li><a href="/children-dashboard">Children</a></li> <!-- NEW: Option B -->
           <li><a href="#">Messages</a></li>
         </ul>
       </div>
@@ -36,8 +37,7 @@
       <div class="teacher-dashboard-grid">
         <div class="card student-list-card">
           <h3>Students</h3>
-          <ul class="student-list" id="students">
-            </ul>
+          <ul class="student-list" id="students"></ul>
         </div>
 
         <div class="card student-info-card">
@@ -61,12 +61,19 @@
               <i class="fas fa-file-export"></i>
               <span>Export Report</span>
             </a>
+            <!-- (Optional) You can also add a quick link tile here if you want both navbar + tile:
+            <a href="/children-dashboard">
+              <i class="fas fa-users"></i>
+              <span>Children Dashboard</span>
+            </a>
+            -->
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Logout Modal -->
   <div id="logout-modal" class="modal">
     <div class="modal-content">
       <h3>Are you sure you want to log out?</h3>
@@ -76,5 +83,27 @@
       </div>
     </div>
   </div>
+
+  <!-- If you use a shared logout.js, include it here -->
+  <!-- <script src="../js/logout.js"></script> -->
+  <script>
+    // Minimal inline wiring for the logout modal (remove if using shared logout.js)
+    const logoutModal = document.getElementById("logout-modal");
+    const openLogout = document.getElementById("open-logout-modal");
+    const cancelLogoutBtn = document.getElementById("cancel-logout-btn");
+    const confirmLogoutBtn = document.getElementById("confirm-logout-btn");
+
+    openLogout?.addEventListener("click", () => logoutModal.style.display = "block");
+    cancelLogoutBtn?.addEventListener("click", () => logoutModal.style.display = "none");
+    confirmLogoutBtn?.addEventListener("click", async () => {
+      localStorage.removeItem("role");
+      localStorage.removeItem("userId");
+      try { await fetch("/api/logout", { method: "POST", credentials: "include" }); } catch(e) {}
+      window.location.href = "/"; // back to login
+    });
+    window.addEventListener("click", (e) => {
+      if (e.target === logoutModal) logoutModal.style.display = "none";
+    });
+  </script>
 </body>
 </html>

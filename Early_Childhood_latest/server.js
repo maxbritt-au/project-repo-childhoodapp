@@ -4,21 +4,23 @@ const express = require('express');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+
+// --- Import routes
 const userRoutes = require('./routes/userRoutes');
 const childrenRoutes = require('./routes/childrenRoutes');
 
-// --- Middleware (PUT THIS BEFORE ROUTES)
+// --- Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- Static
+// --- Serve static frontend
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- API routes
 app.use('/api', userRoutes);
 app.use('/api/children', childrenRoutes);
 
-// --- Pages
+// --- Page routes
 app.get('/login', (req, res) =>
   res.sendFile(path.join(__dirname, 'public', 'html', 'login.html'))
 );
@@ -37,9 +39,15 @@ app.get('/teacher-dashboard', (req, res) =>
 app.get('/teacher-feedback', (req, res) =>
   res.sendFile(path.join(__dirname, 'public', 'html', 'teacher-feedback.html'))
 );
-// after your other page routes in server.js
-app.get('/add-child', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'html', 'add-child.html'));
+
+// --- New pages
+app.get('/add-child', (req, res) =>
+  res.sendFile(path.join(__dirname, 'public', 'html', 'add-child.html'))
+);
+
+app.get('/children-dashboard', (req, res) => {
+  const filePath = path.join(__dirname, 'public', 'html', 'children-dashboard.html');
+  res.sendFile(filePath);
 });
 
 // --- Start server
