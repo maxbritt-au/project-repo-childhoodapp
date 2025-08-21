@@ -40,6 +40,18 @@ CREATE TABLE IF NOT EXISTS feedbacks (
     FOREIGN KEY (teacher_id) REFERENCES users(id)
 );
 
+CREATE TABLE children (
+    child_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    dob DATE NOT NULL,
+    gender ENUM('Male','Female','Other') NOT NULL
+);
+
+INSERT INTO children (first_name,last_name,dob,gender)
+VALUES ('Test','Kid','2018-05-14','Male');
+
+
 -- Insert Users
 INSERT INTO users (name, email, password, role) VALUES
 ('Alice Smith', 'alice.smith@test.com', 'abc12', 'student'),

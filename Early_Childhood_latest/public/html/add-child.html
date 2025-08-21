@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add Child • Early Childhood Teacher App</title>
+  <link rel="stylesheet" href="../css/login.css" />
+  <style>
+    .container { max-width: 640px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
+    h1 { margin: 0 0 8px; }
+    .hint { color:#666; margin-bottom: 16px; }
+    label { display:block; margin:12px 0 6px; font-weight:600; }
+    input, select { width:100%; padding:10px; border:1px solid #e2e2e2; border-radius:8px; }
+    button { margin-top:16px; padding:10px 16px; border-radius:10px; border:0; background:#2f72ff; color:#fff; font-weight:600; cursor:pointer; }
+    .alert { margin-top:12px; padding:10px; border-radius:8px; display:none; }
+    .alert.success { background:#e7f8ee; color:#136c3c; }
+    .alert.error { background:#fdecea; color:#611a15; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Add Child</h1>
+    <p class="hint">Teacher only. Fill in the details and click “Save”.</p>
+
+    <form id="addChildForm" novalidate>
+      <label for="first_name">First Name</label>
+      <input id="first_name" name="first_name" type="text" required />
+
+      <label for="last_name">Last Name</label>
+      <input id="last_name" name="last_name" type="text" required />
+
+      <label for="dob">Date of Birth</label>
+      <input id="dob" name="dob" type="date" required />
+
+      <label for="gender">Gender</label>
+      <select id="gender" name="gender" required>
+        <option value="" selected disabled>Choose one</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+
+      <button type="submit">Save</button>
+
+      <div id="msg" class="alert"></div>
+    </form>
+  </div>
+
+  <script src="../js/add-child.js"></script>
+</body>
+</html>
