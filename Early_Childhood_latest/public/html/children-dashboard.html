@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Children Dashboard</title>
-  <link rel="stylesheet" href="../css/login.css" />
+
+  <!-- root-relative so Express static can serve it -->
+  <link rel="stylesheet" href="/css/login.css" />
+
   <style>
     .wrap { max-width: 1100px; margin: 32px auto; padding: 0 16px; }
     .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
@@ -18,11 +21,44 @@
     .meta h3 { margin: 0 0 4px; }
     .meta p { margin: 0; color: #555; font-size: 0.95rem; }
     .empty { text-align: center; color: #666; margin: 40px 0; }
-    a.cardlink { text-decoration: none; color: inherit; }
-    .children-actions { display:flex; gap:12px; }
+    .hidden { display:none; }
+    .toast{position:fixed;right:12px;bottom:12px;background:#111;color:#fff;padding:10px 14px;border-radius:8px}
   </style>
 </head>
 <body>
   <div class="wrap">
+    <h1>Children</h1>
+
     <div class="toolbar">
-      <input id="search" type="text" placeholder="Search child
+      <!-- IDs that the JS looks for -->
+      <input id="search" type="text" placeholder="Search children…" />
+      <select id="sort">
+        <option value="name-asc">Name ↑</option>
+        <option value="name-desc">Name ↓</option>
+        <option value="dob-asc">DOB ↑</option>
+        <option value="dob-desc">DOB ↓</option>
+      </select>
+      <div class="spacer"></div>
+      <button id="refresh" class="btn">Refresh</button>
+      <button id="addChild" class="btn primary">Add Child</button>
+      <span id="childrenSpinner" class="hidden">Loading…</span>
+    </div>
+
+    <!-- Grid container the script will populate -->
+    <div id="childrenGrid" class="grid"></div>
+
+    <!-- Empty state -->
+    <div id="childrenEmpty" class="empty hidden">No children yet.</div>
+
+    <!-- Toast -->
+    <div id="childrenToast" class="toast hidden"><span id="childrenToastMsg"></span></div>
+
+    <!-- (Optional) Modal markup goes here if you want Add/Edit via modal -->
+  </div>
+
+  <!-- Load your dashboard JS from /public/js -->
+  <script src="/js/children-dashboard.js" defer></script>
+  <!-- temporary smoke test -->
+  <script>console.log('children-dashboard HTML loaded');</script>
+</body>
+</html>

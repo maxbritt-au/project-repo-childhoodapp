@@ -2,50 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Add Child • Early Childhood Teacher App</title>
-  <link rel="stylesheet" href="../css/login.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Child</title>
+  <link rel="stylesheet" href="/css/login.css" />
   <style>
-    .container { max-width: 640px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
-    h1 { margin: 0 0 8px; }
-    .hint { color:#666; margin-bottom: 16px; }
-    label { display:block; margin:12px 0 6px; font-weight:600; }
-    input, select { width:100%; padding:10px; border:1px solid #e2e2e2; border-radius:8px; }
-    button { margin-top:16px; padding:10px 16px; border-radius:10px; border:0; background:#2f72ff; color:#fff; font-weight:600; cursor:pointer; }
-    .alert { margin-top:12px; padding:10px; border-radius:8px; display:none; }
-    .alert.success { background:#e7f8ee; color:#136c3c; }
-    .alert.error { background:#fdecea; color:#611a15; }
+    .wrap{max-width:720px;margin:40px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #eee;border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .row > div{flex:1 1 200px}
+    input,select,textarea{width:100%;padding:10px;border:1px solid #e2e2e2;border-radius:10px}
+    .btn{padding:10px 14px;border:0;border-radius:12px;font-weight:600;cursor:pointer}
+    .primary{background:#2f72ff;color:#fff}
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="wrap">
     <h1>Add Child</h1>
-    <p class="hint">Teacher only. Fill in the details and click “Save”.</p>
-
-    <form id="addChildForm" novalidate>
-      <label for="first_name">First Name</label>
-      <input id="first_name" name="first_name" type="text" required />
-
-      <label for="last_name">Last Name</label>
-      <input id="last_name" name="last_name" type="text" required />
-
-      <label for="dob">Date of Birth</label>
-      <input id="dob" name="dob" type="date" required />
-
-      <label for="gender">Gender</label>
-      <select id="gender" name="gender" required>
-        <option value="" selected disabled>Choose one</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-      </select>
-
-      <button type="submit">Save</button>
-
-      <div id="msg" class="alert"></div>
-    </form>
+    <div class="card">
+      <form id="addChildForm">
+        <div class="row">
+          <div>
+            <label>Full name</label>
+            <input id="childName" placeholder="First Last" required />
+          </div>
+          <div>
+            <label>DOB</label>
+            <input id="childDob" type="date" />
+          </div>
+          <div>
+            <label>Gender</label>
+            <select id="childGender">
+              <option value="">—</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:8px">
+          <button class="btn" type="button" onclick="history.back()">Cancel</button>
+          <button class="btn primary" type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+    <div style="margin-top:12px">
+      <a href="/children-dashboard">← Back to Children</a>
+    </div>
   </div>
 
-  <script src="../js/add-child.js"></script>
+  <script src="/js/add-child.js" defer></script>
 </body>
 </html>
