@@ -28,13 +28,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 // --- Import routes
 const userRoutes = require('./routes/userRoutes');
 const childrenRoutes = require('./routes/childrenRoutes');
+const reportRoutes = require('./routes/reportRoutes'); // NEW
 
 // --- API routes
 app.use('/api', userRoutes);           // e.g. /api/login, /api/users
 app.use('/api/children', childrenRoutes); // e.g. /api/children, /api/children/:id
+app.use('/api/reports', reportRoutes);    // NEW  /api/reports?childId=...
 
 // --- Page routes
-app.get('/login', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'html', 'login.html'));
 });
 
@@ -64,6 +66,10 @@ app.get('/add-child', (req, res) => {
 
 app.get('/children-dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'html', 'children-dashboard.html'));
+});
+
+app.get('/individual-child-dash', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'html', 'individual-child-dash.html'));
 });
 
 // --- Start server

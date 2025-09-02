@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Individual Child Dashboard</title>
+
+  <link rel="stylesheet" href="../css/individual-child-dash.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- JS loaders -->
+  <script defer src="../js/individual-child-dash.js"></script>
+  <script defer src="../js/navbar.js"></script>
+</head>
+<body class="light-mode">
+  <div class="dashboard-container">
+    <nav class="navbar">
+      <div class="navbar-left">
+        <!-- ✅ logo can just link to "#" (role-aware dashboard link will be set by navbar.js) -->
+        <a href="#" id="dashboardLogoLink" class="logo-link">
+          <img src="../img/logo-2.png" alt="Logo" class="logo" />
+        </a>
+      </div>
+      <div class="navbar-center">
+        <ul class="nav-links">
+          <!-- ✅ Dashboard link becomes dynamic -->
+          <li><a href="#" id="dashboardLink">Dashboard</a></li>
+          <li><a href="/student-my-courses">My Courses</a></li>
+          <li><a href="/student-report">Submit Report</a></li>
+          <li><a href="#" class="active">Child Profile</a></li>
+        </ul>
+      </div>
+      <div class="navbar-right">
+        <i class="fas fa-bell notification-icon"></i>
+        <div class="theme-icons">
+          <i class="fas fa-sun light-icon theme-toggle-btn" aria-label="Light Mode"></i>
+          <i class="fas fa-moon dark-icon theme-toggle-btn" aria-label="Dark Mode"></i>
+        </div>
+        <button id="open-logout-modal" class="logout-link">Logout</button>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="profile-hero-card glassy-card">
+      <img src="../img/student-main.png" alt="Profile" class="hero-profile-pic"/>
+      <div class="hero-profile-info">
+        <h2 id="childName">Loading…</h2>
+        <div class="hero-actions">
+          <a id="editProfileLink" class="action-btn primary-btn" href="#">
+            <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN -->
+    <div class="main-content">
+      <section class="content-grid">
+        <!-- Recent Reports -->
+        <article class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-file-lines"></i> Recent Reports</h3>
+            <div class="card-actions">
+              <a id="newReportLink" class="chip" href="#"><i class="fa-solid fa-plus"></i> New</a>
+              <a id="allReportsLink" class="chip" href="#"><i class="fa-solid fa-folder-open"></i> All</a>
+            </div>
+          </div>
+          <ul class="reports-list" id="reportsList">
+            <li style="grid-template-columns: 1fr;">Loading reports…</li>
+          </ul>
+        </article>
+
+        <!-- Quick Actions -->
+        <article class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
+          </div>
+          <div class="action-grid">
+            <a id="qaNewReport" href="#"><i class="fas fa-file-circle-plus"></i><span>New Report</span></a>
+            <a id="qaProgress" href="#"><i class="fas fa-chart-line"></i><span>Progress Overview</span></a>
+            <a id="qaAllReports" href="#"><i class="fas fa-folder-open"></i><span>All Reports</span></a>
+            <a id="qaMessage" href="#"><i class="fas fa-envelope"></i><span>Message Guardian</span></a>
+          </div>
+        </article>
+      </section>
+    </div>
+  </div>
+
+  <!-- Logout Modal -->
+  <div id="logout-modal" class="modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
+      <h3 id="logoutTitle">Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
