@@ -24,10 +24,10 @@ DROP TABLE IF EXISTS `children`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `children` (
   `child_id` int NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `first_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dob` date NOT NULL,
-  `gender` enum('Male','Female','Other') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `gender` enum('Male','Female','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`child_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -86,9 +86,12 @@ CREATE TABLE `reports` (
   `template_id` int NOT NULL,
   `content` text NOT NULL,
   `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `child_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `student_id` (`student_id`),
   KEY `template_id` (`template_id`),
+  KEY `idx_reports_child_id` (`child_id`),
+  CONSTRAINT `fk_reports_child` FOREIGN KEY (`child_id`) REFERENCES `children` (`child_id`),
   CONSTRAINT `reports_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`),
   CONSTRAINT `reports_ibfk_2` FOREIGN KEY (`template_id`) REFERENCES `templates` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -100,7 +103,7 @@ CREATE TABLE `reports` (
 
 LOCK TABLES `reports` WRITE;
 /*!40000 ALTER TABLE `reports` DISABLE KEYS */;
-INSERT INTO `reports` VALUES (1,1,1,'Today we observed children playing...','2025-08-08 13:13:21');
+INSERT INTO `reports` VALUES (1,1,1,'Today we observed children playing...','2025-08-08 13:13:21',NULL);
 /*!40000 ALTER TABLE `reports` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -171,4 +174,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-26  9:24:24
+-- Dump completed on 2025-09-02 11:37:13
