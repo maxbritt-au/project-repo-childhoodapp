@@ -1,11 +1,4 @@
-const students = [
-  { id: "30436982", name: "Nesar Uddin", img: "../img/student-2.png", course: "Bachelor in Information Technology" },
-  { id: "30434157", name: "Younus Foisal", img: "../img/student-1.png", course: "Early Childhood Education" },
-  { id: "30398757", name: "Max Britt", img: "../img/student-3.png", course: "Early Childhood Education" },
-  { id: "30427201", name: "Ashraful Hossain", img: "../img/student-1.png", course: "Early Childhood Education" },
-  { id: "30436123", name: "Arafat Uddin", img: "../img/student-2.png", course: "Early Childhood Education" },
-  { id: "30436456", name: "Andrew Pham", img: "../img/student-3.png", course: "Early Childhood Education" },
-];
+// public/js/teacher-dashboard.js
 
 const studentContainer = document.getElementById("students");
 const infoDisplayArea = document.getElementById("info-display-area");
@@ -13,9 +6,16 @@ const infoTitle = document.querySelector(".info-title");
 const infoSubtitle = document.querySelector(".info-subtitle");
 const addFeedbackBtn = document.getElementById("add-feedback-btn");
 
-function renderStudentList() {
+let allStudents = [];
+
+function renderStudentList(students) {
   studentContainer.innerHTML = '';
-  students.forEach((student, index) => {
+  if (students.length === 0) {
+    studentContainer.innerHTML = '<p class="placeholder-text">No students found.</p>';
+    return;
+  }
+  
+  students.forEach(student => {
     const listItem = document.createElement("li");
     listItem.className = "student-list-item";
     listItem.innerHTML = `
@@ -27,20 +27,33 @@ function renderStudentList() {
         </div>
       </div>
       <div class="student-actions">
-        <a href="#" onclick="viewProfile(${index}); return false;"><i class="fas fa-user"></i></a>
-        <a href="#" onclick="viewReport(${index}); return false;"><i class="fas fa-file-alt"></i></a>
+        <a href="#" onclick="viewProfile('${student.id}'); return false;"><i class="fas fa-user"></i></a>
+        <a href="#" onclick="viewReport('${student.id}'); return false;"><i class="fas fa-file-alt"></i></a>
       </div>
     `;
     studentContainer.appendChild(listItem);
   });
 }
 
-// Initial render
-renderStudentList();
+async function loadStudents() {
+  try {
+    const response = await fetch('/api/students', { credentials: 'include' });
+    if (!response.ok) {
+      throw new Error('Failed to fetch students.');
+    }
+    const studentsData = await response.json();
+    allStudents = studentsData;
+    renderStudentList(allStudents);
+  } catch (error) {
+    console.error('Error loading students:', error);
+    studentContainer.innerHTML = '<p class="placeholder-text">Failed to load student list.</p>';
+  }
+}
 
-// Function to view a student's profile
-function viewProfile(index) {
-  const student = students[index];
+function viewProfile(studentId) {
+  const student = allStudents.find(s => s.id === studentId);
+  if (!student) return;
+
   infoTitle.textContent = "Student Profile";
   infoSubtitle.textContent = `Viewing profile for ${student.name}`;
   infoDisplayArea.innerHTML = `
@@ -55,9 +68,10 @@ function viewProfile(index) {
   `;
 }
 
-// Function to view a student's report
-function viewReport(index) {
-  const student = students[index];
+function viewReport(studentId) {
+  const student = allStudents.find(s => s.id === studentId);
+  if (!student) return;
+
   infoTitle.textContent = "Recent Reports";
   infoSubtitle.textContent = `Reports for ${student.name}`;
   infoDisplayArea.innerHTML = `
@@ -69,30 +83,8 @@ function viewReport(index) {
   `;
 }
 
-// Theme Toggle Logic
-const themeToggle = document.querySelector('.theme-icons');
-const body = document.body;
+loadStudents();
 
-const currentTheme = localStorage.getItem('theme');
-if (currentTheme) {
-  body.classList.add(currentTheme);
-} else {
-  body.classList.add('light-mode');
-}
-
-themeToggle.addEventListener('click', () => {
-  if (body.classList.contains('light-mode')) {
-    body.classList.remove('light-mode');
-    body.classList.add('dark-mode');
-    localStorage.setItem('theme', 'dark-mode');
-  } else {
-    body.classList.remove('dark-mode');
-    body.classList.add('light-mode');
-    localStorage.setItem('theme', 'light-mode');
-  }
-});
-
-// Logout Modal Logic
 const logoutModal = document.getElementById('logout-modal');
 const openLogoutBtn = document.getElementById('open-logout-modal');
 const cancelLogoutBtn = document.getElementById('cancel-logout-btn');

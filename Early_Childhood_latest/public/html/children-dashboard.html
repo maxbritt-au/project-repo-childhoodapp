@@ -4,62 +4,74 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Children Dashboard</title>
-
-  <!-- root-relative so Express static can serve it -->
-  <link rel="stylesheet" href="/css/login.css" />
-
-  <style>
-    .wrap { max-width: 1100px; margin: 32px auto; padding: 0 16px; }
-    .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
-    .toolbar input, .toolbar select { padding: 10px; border: 1px solid #e2e2e2; border-radius: 10px; }
-    .toolbar .spacer { flex: 1; }
-    .btn { padding: 10px 14px; border: 0; border-radius: 12px; font-weight: 600; cursor: pointer; }
-    .btn.primary { background: #2f72ff; color: #fff; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-    .card { background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); display:flex; gap:12px; }
-    .avatar { width: 54px; height: 54px; border-radius: 50%; background: #f1f5ff; display:flex; align-items:center; justify-content:center; font-weight:700; }
-    .meta h3 { margin: 0 0 4px; }
-    .meta p { margin: 0; color: #555; font-size: 0.95rem; }
-    .empty { text-align: center; color: #666; margin: 40px 0; }
-    .hidden { display:none; }
-    .toast{position:fixed;right:12px;bottom:12px;background:#111;color:#fff;padding:10px 14px;border-radius:8px}
-  </style>
+  
+  <link rel="stylesheet" href="../css/children-dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <script defer src="../js/children-dashboard.js"></script>
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
 </head>
-<body>
-  <div class="wrap">
-    <h1>Children</h1>
+<body class="light-mode">
+  <div class="dashboard-container">
+    <nav class="navbar">
+      <div class="navbar-left">
+        <a href="#" id="dashboardLogoLink" class="logo-link">
+          <img src="../img/logo-2.png" alt="Logo" class="logo" />
+        </a>
+      </div>
+      <div class="navbar-center">
+        <ul class="nav-links">
+          <li><a href="#" id="dashboardLink">Dashboard</a></li>
+          <li><a href="/teacher-feedback">Feedback</a></li>
+          <li><a href="/children-dashboard" class="active">Children</a></li>
+          
+        </ul>
+      </div>
+      <div class="navbar-right">
+        <i class="fas fa-bell notification-icon"></i>
+        <div class="theme-icons">
+          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
+          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
+        </div>
+        <button id="open-logout-modal" class="logout-link">Logout</button>
+      </div>
+    </nav>
+    
+    <div class="main-content">
+      <div class="toolbar card">
+        <h1>Children</h1>
+        <div class="spacer"></div>
+        <input id="search" type="text" placeholder="Search children…" />
+        <select id="sort">
+          <option value="name-asc">Name ↑</option>
+          <option value="name-desc">Name ↓</option>
+          <option value="dob-asc">DOB ↑</option>
+          <option value="dob-desc">DOB ↓</option>
+        </select>
+        <button id="refresh" class="btn">Refresh</button>
+        <a href="/add-child.html" id="addChild" class="btn primary">Add Child</a>
+        <span id="childrenSpinner" class="hidden">Loading…</span>
+      </div>
 
-    <div class="toolbar">
-      <!-- IDs that the JS looks for -->
-      <input id="search" type="text" placeholder="Search children…" />
-      <select id="sort">
-        <option value="name-asc">Name ↑</option>
-        <option value="name-desc">Name ↓</option>
-        <option value="dob-asc">DOB ↑</option>
-        <option value="dob-desc">DOB ↓</option>
-      </select>
-      <div class="spacer"></div>
-      <button id="refresh" class="btn">Refresh</button>
-      <button id="addChild" class="btn primary">Add Child</button>
-      <span id="childrenSpinner" class="hidden">Loading…</span>
+      <div id="childrenGrid" class="grid"></div>
+
+      <div id="childrenEmpty" class="empty hidden">No children yet.</div>
+
+      <div id="childrenToast" class="toast hidden"><span id="childrenToastMsg"></span></div>
     </div>
+  </div>
 
-    <!-- Grid container the script will populate -->
-    <div id="childrenGrid" class="grid"></div>
-
-    <!-- Empty state -->
-    <div id="childrenEmpty" class="empty hidden">No children yet.</div>
-
-    <!-- Toast -->
-    <div id="childrenToast" class="toast hidden"><span id="childrenToastMsg"></span></div>
-
-    <!-- (Optional) Modal markup goes here if you want Add/Edit via modal -->
+  <div id="logout-modal" class="modal">
+    <div class="modal-content">
+      <h3>Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
   </div>
   
-
-  <!-- Load your dashboard JS from /public/js -->
-  <script src="/js/children-dashboard.js" defer></script>
-  <!-- temporary smoke test -->
-  <script>console.log('children-dashboard HTML loaded');</script>
+  <script src="../js/children-dashboard.js" defer></script>
 </body>
 </html>

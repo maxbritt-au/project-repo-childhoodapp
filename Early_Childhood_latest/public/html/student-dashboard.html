@@ -6,7 +6,9 @@
   <title>Student Dashboard</title>
   <link rel="stylesheet" href="../css/student-dashboard.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="../js/router.js"></script>
   <script defer src="../js/student-dashboard.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
@@ -17,8 +19,6 @@
       <div class="navbar-center">
         <ul class="nav-links">
           <li><a href="/student-dashboard" class="active">Dashboard</a></li>
-          <li><a href="/student-my-courses">My Courses</a></li>
-          <li><a href="#">Contact</a></li>
           <li><a href="/student-report">Submit Report</a></li>
         </ul>
       </div>
@@ -41,20 +41,6 @@
           <p class="hero-id" id="studentId">Student ID: </p>
           <div class="hero-actions">
             <button class="action-btn primary-btn">Edit Profile</button>
-          </div>
-        </div>
-        <div class="hero-stats">
-          <div class="stat-item">
-            <h3>6.0</h3>
-            <p>GPA</p>
-          </div>
-          <div class="stat-item">
-            <h3>3</h3>
-            <p>Reports</p>
-          </div>
-          <div class="stat-item">
-            <h3>80%</h3>
-            <p>Attendance</p>
           </div>
         </div>
       </div>

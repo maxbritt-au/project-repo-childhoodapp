@@ -9,26 +9,22 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
   <script defer src="../js/teacher-feedback.js"></script>
-  <!-- ✅ Shared navbar logic -->
-  <script defer src="../js/navbar.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
-        <!-- ✅ logo link is role-aware -->
         <a href="#" id="dashboardLogoLink" class="logo-link">
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
       <div class="navbar-center">
         <ul class="nav-links">
-          <!-- ✅ dashboard link is set dynamically by navbar.js -->
           <li><a href="#" id="dashboardLink">Dashboard</a></li>
           <li><a href="/teacher-feedback" class="active">Feedback</a></li>
-          <li><a href="/teacher-my-courses">My Courses</a></li>
-          <li><a href="#">Messages</a></li>
         </ul>
       </div>
       <div class="navbar-right">
@@ -43,7 +39,6 @@
 
     <div class="main-content">
       <div class="feedback-grid">
-        <!-- Report Viewer -->
         <div class="report-viewer card">
           <div class="report-header">
             <h3 class="report-title">Student Report</h3>
@@ -57,7 +52,6 @@
           </div>
         </div>
         
-        <!-- Feedback Form -->
         <div class="feedback-form card">
           <h3 class="form-title">Submit Feedback</h3>
           <form id="feedbackForm">
@@ -79,7 +73,6 @@
     </div>
   </div>
 
-  <!-- Logout Modal -->
   <div id="logout-modal" class="modal">
     <div class="modal-content">
       <h3>Are you sure you want to log out?</h3>

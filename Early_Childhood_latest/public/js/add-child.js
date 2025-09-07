@@ -6,17 +6,14 @@
   const genderField = document.querySelector('#childGender');
 
   if (!form) {
-    console.warn('[add-child] #addChildForm not found – check your HTML ids');
     return;
   }
-  console.log('[add-child] script running');
 
   const api = async (url, options = {}) => {
     const res = await fetch(url, {
-      credentials: 'include',                 // send session cookie
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'x-user-role': 'teacher',            // TEMP: bypass requireTeacher while testing
         ...(options.headers || {})
       },
       ...options
@@ -46,8 +43,6 @@
         gender: genderField.value || null
       };
 
-      console.log('[add-child] submitting payload:', payload);
-
       await api('/api/children', {
         method: 'POST',
         body: JSON.stringify(payload)
@@ -56,7 +51,7 @@
       alert('Child added successfully!');
       window.location.href = '/children-dashboard';
     } catch (err) {
-      console.error('[add-child] submit error:', err);
+      console.error('Failed to add child:', err);
       alert('Failed to add child: ' + err.message);
     }
   });

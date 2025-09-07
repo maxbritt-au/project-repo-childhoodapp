@@ -8,25 +8,23 @@
   <link rel="stylesheet" href="../css/individual-child-dash.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <!-- JS loaders -->
+  <script defer src="../js/router.js"></script>
   <script defer src="../js/individual-child-dash.js"></script>
-  <script defer src="../js/navbar.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
-        <!-- ✅ logo can just link to "#" (role-aware dashboard link will be set by navbar.js) -->
         <a href="#" id="dashboardLogoLink" class="logo-link">
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
       <div class="navbar-center">
         <ul class="nav-links">
-          <!-- ✅ Dashboard link becomes dynamic -->
           <li><a href="#" id="dashboardLink">Dashboard</a></li>
-          <li><a href="/student-my-courses">My Courses</a></li>
-          <li><a href="/student-report">Submit Report</a></li>
+          <li><a href="/teacher-feedback">Feedback</a></li>
+          <li><a href="/children-dashboard">Children</a></li>
           <li><a href="#" class="active">Child Profile</a></li>
         </ul>
       </div>
@@ -40,7 +38,6 @@
       </div>
     </nav>
 
-    <!-- HERO -->
     <section class="profile-hero-card glassy-card">
       <img src="../img/student-main.png" alt="Profile" class="hero-profile-pic"/>
       <div class="hero-profile-info">
@@ -53,10 +50,8 @@
       </div>
     </section>
 
-    <!-- MAIN -->
     <div class="main-content">
       <section class="content-grid">
-        <!-- Recent Reports -->
         <article class="card">
           <div class="card-header">
             <h3><i class="fa-solid fa-file-lines"></i> Recent Reports</h3>
@@ -70,7 +65,6 @@
           </ul>
         </article>
 
-        <!-- Quick Actions -->
         <article class="card">
           <div class="card-header">
             <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
@@ -86,7 +80,6 @@
     </div>
   </div>
 
-  <!-- Logout Modal -->
   <div id="logout-modal" class="modal" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
       <h3 id="logoutTitle">Are you sure you want to log out?</h3>

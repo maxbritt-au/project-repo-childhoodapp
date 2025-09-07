@@ -36,7 +36,6 @@ body, html {
   font-family: 'Poppins', sans-serif;
   color: var(--text-primary);
   display: flex;
-  justify-content: center;
   flex-direction: column;
   background-image: var(--bg-image);
   background-position: center center;
@@ -189,26 +188,6 @@ body.dark-mode .dark-icon { display: block; }
   width: 100%;
 }
 
-.page-header {
-  border-bottom: 1px solid var(--glass-border);
-  padding-bottom: 15px;
-  margin-bottom: 20px;
-}
-
-.page-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0;
-  color: var(--text-primary);
-}
-
-.courses-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
-}
-
 .card {
   padding: 25px;
   border-radius: 20px;
@@ -225,99 +204,88 @@ body.dark-mode .dark-icon { display: block; }
   box-shadow: var(--shadow-hover);
 }
 
-.course-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.add-child-form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-.course-info {
-  margin-bottom: 20px;
-}
-
-.course-title {
+.form-title {
   font-family: 'Montserrat', sans-serif;
-  font-size: 20px;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 20px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 15px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
   font-weight: 600;
-  margin: 0 0 5px;
+  display: block;
+  margin-bottom: 8px;
   color: var(--text-primary);
 }
 
-.course-id, .course-teacher {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin: 0 0 5px;
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 15px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
-.action-btn {
-  width: 100%;
-  padding: 12px;
-  background-color: var(--accent-color);
-  color: white;
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.2);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 12px 25px;
   border: none;
   border-radius: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  display: inline-block;
 }
 
-.action-btn:hover {
+.btn.primary {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.btn.primary:hover {
   background-color: var(--accent-hover);
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: var(--dropdown-bg);
-  padding: 30px;
-  border-radius: 20px;
-  text-align: center;
-  max-width: 400px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-.modal-content h3 {
-  margin: 0 0 20px;
-  color: var(--text-primary);
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-.modal-btn {
-  padding: 10px 20px;
-  border-radius: 15px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.modal-btn.primary {
-  background-color: var(--accent-color);
-  color: white;
-}
-
-.modal-btn.secondary {
+.btn.secondary {
   background-color: #eee;
   color: var(--text-secondary);
+}
+
+.btn.secondary:hover {
+  background-color: #ddd;
 }
 
 
@@ -325,14 +293,17 @@ body.dark-mode .dark-icon { display: block; }
   .navbar { flex-direction: column; gap: 15px; }
   .navbar-left, .navbar-right, .navbar-center { width: 100%; justify-content: center; }
   .main-content { padding: 30px 20px; }
-  .courses-grid { grid-template-columns: 1fr; }
+  .add-child-form-container { padding: 20px; }
 }
 
 @media (max-width: 768px) {
   .main-content { padding: 20px 15px; }
+  .form-actions { flex-direction: column; }
+  .btn { width: 100%; text-align: center; }
 }
 
 @media (max-width: 480px) {
   .navbar { padding: 10px 15px; }
   .nav-links { flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .form-title { font-size: 20px; }
 }

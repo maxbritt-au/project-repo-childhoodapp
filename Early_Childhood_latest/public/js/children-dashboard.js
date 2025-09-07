@@ -124,26 +124,21 @@
     const frag = document.createDocumentFragment();
     rows.forEach((c) => {
       const card = document.createElement('div');
-      card.className = 'card';
+      card.className = 'child-card';
       card.dataset.id = c.id;
       card.tabIndex = 0;
-      card.style.cursor = 'pointer';
 
       const initials = initialsFrom(c.first_name, c.last_name, c.name);
-      const avatar = c.profile_url
-        ? `<img src="${esc(c.profile_url)}" alt="${esc(c.name)}" style="width:54px;height:54px;border-radius:50%;object-fit:cover">`
+      const avatarContent = c.profile_url
+        ? `<img src="${esc(c.profile_url)}" alt="${esc(c.name)}">`
         : esc(initials);
 
       card.innerHTML = `
-        <div class="avatar">${avatar}</div>
-        <div class="meta" style="flex:1">
+        <div class="avatar">${avatarContent}</div>
+        <div class="meta">
           <h3>${esc(c.name || `${c.first_name || ''} ${c.last_name || ''}`.trim() || 'Unnamed')}</h3>
           <p>DOB: ${esc(fmtDate(c.dob))} • Age: ${esc(String(age(c.dob)))}</p>
           <p>${esc(c.gender || '')}${c.gender && c.notes ? ' • ' : ''}${esc((c.notes || '').slice(0,80))}${(c.notes?.length>80)?'…':''}</p>
-          <div class="children-actions" style="margin-top:8px;">
-            <button class="edit btn" data-id="${c.id}">Edit</button>
-            <button class="del btn" data-id="${c.id}">Delete</button>
-          </div>
         </div>
       `;
       frag.appendChild(card);
@@ -151,13 +146,12 @@
     els.grid.appendChild(frag);
   };
 
-  // map UI sort -> API sort your route supports: last_asc | last_desc | age_asc | age_desc
   const mapSort = (ui) => {
     switch (ui) {
       case 'name-asc': return 'last_asc';
       case 'name-desc': return 'last_desc';
-      case 'dob-asc': return 'age_desc'; // younger first = newer DOB
-      case 'dob-desc': return 'age_asc'; // older first  = older DOB
+      case 'dob-asc': return 'age_desc';
+      case 'dob-desc': return 'age_asc';
       default: return 'last_asc';
     }
   };
@@ -171,7 +165,7 @@
       const url = `${API_BASE}?${new URLSearchParams(params).toString()}`;
       const list = await api(url);
       children = Array.isArray(list) ? list.map(normalize) : [];
-      applyFilters(); // local filter too (keeps UI snappy)
+      applyFilters();
     } catch (e) {
       console.error(e);
       toast(`Failed to load children: ${e.message}`);
@@ -193,7 +187,6 @@
       return hay.includes(q);
     });
 
-    // stabilize sort locally for better UX
     const [field, dir] = uiSort.split('-');
     filtered.sort((a,b) => {
       let va = a[field] ?? '';
@@ -216,31 +209,25 @@
   const wireEvents = () => {
     els.refreshBtn?.addEventListener('click', loadChildren);
     els.searchInput?.addEventListener('input', () => {
-      // re-fetch using q so backend filtering also applies
       clearTimeout(window.__childSearchTimer);
       window.__childSearchTimer = setTimeout(loadChildren, 250);
     });
     els.sortSelect?.addEventListener('change', loadChildren);
 
-    // delegated: edit/delete and card navigation
     const container = els.tableBody || els.grid;
     container?.addEventListener('click', async (e) => {
-      const btn = e.target.closest('button');
-      const card = e.target.closest('.card');
-
-      if (btn) return; // your existing edit/delete handler lives elsewhere; keep behavior
-
-      if (card && els.grid && !e.target.closest('button')) {
+      const card = e.target.closest('.child-card');
+      if (card) {
         const id = card.dataset.id;
-        if (id) window.location.href = `/individual-child-dash?childId=${encodeURIComponent(id)}`;
+        if (id) window.location.href = `/html/individual-child-dash.html?childId=${encodeURIComponent(id)}`;
       }
     });
 
     container?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        const card = e.target.closest('.card');
+        const card = e.target.closest('.child-card');
         if (card && card.dataset.id) {
-          window.location.href = `/individual-child-dash?childId=${encodeURIComponent(card.dataset.id)}`;
+          window.location.href = `/html/individual-child-dash.html?childId=${encodeURIComponent(card.dataset.id)}`;
         }
       }
     });

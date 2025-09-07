@@ -1,7 +1,6 @@
 // public/js/student-dashboard.js
 
 document.addEventListener('DOMContentLoaded', () => {
-  // ------- Read logged-in user -------
   const stored = localStorage.getItem('user');
   const user = stored ? JSON.parse(stored) : null;
 
@@ -10,23 +9,16 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  console.log('[dashboard] user from localStorage:', user);
-
-  // ------- Greeting (with fallback if no #greeting) -------
   const greetingEl = document.getElementById('greeting');
   if (greetingEl) {
     greetingEl.textContent = `Hello, ${user.name}!`;
   } else {
-    // fallback: replace the first h2 inside the hero block (where "Hello, Nesar!" is)
     const fallbackH2 = document.querySelector('.hero-profile-info h2');
     if (fallbackH2) {
       fallbackH2.textContent = `Hello, ${user.name}!`;
-    } else {
-      console.warn('[dashboard] No greeting element found.');
     }
   }
 
-  // ------- Student ID if available -------
   const idEl = document.getElementById('studentId');
   if (idEl) {
     if (user.userId) {
@@ -36,42 +28,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ------- Dropdown (profile menu) -------
-  function toggleDropdown(event) {
-    event.stopPropagation();
-    const menu = event.currentTarget.querySelector('.dropdown-menu');
-    if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  const reportsList = document.querySelector('.reports-list');
+  
+  async function loadReports() {
+    try {
+      const response = await fetch(`/api/reports?studentId=${user.userId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch reports.');
+      }
+      const reports = await response.json();
+      renderReports(reports);
+    } catch (error) {
+      console.error('Error loading reports:', error);
+      reportsList.innerHTML = '<li><p>Failed to load recent reports.</p></li>';
+    }
   }
-  // If you have a trigger element, wire it:
-  // document.querySelector('.profile-menu')?.addEventListener('click', toggleDropdown);
 
-  document.addEventListener('click', (event) => {
-    const profileMenu = document.querySelector('.profile-menu');
-    if (profileMenu && !profileMenu.contains(event.target)) {
-      const dropdown = profileMenu.querySelector('.dropdown-menu');
-      if (dropdown) dropdown.style.display = 'none';
+  function renderReports(reports) {
+    reportsList.innerHTML = '';
+    if (reports.length === 0) {
+      reportsList.innerHTML = '<li><p>No reports found.</p></li>';
+      return;
+    }
+
+    reports.forEach(report => {
+      const date = new Date(report.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `
+        <i class="fas fa-file-pdf"></i>
+        <span>${report.title}</span><span>${date}</span>
+      `;
+      reportsList.appendChild(listItem);
+    });
+  }
+
+  reportsList.addEventListener('click', (event) => {
+    const listItem = event.target.closest('li');
+    if (listItem) {
+      const reportTitle = listItem.querySelector('span').textContent;
+      console.log(`Report clicked: ${reportTitle}`);
     }
   });
 
-  // ------- Theme toggle -------
-  const themeToggle = document.querySelector('.theme-icons');
-  const body = document.body;
-  const currentTheme = localStorage.getItem('theme');
-  body.classList.add(currentTheme || 'light-mode');
+  loadReports();
 
-  themeToggle?.addEventListener('click', () => {
-    if (body.classList.contains('light-mode')) {
-      body.classList.remove('light-mode');
-      body.classList.add('dark-mode');
-      localStorage.setItem('theme', 'dark-mode');
-    } else {
-      body.classList.remove('dark-mode');
-      body.classList.add('light-mode');
-      localStorage.setItem('theme', 'light-mode');
-    }
-  });
-
-  // ------- Logout Modal -------
   const logoutModal = document.getElementById('logout-modal');
   const openLogoutBtn = document.getElementById('open-logout-modal');
   const cancelLogoutBtn = document.getElementById('cancel-logout-btn');
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   confirmLogoutBtn?.addEventListener('click', () => {
-    localStorage.removeItem('user'); // keep rememberedEmail
+    localStorage.removeItem('user');
     if (logoutModal) logoutModal.style.display = 'none';
     window.location.href = '/';
   });

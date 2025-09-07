@@ -50,9 +50,9 @@ async function loadChild(childId) {
 
     if (child.profile_url) avatarEl.src = child.profile_url;
 
-    editProfileLink.href = `/edit-child-profile?childId=${encodeURIComponent(childId)}`;
-    newReportLink.href = `/student-report?childId=${encodeURIComponent(childId)}`;
-    allReportsLink.href = `/reports?childId=${encodeURIComponent(childId)}`;
+    editProfileLink.href = `/html/edit-child-profile.html?childId=${encodeURIComponent(childId)}`;
+    newReportLink.href = `/html/student-report.html?childId=${encodeURIComponent(childId)}`;
+    allReportsLink.href = `/html/reports.html?childId=${encodeURIComponent(childId)}`;
     qaNewReport.href = newReportLink.href;
     qaAllReports.href = allReportsLink.href;
   } catch (e) {
