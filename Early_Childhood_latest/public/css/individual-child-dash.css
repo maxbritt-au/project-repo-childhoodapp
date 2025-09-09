@@ -263,3 +263,43 @@ html, body {
   margin: 16px auto 40px;
   width: calc(100% - 80px);
 }
+
+/* Shared button styles */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 20px;  /* 👈 Matches pill-like look */
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.action-btn i {
+  font-size: 0.9rem;
+}
+
+/* Hover effect */
+.action-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Edit profile (already styled in your project as primary) */
+.action-btn.primary-btn {
+  background-color: #6c63ff; /* your purple */
+  color: #fff;
+}
+
+/* Delete button (same shape, danger colour) */
+.action-btn.danger-btn {
+  background-color: #e74c3c; /* red */
+  color: #fff;
+}
+
+.action-btn.danger-btn:hover {
+  background-color: #c0392b;
+}

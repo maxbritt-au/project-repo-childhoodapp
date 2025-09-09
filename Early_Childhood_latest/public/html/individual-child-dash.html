@@ -7,22 +7,19 @@
 
   <link rel="stylesheet" href="../css/individual-child-dash.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <script defer src="../js/router.js"></script>
-  <script defer src="../js/individual-child-dash.js"></script>
-  <script defer src="../js/theme-toggle.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
-        <a href="#" id="dashboardLogoLink" class="logo-link">
+        <!-- Safe default; navbar.js will overwrite based on /api/me -->
+        <a href="/html/teacher-dashboard.html" id="dashboardLogoLink" class="logo-link">
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
       <div class="navbar-center">
         <ul class="nav-links">
-          <li><a href="#" id="dashboardLink">Dashboard</a></li>
+          <li><a href="/html/teacher-dashboard.html" id="dashboardLink">Dashboard</a></li>
           <li><a href="/teacher-feedback">Feedback</a></li>
           <li><a href="/children-dashboard">Children</a></li>
           <li><a href="#" class="active">Child Profile</a></li>
@@ -46,6 +43,10 @@
           <a id="editProfileLink" class="action-btn primary-btn" href="#">
             <i class="fa-solid fa-pen-to-square"></i> Edit Profile
           </a>
+          <!-- 🔴 New Delete Child button -->
+          <button id="deleteChildBtn" class="action-btn danger-btn">
+            <i class="fa-solid fa-trash"></i> Delete Child
+          </button>
         </div>
       </div>
     </section>
@@ -89,5 +90,11 @@
       </div>
     </div>
   </div>
+
+  <!-- Scripts -->
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/individual-child-dash.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
+  <script defer src="../js/navbar.js"></script>
 </body>
 </html>

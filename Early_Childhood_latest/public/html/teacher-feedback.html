@@ -5,25 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Teacher Feedback</title>
 
+  <!-- Styles -->
   <link rel="stylesheet" href="../css/teacher-feedback.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script defer src="../js/router.js"></script>
-  <script defer src="../js/theme-toggle.js"></script>
-  <script defer src="../js/teacher-feedback.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
-        <a href="#" id="dashboardLogoLink" class="logo-link">
+        <a href="/html/teacher-dashboard.html" id="dashboardLogoLink" class="logo-link">
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
       <div class="navbar-center">
         <ul class="nav-links">
-          <li><a href="#" id="dashboardLink">Dashboard</a></li>
+          <!-- Safe default; navbar.js will overwrite href based on role -->
+          <li><a href="/html/teacher-dashboard.html" id="dashboardLink">Dashboard</a></li>
           <li><a href="/teacher-feedback" class="active">Feedback</a></li>
         </ul>
       </div>
@@ -82,5 +79,14 @@
       </div>
     </div>
   </div>
+
+  <!-- Scripts (defer so DOM is ready) -->
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
+  <script defer src="../js/teacher-feedback.js"></script>
+  <!-- 🔑 Include navbar.js so it can set Dashboard link based on /api/me -->
+  <script defer src="../js/navbar.js"></script>
+  <!-- Optional: jsPDF if used by exportPDF() -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>

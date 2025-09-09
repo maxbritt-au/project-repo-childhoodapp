@@ -72,6 +72,18 @@ app.get('/individual-child-dash', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'html', 'individual-child-dash.html'));
 });
 
+app.get('/observation-report', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'html', 'observation-report.html'));
+});
+
+app.get('/anecdotal-record', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'html', 'anecdotal-record.html'));
+});
+
+app.get('/summative-assessment', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'html', 'summative-assessment.html'));
+});
+
 // --- Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

@@ -1,5 +1,3 @@
-// public/js/individual-child-dash.js
-
 function getChildId() {
   const url = new URL(window.location.href);
   return url.searchParams.get('childId');
@@ -14,10 +12,11 @@ const newReportLink = document.getElementById('newReportLink');
 const allReportsLink = document.getElementById('allReportsLink');
 const qaNewReport = document.getElementById('qaNewReport');
 const qaAllReports = document.getElementById('qaAllReports');
+const deleteChildBtn = document.getElementById('deleteChildBtn'); // 🔑 new
 
 async function fetchJSON(url) {
   const res = await fetch(url, { credentials: 'include' });
-  if (!res.ok) throw new Error(await res.text().catch(()=>''));
+  if (!res.ok) throw new Error(await res.text().catch(() => ''));
   return res.json();
 }
 
@@ -30,7 +29,11 @@ function renderReports(reports) {
 
   for (const r of reports) {
     const dateStr = r.submitted_at
-      ? new Date(r.submitted_at).toLocaleDateString(undefined, { month:'short', day:'2-digit', year:'numeric' })
+      ? new Date(r.submitted_at).toLocaleDateString(undefined, {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric'
+        })
       : '';
     const li = document.createElement('li');
     li.innerHTML = `
@@ -71,6 +74,33 @@ async function loadReports(childId) {
   }
 }
 
+// 🔴 New delete handler
+async function deleteChild(childId) {
+  if (!childId) return alert('No child ID provided.');
+
+  if (!confirm('Are you sure you want to delete this child? This action cannot be undone.')) {
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/children/${encodeURIComponent(childId)}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    if (res.ok) {
+      alert('Child deleted successfully');
+      window.location.href = '/children-dashboard';
+    } else {
+      const err = await res.json().catch(() => ({}));
+      alert('Failed to delete child: ' + (err.message || res.statusText));
+    }
+  } catch (e) {
+    console.error('Error deleting child:', e);
+    alert('Unexpected error deleting child.');
+  }
+}
+
 (async function init() {
   const childId = getChildId();
   if (!childId) {
@@ -78,5 +108,11 @@ async function loadReports(childId) {
     renderReports([]);
     return;
   }
+
   await Promise.all([loadChild(childId), loadReports(childId)]);
+
+  // Hook delete button
+  if (deleteChildBtn) {
+    deleteChildBtn.addEventListener('click', () => deleteChild(childId));
+  }
 })();

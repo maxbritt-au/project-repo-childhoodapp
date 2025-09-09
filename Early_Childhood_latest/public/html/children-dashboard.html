@@ -5,27 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Children Dashboard</title>
   
+  <!-- Styles -->
   <link rel="stylesheet" href="../css/children-dashboard.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
-  <script defer src="../js/children-dashboard.js"></script>
-  <script defer src="../js/router.js"></script>
-  <script defer src="../js/theme-toggle.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
-        <a href="#" id="dashboardLogoLink" class="logo-link">
+        <!-- Safe default; navbar.js will overwrite based on /api/me -->
+        <a href="/html/teacher-dashboard.html" id="dashboardLogoLink" class="logo-link">
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
       <div class="navbar-center">
         <ul class="nav-links">
-          <li><a href="#" id="dashboardLink">Dashboard</a></li>
+          <li><a href="/html/teacher-dashboard.html" id="dashboardLink">Dashboard</a></li>
           <li><a href="/teacher-feedback">Feedback</a></li>
           <li><a href="/children-dashboard" class="active">Children</a></li>
-          
         </ul>
       </div>
       <div class="navbar-right">
@@ -50,14 +47,12 @@
           <option value="dob-desc">DOB ↓</option>
         </select>
         <button id="refresh" class="btn">Refresh</button>
-        <a href="/add-child.html" id="addChild" class="btn primary">Add Child</a>
+        <a href="/add-child" id="addChild" class="btn primary">Add Child</a>
         <span id="childrenSpinner" class="hidden">Loading…</span>
       </div>
 
       <div id="childrenGrid" class="grid"></div>
-
       <div id="childrenEmpty" class="empty hidden">No children yet.</div>
-
       <div id="childrenToast" class="toast hidden"><span id="childrenToastMsg"></span></div>
     </div>
   </div>
@@ -72,6 +67,11 @@
     </div>
   </div>
   
-  <script src="../js/children-dashboard.js" defer></script>
+  <!-- Scripts (defer so DOM is ready) -->
+  <script defer src="../js/children-dashboard.js"></script>
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
+  <!-- 🔑 Include navbar.js -->
+  <script defer src="../js/navbar.js"></script>
 </body>
 </html>

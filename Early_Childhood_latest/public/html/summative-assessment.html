@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Summative Assessment</title>
+  <style>
+    :root { --gap: 12px; --fg: #111; --muted:#555; --border:#ddd; --accent:#0b5fff; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--fg); margin: 0; background: #FFE6F2; }
+    header { padding: 20px; background:#fff; border-bottom:1px solid var(--border); position: sticky; top: 0; }
+    main { max-width: 900px; margin: 0 auto; padding: 24px; }
+    h1 { margin: 0 0 6px; font-size: 1.5rem; }
+    p.help { margin: 0; color: var(--muted); font-size: 0.92rem; }
+    form { display: grid; gap: var(--gap); }
+    fieldset { border: 1px solid var(--border); padding: 16px; border-radius: 12px; background:#fff; }
+    legend { padding: 0 6px; font-weight: 600; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
+    input[type="text"], input[type="date"], textarea, select {
+      width: 100%; padding: 10px 12px; border:1px solid var(--border); border-radius: 10px; background: #fff;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); }
+    .actions { display: flex; gap: 10px; justify-content: flex-end; }
+    button { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background:#fff; cursor: pointer; }
+    button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    @media print {
+      header { display: none; }
+      body { background: #fff; }
+      fieldset { page-break-inside: avoid; }
+      textarea { height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Summative Assessment</h1>
+    <p class="help">Use this form to summarise learning and development and link to EYLF outcomes, principles, and practices.</p>
+  </header>
+  <main>
+    <form method="post" action="#">
+      <fieldset>
+        <legend>Summary of learning and development</legend>
+        <div class="row">
+          <div>
+            <label for="child_name">Child’s name</label>
+            <input id="child_name" name="child_name" type="text" required />
+          </div>
+          <div>
+            <label for="date">Date</label>
+            <input id="date" name="date" type="date" required />
+          </div>
+        </div>
+        <label for="recent_family_experiences">Recent family experiences</label>
+        <textarea id="recent_family_experiences" name="recent_family_experiences" placeholder="e.g., new sibling, travel, routines, family events"></textarea>
+        <label for="current_interests">Current interests</label>
+        <textarea id="current_interests" name="current_interests" placeholder="e.g., dinosaurs, drawing, counting, outdoor play"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>Learning and development progress</legend>
+
+        <label for="identity">My strong sense of identity</label>
+        <textarea id="identity" name="identity"></textarea>
+        <label for="identity_links">Links to learning outcomes, principles, practices</label>
+        <textarea id="identity_links" name="identity_links" placeholder=""></textarea>
+
+        <label for="world">My connection &amp; contribution to the world</label>
+        <textarea id="world" name="world"></textarea>
+        <label for="world_links">Links to learning outcomes, principles, practices</label>
+        <textarea id="world_links" name="world_links"></textarea>
+
+        <label for="wellbeing">My strong sense of wellbeing</label>
+        <textarea id="wellbeing" name="wellbeing"></textarea>
+        <label for="wellbeing_links">Links to learning outcomes, principles, practices</label>
+        <textarea id="wellbeing_links" name="wellbeing_links"></textarea>
+
+        <label for="involvement">My involvement in learning</label>
+        <textarea id="involvement" name="involvement"></textarea>
+        <label for="involvement_links">Links to learning outcomes, principles, practices</label>
+        <textarea id="involvement_links" name="involvement_links"></textarea>
+
+        <label for="communicator">Being an effective communicator</label>
+        <textarea id="communicator" name="communicator"></textarea>
+        <label for="communicator_links">Links to learning outcomes, principles, practices</label>
+        <textarea id="communicator_links" name="communicator_links"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>Family comments &amp; goals</legend>
+        <textarea id="family_comments_goals" name="family_comments_goals"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>Planning to support further learning and development</legend>
+        <textarea id="planning_support" name="planning_support"></textarea>
+      </fieldset>
+
+      <div class="actions">
+        <button type="reset">Reset</button>
+        <button class="primary" type="submit">Submit</button>
+      </div>
+    </form>
+  </main>
+</body>
+</html>
