@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 9.4.0, for macos15.4 (arm64)
 --
 -- Host: localhost    Database: early_childhood_education_app
 -- ------------------------------------------------------
--- Server version	8.0.43
+-- Server version	9.4.0
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,7 +29,7 @@ CREATE TABLE `children` (
   `dob` date NOT NULL,
   `gender` enum('Male','Female','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`child_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +38,7 @@ CREATE TABLE `children` (
 
 LOCK TABLES `children` WRITE;
 /*!40000 ALTER TABLE `children` DISABLE KEYS */;
-INSERT INTO `children` VALUES (1,'Emily','Johnson','2018-05-14','Female'),(2,'Test','Kid','2025-08-01','Male'),(3,'Max','Britt','2016-01-01','Male');
+INSERT INTO `children` VALUES (1,'Emily','Johnson','2018-05-14','Female'),(3,'Max','Britt','2016-01-01','Male');
 /*!40000 ALTER TABLE `children` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -84,17 +84,17 @@ CREATE TABLE `reports` (
   `id` int NOT NULL AUTO_INCREMENT,
   `student_id` int NOT NULL,
   `template_id` int NOT NULL,
+  `child_id` int DEFAULT NULL,
   `content` text NOT NULL,
   `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `child_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `student_id` (`student_id`),
   KEY `template_id` (`template_id`),
   KEY `idx_reports_child_id` (`child_id`),
-  CONSTRAINT `fk_reports_child` FOREIGN KEY (`child_id`) REFERENCES `children` (`child_id`),
+  CONSTRAINT `fk_reports_child` FOREIGN KEY (`child_id`) REFERENCES `children` (`child_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `reports_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`),
   CONSTRAINT `reports_ibfk_2` FOREIGN KEY (`template_id`) REFERENCES `templates` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -103,7 +103,7 @@ CREATE TABLE `reports` (
 
 LOCK TABLES `reports` WRITE;
 /*!40000 ALTER TABLE `reports` DISABLE KEYS */;
-INSERT INTO `reports` VALUES (1,1,1,'Today we observed children playing...','2025-08-08 13:13:21',NULL);
+INSERT INTO `reports` VALUES (1,1,1,NULL,'Today we observed children playing...','2025-08-08 13:13:21'),(2,8,1,3,'{\"date\":\"2025-09-01\",\"setting\":\"home\",\"sample_desc\":\"max is cool\",\"analysis\":\"so cool\"}','2025-09-10 09:34:38'),(3,8,1,1,'{\"date\":\"2025-09-01\",\"setting\":\"Work\",\"sample_desc\":\"This is a test\",\"analysis\":\"Testing \"}','2025-09-10 09:49:16'),(4,8,1,3,'{\"date\":\"2025-09-01\",\"setting\":\"Test\",\"sample_desc\":\"Test 2\",\"analysis\":\"Test 2\"}','2025-09-10 09:49:51');
 /*!40000 ALTER TABLE `reports` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -123,7 +123,7 @@ CREATE TABLE `templates` (
   PRIMARY KEY (`id`),
   KEY `created_by` (`created_by`),
   CONSTRAINT `templates_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -132,7 +132,7 @@ CREATE TABLE `templates` (
 
 LOCK TABLES `templates` WRITE;
 /*!40000 ALTER TABLE `templates` DISABLE KEYS */;
-INSERT INTO `templates` VALUES (1,'Observation Template 1','Template Content Here...',2,'2025-08-08 13:13:21');
+INSERT INTO `templates` VALUES (1,'Observation','Template Content Here...',2,'2025-08-08 13:13:21'),(2,'Anecdotal','-',7,'2025-09-10 08:57:59'),(3,'Summative','-',7,'2025-09-10 08:57:52');
 /*!40000 ALTER TABLE `templates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -174,4 +174,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-02 11:37:13
+-- Dump completed on 2025-09-10 20:46:49
