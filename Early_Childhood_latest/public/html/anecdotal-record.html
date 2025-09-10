@@ -20,11 +20,10 @@
       width: 100%; padding: 10px 12px; border:1px solid var(--border); border-radius: 10px; background: #fff;
     }
     textarea { min-height: 110px; resize: vertical; }
-    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); }
+    .row, .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
     .actions { display: flex; gap: 10px; justify-content: flex-end; }
     button { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background:#fff; cursor: pointer; }
     button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
     @media print {
       header { display: none; }
       body { background: #fff; }
@@ -36,20 +35,22 @@
 <body>
   <header>
     <h1>Anecdotal Record</h1>
-    <p class="help">A detailed ovservation of a child's learning experience, capturing observed behaviour and linking it meaningfully to developmental domains, EYLF outcomes, and educational theory.</p>
+    <p class="help">A detailed observation of a child's learning experience, capturing behaviour and linking it meaningfully to developmental domains, EYLF outcomes, and theory.</p>
   </header>
   <main>
-    <form method="post" action="#">
+    <form id="anecdotalForm">
       <fieldset>
         <legend>Child Details</legend>
         <div class="two-col">
           <div>
-            <label for="child_name">Child’s name</label>
-            <input id="child_name" name="child_name" type="text" required />
+            <label for="childSelect">Child</label>
+            <select id="childSelect" name="child_id" required>
+              <option value="">— Select a child —</option>
+            </select>
           </div>
           <div>
             <label for="age">Age</label>
-            <input id="age" name="age" type="text" />
+            <input id="age" name="age" type="text" readonly />
           </div>
         </div>
         <div class="two-col">
@@ -67,32 +68,81 @@
       <fieldset>
         <legend>Observation</legend>
         <label for="observation">Narrative observation</label>
-        <textarea id="observation" name="observation" placeholder="Objective description of what you saw/heard, including quotes and sequence of events."></textarea>
+        <textarea id="observation" name="observation"></textarea>
       </fieldset>
 
       <fieldset>
         <legend>Analysis</legend>
         <label for="domains">Developmental domain(s)</label>
-        <textarea id="domains" name="domains" placeholder=""></textarea>
+        <textarea id="domains" name="domains"></textarea>
 
         <label for="eylf">Early Years Learning Framework (EYLF) links</label>
-        <textarea id="eylf" name="eylf" placeholder=""></textarea>
+        <textarea id="eylf" name="eylf"></textarea>
 
         <label for="theory">Early childhood theory</label>
-        <textarea id="theory" name="theory" placeholder=""></textarea>
+        <textarea id="theory" name="theory"></textarea>
       </fieldset>
 
       <fieldset>
         <legend>Future Planning</legend>
         <label for="planning_ideas">Future planning ideas (at least two)</label>
-        <textarea id="planning_ideas" name="planning_ideas" placeholder=""></textarea>
+        <textarea id="planning_ideas" name="planning_ideas"></textarea>
       </fieldset>
 
       <div class="actions">
         <button type="reset">Reset</button>
-        <button class="primary" type="submit">Submit</button>
+        <button class="primary" type="submit">Save Report</button>
       </div>
     </form>
   </main>
+
+  <script src="../js/report-helper.js"></script>
+  <script>
+    // Populate child dropdown
+    async function loadChildren() {
+      try {
+        const res = await fetch('/api/children', { credentials: 'include' });
+        if (!res.ok) throw new Error('Failed to load children');
+        const children = await res.json();
+        const select = document.getElementById('childSelect');
+        children.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.child_id;
+          opt.textContent = `${c.first_name} ${c.last_name}`;
+          select.appendChild(opt);
+        });
+
+        // auto-fill age
+        select.addEventListener('change', () => {
+          const chosen = children.find(c => c.child_id == select.value);
+          if (chosen?.dob) {
+            const dob = new Date(chosen.dob);
+            const diff = Date.now() - dob.getTime();
+            const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+            document.getElementById('age').value = age;
+          } else {
+            document.getElementById('age').value = '';
+          }
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    loadChildren();
+
+    // Hook form to backend
+    attachReportForm('#anecdotalForm', {
+      templateId: 2, // your Anecdotal template ID in DB
+      getContent: () => ({
+        date: document.getElementById('date').value,
+        setting: document.getElementById('setting').value,
+        observation: document.getElementById('observation').value,
+        domains: document.getElementById('domains').value,
+        eylf: document.getElementById('eylf').value,
+        theory: document.getElementById('theory').value,
+        planning_ideas: document.getElementById('planning_ideas').value
+      })
+    });
+  </script>
 </body>
 </html>

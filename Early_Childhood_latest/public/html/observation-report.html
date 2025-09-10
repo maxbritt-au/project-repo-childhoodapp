@@ -20,7 +20,7 @@
       width: 100%; padding: 10px 12px; border:1px solid var(--border); border-radius: 10px; background: #fff;
     }
     textarea { min-height: 110px; resize: vertical; }
-    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); }
+    .row, .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
     .actions { display: flex; gap: 10px; justify-content: flex-end; }
     button { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background:#fff; cursor: pointer; }
     button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
@@ -38,20 +38,22 @@
     <p class="help">Attach or describe a sample of work and analyse the learning demonstrated.</p>
   </header>
   <main>
-    <form method="post" action="#" enctype="multipart/form-data">
+    <form id="observationForm">
       <fieldset>
         <legend>Child Details</legend>
-        <div class="row">
+        <div class="two-col">
           <div>
-            <label for="child_name">Child’s name</label>
-            <input id="child_name" name="child_name" type="text" required />
+            <label for="childSelect">Child</label>
+            <select id="childSelect" name="child_id" required>
+              <option value="">— Select a child —</option>
+            </select>
           </div>
           <div>
             <label for="age">Child’s age</label>
-            <input id="age" name="age" type="text" />
+            <input id="age" name="age" type="text" readonly />
           </div>
         </div>
-        <div class="row">
+        <div class="two-col">
           <div>
             <label for="date">Date</label>
             <input id="date" name="date" type="date" required />
@@ -78,9 +80,66 @@
 
       <div class="actions">
         <button type="reset">Reset</button>
-        <button class="primary" type="submit">Submit</button>
+        <button class="primary" type="submit">Save Report</button>
       </div>
     </form>
   </main>
+
+  <script src="../js/report-helper.js"></script>
+  <script>
+    // Populate child dropdown and auto-fill age from DOB
+    async function loadChildren() {
+      try {
+        const res = await fetch('/api/children', { credentials: 'include' });
+        if (!res.ok) throw new Error('Failed to load children');
+        const children = await res.json();
+
+        const select = document.getElementById('childSelect');
+        children.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.child_id;
+          opt.textContent = `${c.first_name} ${c.last_name}`;
+          select.appendChild(opt);
+        });
+
+        // If a childId is present in the URL, preselect it
+        const childIdFromURL = new URLSearchParams(location.search).get('childId');
+        if (childIdFromURL) {
+          select.value = childIdFromURL;
+        }
+
+        // Update age when selection changes
+        function updateAge() {
+          const chosen = children.find(c => String(c.child_id) === String(select.value));
+          const ageEl = document.getElementById('age');
+          if (chosen?.dob) {
+            const dob = new Date(chosen.dob);
+            const diff = Date.now() - dob.getTime();
+            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+            ageEl.value = years;
+          } else {
+            ageEl.value = '';
+          }
+        }
+        select.addEventListener('change', updateAge);
+        updateAge(); // run once in case we preselected
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    loadChildren();
+
+    // Hook up submit to the API via the shared helper
+    attachReportForm('#observationForm', {
+      templateId: 1, // Observation template ID
+      getContent: () => ({
+        date: document.getElementById('date').value,
+        setting: document.getElementById('setting').value,
+        sample_desc: document.getElementById('sample_desc').value,
+        // NOTE: File uploads not handled yet — extend later
+        analysis: document.getElementById('analysis').value
+      })
+    });
+  </script>
 </body>
 </html>

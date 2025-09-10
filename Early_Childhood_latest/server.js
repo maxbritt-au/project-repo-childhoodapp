@@ -84,7 +84,15 @@ app.get('/summative-assessment', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'html', 'summative-assessment.html'));
 });
 
-// --- Start server
+app.get('/report-list', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'html', 'report-list.html'));
+});
+
+app.get('/report-view', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'html', 'report-view.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+

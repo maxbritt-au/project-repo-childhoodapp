@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reports</title>
+  <link rel="stylesheet" href="../css/children-dashboard.css" />
+</head>
+<body class="light-mode">
+  <div class="dashboard-container">
+    <nav class="navbar">
+      <div class="navbar-left">
+        <a href="/teacher-dashboard" class="logo-link">
+          <img src="../img/logo-2.png" alt="Logo" class="logo" />
+        </a>
+      </div>
+      <div class="navbar-center">
+        <ul class="nav-links">
+          <li><a href="/student-report">New Report</a></li>
+          <li><a href="#" class="active">Reports</a></li>
+        </ul>
+      </div>
+      <div class="navbar-right">
+        <i class="fas fa-bell notification-icon"></i>
+        <button id="open-logout-modal" class="logout-link">Logout</button>
+      </div>
+    </nav>
+
+    <main class="main-content wrap">
+      <h1>Reports</h1>
+      <div id="reportsList" class="card">
+        <p>Loading reports...</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/report-list.js"></script>
+</body>
+</html>
