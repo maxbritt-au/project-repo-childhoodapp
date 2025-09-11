@@ -28,44 +28,58 @@
         </ul>
       </div>
       <div class="navbar-right">
-        <i class="fas fa-bell notification-icon"></i>
+        <i class="fas fa-bell notification-icon" aria-hidden="true"></i>
         <div class="theme-icons">
-          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
-          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
+          <i class="fas fa-sun light-icon theme-toggle-btn" aria-hidden="true"></i>
+          <i class="fas fa-moon dark-icon theme-toggle-btn" aria-hidden="true"></i>
         </div>
-        <button id="open-logout-modal" class="logout-link">Logout</button>
+        <button id="open-logout-modal" class="logout-link" type="button">Logout</button>
       </div>
     </nav>
 
     <main class="main-content">
-      <div class="wrap">
-        <h1 class="page-title">Choose a Report Template</h1>
-        <p class="intro-text">
-          Select a report type below to quickly start documenting your observations and assessments for each child.
-        </p>
+      <!-- Two-column wrapper -->
+      <div class="reports-layout">
+        <!-- LEFT: Recent Reports -->
+        <aside class="recent-reports">
+          <h2>Recent Reports</h2>
+          <div class="filters">
+            <input id="recentSearch" type="text" placeholder="Search by child, student, type…" aria-label="Search recent reports" />
+          </div>
+          <ul id="recentReportsList" class="recent-list" aria-live="polite"></ul>
+          <button id="viewAllReports" class="btn-link" type="button">View all</button>
+        </aside>
 
-        <div class="template-grid">
-          <!-- Observation Report -->
-          <a href="/html/observation-report.html" class="template-card" title="Record key observations from class or play activities.">
-            <i class="fa-solid fa-eye template-icon"></i>
-            <h3>Observation Report</h3>
-            <p>Document key observations from class or play activities.</p>
-          </a>
+        <!-- RIGHT: Title + Intro + Templates ALL inside this panel -->
+        <section class="templates-panel">
+          <h1 class="page-title">Choose a Report Template</h1>
+          <p class="intro-text">
+            Select a report type below to quickly start documenting your observations and assessments for each child.
+          </p>
 
-          <!-- Anecdotal Record -->
-          <a href="/html/anecdotal-record.html" class="template-card" title="Capture brief, narrative notes of significant moments.">
-            <i class="fa-solid fa-book-open template-icon"></i>
-            <h3>Anecdotal Record</h3>
-            <p>Capture brief, narrative notes of significant moments.</p>
-          </a>
+          <div class="template-grid">
+            <!-- Observation Report -->
+            <a href="/html/observation-report.html" class="template-card" title="Record key observations from class or play activities.">
+              <i class="fa-solid fa-eye template-icon" aria-hidden="true"></i>
+              <h3>Observation Report</h3>
+              <p>Document key observations from class or play activities.</p>
+            </a>
 
-          <!-- Summative Assessment -->
-          <a href="/html/summative-assessment.html" class="template-card" title="Summarise achievement against learning outcomes.">
-            <i class="fa-solid fa-chart-line template-icon"></i>
-            <h3>Summative Assessment</h3>
-            <p>Summarise achievement against learning outcomes.</p>
-          </a>
-        </div>
+            <!-- Anecdotal Record -->
+            <a href="/html/anecdotal-record.html" class="template-card" title="Capture brief, narrative notes of significant moments.">
+              <i class="fa-solid fa-book-open template-icon" aria-hidden="true"></i>
+              <h3>Anecdotal Record</h3>
+              <p>Capture brief, narrative notes of significant moments.</p>
+            </a>
+
+            <!-- Summative Assessment -->
+            <a href="/html/summative-assessment.html" class="template-card" title="Summarise achievement against learning outcomes.">
+              <i class="fa-solid fa-chart-line template-icon" aria-hidden="true"></i>
+              <h3>Summative Assessment</h3>
+              <p>Summarise achievement against learning outcomes.</p>
+            </a>
+          </div>
+        </section>
       </div>
     </main>
   </div>
@@ -86,6 +100,98 @@
         url.searchParams.set('childId', childId);
         a.setAttribute('href', url.pathname + '?' + url.searchParams.toString());
       });
+    })();
+  </script>
+
+  <!-- Recent Reports loader + filter (pill links to WRITTEN report) -->
+  <script>
+    (function () {
+      const listEl = document.getElementById('recentReportsList');
+      const searchEl = document.getElementById('recentSearch');
+      const viewAllBtn = document.getElementById('viewAllReports');
+
+      let allReports = [];
+
+      async function loadRecent() {
+        try {
+          const res = await fetch('/api/reports/recent?limit=8');
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          allReports = await res.json();
+          render(allReports);
+        } catch (e) {
+          console.error('Failed to load recent reports', e);
+          listEl.innerHTML = '<li class="muted">Could not load recent reports.</li>';
+        }
+      }
+
+      function render(items) {
+        if (!items.length) {
+          listEl.innerHTML = '<li class="muted">No recent reports.</li>';
+          return;
+        }
+
+        listEl.innerHTML = items.map(r => `
+          <li class="recent-item">
+            <!-- Pill opens the actual saved report -->
+            <a class="pill pill-link"
+               href="/html/report-view.html?reportId=${encodeURIComponent(r.id)}"
+               title="View this ${escapeHtml(r.report_type)}">
+              ${escapeHtml(r.report_type)}
+            </a>
+            <div class="meta">
+              <span class="label">Student:</span> ${escapeHtml(r.student_name)}
+              <span class="sep">•</span>
+              <span class="label">Child:</span> ${escapeHtml(r.child_name)}
+            </div>
+            <div class="time" title="${new Date(r.created_at).toLocaleString()}">
+              ${timeAgo(r.created_at)}
+            </div>
+          </li>
+        `).join('');
+
+        // (Optional) Make the whole row clickable to the same link:
+        // listEl.querySelectorAll('.recent-item').forEach(li => {
+        //   const a = li.querySelector('.pill-link');
+        //   if (!a) return;
+        //   li.style.position = 'relative';
+        //   const overlay = document.createElement('a');
+        //   overlay.href = a.href;
+        //   overlay.className = 'row-link';
+        //   overlay.setAttribute('aria-label', 'Open report');
+        //   li.appendChild(overlay);
+        // });
+      }
+
+      function filter() {
+        const q = (searchEl.value || '').toLowerCase();
+        const filtered = allReports.filter(r =>
+          (r.report_type || '').toLowerCase().includes(q) ||
+          (r.student_name || '').toLowerCase().includes(q) ||
+          (r.child_name || '').toLowerCase().includes(q)
+        );
+        render(filtered);
+      }
+
+      function timeAgo(iso) {
+        const d = new Date(iso);
+        const s = Math.floor((Date.now() - d.getTime()) / 1000);
+        const m = Math.floor(s / 60), h = Math.floor(m / 60), dys = Math.floor(h / 24);
+        if (dys > 0) return `${dys}d ago`;
+        if (h > 0) return `${h}h ago`;
+        if (m > 0) return `${m}m ago`;
+        return 'just now';
+      }
+
+      function escapeHtml(str='') {
+        return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      }
+
+      searchEl?.addEventListener('input', filter);
+      viewAllBtn?.addEventListener('click', () => {
+        window.location.href = '/report-list';
+      });
+
+      loadRecent();
     })();
   </script>
 </body>

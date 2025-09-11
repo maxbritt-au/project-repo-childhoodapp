@@ -6,6 +6,29 @@ async function fetchReports(childId) {
   return res.json();
 }
 
+async function deleteReport(id) {
+  const res = await fetch(`/api/reports/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  if (!res.ok) {
+    const msg = await safeText(res);
+    throw new Error(msg || 'Failed to delete report');
+  }
+  return true;
+}
+
+function safeHTML(str = '') {
+  return String(str).replace(/[&<>"']/g, m => (
+    { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]
+  ));
+}
+
+async function safeText(res) {
+  try { return await res.text(); } catch { return ''; }
+}
+
 function renderReports(reports, childId) {
   const container = document.getElementById('reportsList');
   container.innerHTML = '';
@@ -21,13 +44,49 @@ function renderReports(reports, childId) {
   reports.forEach(r => {
     const li = document.createElement('li');
     li.className = 'report-item';
-    const dateStr = new Date(r.submitted_at).toLocaleDateString();
+
+    const dateStr = r.submitted_at ? new Date(r.submitted_at).toLocaleDateString() : '';
+    const viewHref =
+      // use whichever route you serve the view from; both are supported by your report-view
+      `/html/report-view.html?reportId=${encodeURIComponent(r.id)}&childId=${encodeURIComponent(childId)}`;
+
     li.innerHTML = `
-      <strong>${r.template_title || 'Report'}</strong> 
-      by ${r.student_name} 
-      <span class="muted">(${dateStr})</span>
-      <a href="/report-view?id=${r.id}&childId=${childId}" class="btn small">Open</a>
+      <strong>${safeHTML(r.template_title || 'Report')}</strong>
+      by ${safeHTML(r.student_name || '')}
+      <span class="muted">(${safeHTML(dateStr)})</span>
+      <div class="actions">
+        <a href="${viewHref}" class="btn small">Open</a>
+        <button class="btn small danger" data-id="${safeHTML(String(r.id))}">Delete</button>
+      </div>
     `;
+
+    // Wire up delete
+    li.querySelector('button.danger')?.addEventListener('click', async (ev) => {
+      const btn = ev.currentTarget;
+      const id = btn.getAttribute('data-id');
+      const title = r.template_title || 'report';
+
+      if (!confirm(`Delete this ${title}?\nThis action cannot be undone.`)) return;
+
+      // Optimistic UI: disable button while deleting
+      const prevText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Deleting…';
+
+      try {
+        await deleteReport(id);
+        li.remove(); // remove from DOM
+        // If the list becomes empty, show a note:
+        if (!list.querySelector('.report-item')) {
+          container.innerHTML = '<p>No reports found for this child.</p>';
+        }
+      } catch (err) {
+        alert(err.message || 'Failed to delete report.');
+        btn.disabled = false;
+        btn.textContent = prevText;
+      }
+    });
+
     list.appendChild(li);
   });
 

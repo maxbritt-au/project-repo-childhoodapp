@@ -55,7 +55,7 @@ async function loadChild(childId) {
 
     editProfileLink.href = `/html/edit-child-profile.html?childId=${encodeURIComponent(childId)}`;
     newReportLink.href = `/html/student-report.html?childId=${encodeURIComponent(childId)}`;
-    allReportsLink.href = `/html/reports.html?childId=${encodeURIComponent(childId)}`;
+    allReportsLink.href = `/html/report-list.html?childId=${encodeURIComponent(childId)}`;
     qaNewReport.href = newReportLink.href;
     qaAllReports.href = allReportsLink.href;
   } catch (e) {

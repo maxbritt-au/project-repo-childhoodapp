@@ -4,26 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Add Child</title>
-  
+
   <link rel="stylesheet" href="../css/add-child.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
+
+  <!-- Scripts -->
   <script defer src="../js/router.js"></script>
   <script defer src="../js/theme-toggle.js"></script>
+  <!-- ADD THIS so the Dashboard link points to the right page -->
+  <script defer src="../js/navbar.js"></script>
   <script defer src="../js/add-child.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
-        <a href="#" id="dashboardLogoLink" class="logo-link">
+        <!-- Safe default (teacher); navbar.js will overwrite based on /api/me -->
+        <a href="/teacher-dashboard" id="dashboardLogoLink" class="logo-link">
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
       <div class="navbar-center">
         <ul class="nav-links">
-          <li><a href="#" id="dashboardLink">Dashboard</a></li>
-          <li><a href="/teacher-feedback">Feedback</a></li>
+          <!-- Safe default (teacher); navbar.js will overwrite for students -->
+          <li><a href="/teacher-dashboard" id="dashboardLink">Dashboard</a></li>
+          <li><a href="/student-report">Reports</a></li>
           <li><a href="/children-dashboard" class="active">Child Dashboard</a></li>
         </ul>
       </div>
@@ -36,7 +41,7 @@
         <button id="open-logout-modal" class="logout-link">Logout</button>
       </div>
     </nav>
-    
+
     <div class="main-content">
       <div class="add-child-form-container card">
         <h1 class="form-title">Add Child</h1>
@@ -67,6 +72,7 @@
     </div>
   </div>
 
+  <!-- Logout modal -->
   <div id="logout-modal" class="modal">
     <div class="modal-content">
       <h3>Are you sure you want to log out?</h3>
@@ -76,7 +82,5 @@
       </div>
     </div>
   </div>
-  
-  <script defer src="../js/add-child.js"></script>
 </body>
 </html>

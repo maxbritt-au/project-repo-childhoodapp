@@ -1,7 +1,6 @@
 // public/js/student-dashboard.js
-
 document.addEventListener('DOMContentLoaded', () => {
-  // --- Auth gate via localStorage (kept as-is)
+  // --- Auth gate via localStorage
   const stored = localStorage.getItem('user');
   const user = stored ? JSON.parse(stored) : null;
 
@@ -23,13 +22,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (idEl) idEl.textContent = user.userId ? `Student ID: ${user.userId}` : '';
 
   // --- Recent Reports
-  const recentListEl  = document.querySelector('.reports-list'); // your existing UL
+  const recentListEl = document.querySelector('.reports-list');
   const recentEmptyMsg = 'No reports found.';
   const recentErrorMsg = 'Failed to load recent reports.';
 
   function fmtDate(iso) {
     try {
-      return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
+      return new Date(iso).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+      });
     } catch {
       return '';
     }
@@ -53,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <span><strong>${r.template_title || 'Report'}</strong>${childName ? ` — ${childName}` : ''}</span>
         <span class="muted">${dateStr}</span>
       `;
-      // click: go to that child's report list (adjust if you have a detail page)
       li.addEventListener('click', () => {
         if (r.child_id) {
           window.location.href = `/report-list?childId=${encodeURIComponent(r.child_id)}`;
@@ -78,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadRecent();
 
-  // --- (Optional) click logging on list
+  // --- Click logging (optional)
   recentListEl?.addEventListener('click', (event) => {
     const li = event.target.closest('li');
     if (li) {
@@ -87,30 +89,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- Logout modal wiring (kept as-is)
+  // --- Logout modal wiring (robust)
   const logoutModal = document.getElementById('logout-modal');
   const openLogoutBtn = document.getElementById('open-logout-modal');
   const cancelLogoutBtn = document.getElementById('cancel-logout-btn');
   const confirmLogoutBtn = document.getElementById('confirm-logout-btn');
 
+  // Ensure modal is hidden on page load
+  if (logoutModal) {
+    logoutModal.classList.remove('open');
+    logoutModal.setAttribute('aria-hidden', 'true');
+    logoutModal.style.display = 'none';
+  }
+
+  function showLogout() {
+    if (!logoutModal) return;
+    logoutModal.classList.add('open');
+    logoutModal.removeAttribute('aria-hidden');
+    logoutModal.style.display = 'flex';
+  }
+
+  function hideLogout() {
+    if (!logoutModal) return;
+    logoutModal.classList.remove('open');
+    logoutModal.setAttribute('aria-hidden', 'true');
+    logoutModal.style.display = 'none';
+  }
+
   openLogoutBtn?.addEventListener('click', (e) => {
     e.preventDefault();
-    if (logoutModal) logoutModal.style.display = 'flex';
+    showLogout();
   });
 
-  cancelLogoutBtn?.addEventListener('click', () => {
-    if (logoutModal) logoutModal.style.display = 'none';
-  });
+  cancelLogoutBtn?.addEventListener('click', hideLogout);
 
   confirmLogoutBtn?.addEventListener('click', () => {
     localStorage.removeItem('user');
-    if (logoutModal) logoutModal.style.display = 'none';
+    hideLogout();
     window.location.href = '/';
   });
 
   window.addEventListener('click', (event) => {
     if (event.target === logoutModal) {
-      logoutModal.style.display = 'none';
+      hideLogout();
     }
   });
 });
