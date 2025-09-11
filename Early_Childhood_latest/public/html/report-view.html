@@ -5,6 +5,225 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Report Detail</title>
   <link rel="stylesheet" href="../css/children-dashboard.css" />
+  <!-- Add Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<style>
+  body.light-mode {
+    background: #f5f6fa;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: #333;
+  }
+
+  .dashboard-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .navbar a, .navbar button {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .navbar-right .notification-icon {
+    margin-right: 12px;
+    cursor: pointer;
+  }
+
+  .main-content {
+    padding: 24px 0;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+
+  .card header h1 {
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+  }
+
+  .card header p.muted {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+
+  .card fieldset {
+    border-radius: 12px;
+    border-width: 2px;
+    padding: 18px 16px 12px 16px;
+    margin-bottom: 18px;
+    background: #fff;
+    border-style: solid;
+    border-color: #ddd;
+  }
+
+  .card legend {
+    font-weight: bold;
+    padding: 0 8px;
+    font-size: 1.1rem;
+  }
+
+  .card label {
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    display: block;
+    color: #4a90e2;
+  }
+
+  .card input,
+  .card textarea {
+    width: 100%;
+    border-radius: 10px;
+    border: 1.5px solid #e0e7ff;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    background: #f9f7fd;
+    resize: vertical;
+    color: #333;
+  }
+
+  .card input[readonly],
+  .card textarea[readonly] {
+    background: #f3f3f3;
+    color: #555;
+    border: 1px solid #d1d5db;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* Template colors */
+  .template-1 fieldset { border-color: #4a90e2; background: #e3f6fc; }
+  .template-2 fieldset { border-color: #ffb347; background: #fffbe7; }
+  .template-3 fieldset { border-color: #81c784; background: #e3ffe6; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .two-col { grid-template-columns: 1fr; }
+    .card { padding: 16px; }
+  }
+
+  /* Better textarea style */
+  .card textarea {
+    min-height: 120px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+  }
+
+  /* Meta info styling */
+  #reportMeta {
+    font-style: italic;
+    color: #555;
+  }
+
+  /* Container card */
+.card {
+  max-width: 800px;
+  margin: 32px auto;
+  padding: 24px;
+  background: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* Fieldsets */
+.card fieldset {
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border-width: 2px;
+  padding: 20px 18px 14px 18px;
+  background: #fff;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
+}
+
+/* Legends */
+.card legend {
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 0 10px;
+  color: #333;
+}
+
+/* Labels */
+.card label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  color: #333;
+}
+
+/* Inputs & Textareas */
+.card input,
+.card textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1.5px solid #ccc;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  background: #fefefe;
+  color: #333;
+  resize: vertical;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+/* Read-only inputs/textareas */
+.card input[readonly],
+.card textarea[readonly] {
+  background: #f5f5f5;
+  border-color: #ddd;
+  color: #555;
+}
+
+/* Two-column layout */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fieldset background colors (template specific) */
+.card fieldset:nth-child(1) { background: #fffbe7; border-color: #ffb347; }
+.card fieldset:nth-child(2) { background: #e3f6fc; border-color: #81c784; }
+.card fieldset:nth-child(3) { background: #f9f7fd; border-color: #4a90e2; }
+.card fieldset:nth-child(4) { background: #fffbe7; border-color: #ffb347; }
+
+</style>
+
+  
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
@@ -26,14 +245,176 @@
     </nav>
 
     <main class="main-content wrap">
-      <h1 id="reportTitle">Loading...</h1>
-      <p id="reportMeta" class="muted"></p>
-      <div id="reportContent" class="card">
-        <p>Loading content...</p>
+      <div id="reportCard" class="card" style="max-width:800px;margin:32px auto;padding:24px;">
+        <header>
+          <h1 id="reportTitle">Loading...</h1>
+          <p id="reportMeta" class="muted"></p>
+        </header>
+        <form id="reportViewForm" style="pointer-events:none;">
+          <p>Loading content...</p>
+        </form>
       </div>
     </main>
   </div>
 
   <script src="../js/report-view.js"></script>
+  <script>
+    async function loadReport() {
+      const params = new URLSearchParams(window.location.search);
+      const reportId = params.get('reportId') || params.get('id');
+      if (!reportId) {
+        document.getElementById('reportViewForm').innerHTML = '<p style="color:red;">No report ID provided.</p>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/reports/${reportId}`);
+        if (!res.ok) throw new Error('Report not found');
+        const report = await res.json();
+
+        if (!report || !report.template_id) {
+          document.getElementById('reportViewForm').innerHTML = '<p style="color:red;">Report not found or invalid data.</p>';
+          return;
+        }
+
+        // Parse content if it's a string
+        if (typeof report.content === "string") {
+          report.content = JSON.parse(report.content);
+        }
+
+        // After fetching the report
+        if (!report.content.age && report.child_dob) {
+          const dob = new Date(report.child_dob);
+          const diff = Date.now() - dob.getTime();
+          report.content.age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+        }
+
+        // Set title and icon based on template_id
+        const titleEl = document.getElementById('reportTitle');
+        let icon = '';
+        let title = '';
+        if (report.template_id == 1) {
+          icon = '<i class="fas fa-eye" style="color:#4a90e2;"></i>';
+          title = 'Observation Report';
+        } else if (report.template_id == 2) {
+          icon = '<i class="fas fa-book-open" style="color:#ffb347;"></i>';
+          title = 'Anecdotal Record';
+        } else if (report.template_id == 3) {
+          icon = '<i class="fas fa-chart-line" style="color:#81c784;"></i>';
+          title = 'Summative Assessment';
+        }
+        titleEl.innerHTML = `${icon} ${title}`;
+const card = document.getElementById('reportCard');
+card.classList.remove('template-1','template-2','template-3');
+if(report.template_id == 1) card.classList.add('template-1');
+else if(report.template_id == 2) card.classList.add('template-2');
+else if(report.template_id == 3) card.classList.add('template-3');
+
+        // Meta info
+const childName = report.child_name || report.content.child_name || 'Unknown';
+const childAge = report.content.age || '';
+document.getElementById('reportMeta').textContent =
+  `Child: ${childName} | Age: ${childAge} | Date: ${report.content.date || ''}`;
+
+        // Render fieldsets based on template
+        const form = document.getElementById('reportViewForm');
+        form.innerHTML = '';
+        if (report.template_id == 2) {
+          // Anecdotal
+          form.innerHTML = `
+            <fieldset style="border:2px solid #ffb347; background:#fffbe7;">
+              <legend>Child Details</legend>
+              <div class="two-col">
+<div><label>Child</label><input type="text" value="${report.child_name || report.content.child_name || ''}" readonly></div>
+                <div><label>Age</label><input type="text" value="${report.content.age || ''}" readonly></div>
+              </div>
+              <div class="two-col">
+                <div><label>Date</label><input type="text" value="${report.content.date || ''}" readonly></div>
+                <div><label>Setting / Context</label><input type="text" value="${report.content.setting || ''}" readonly></div>
+              </div>
+            </fieldset>
+            <fieldset style="border:2px solid #81c784; background:#e3f6fc;">
+              <legend>Observation</legend>
+              <label>Narrative observation</label>
+              <textarea readonly>${report.content.observation || ''}</textarea>
+            </fieldset>
+            <fieldset style="border:2px solid #4a90e2; background:#f9f7fd;">
+              <legend>Analysis</legend>
+              <label>Developmental domain(s)</label>
+              <textarea readonly>${report.content.domains || ''}</textarea>
+              <label>EYLF links</label>
+              <textarea readonly>${report.content.eylf || ''}</textarea>
+              <label>Theory</label>
+              <textarea readonly>${report.content.theory || ''}</textarea>
+            </fieldset>
+            <fieldset style="border:2px solid #ffb347; background:#fffbe7;">
+              <legend>Future Planning</legend>
+              <label>Future planning ideas</label>
+              <textarea readonly>${report.content.planning_ideas || ''}</textarea>
+            </fieldset>
+          `;
+        } else if (report.template_id == 1) {
+          // Observation
+          form.innerHTML = `
+            <fieldset style="border:2px solid #4a90e2; background:#e3f6fc;">
+              <legend>Child Details</legend>
+              <div class="two-col">
+             <div><label>Child</label><input type="text" value="${report.child_name || report.content.child_name || ''}" readonly></div>
+<div><label>Age</label><input type="text" value="${report.content.age || ''}" readonly></div>
+
+              </div>
+              <div class="two-col">
+                <div><label>Date</label><input type="text" value="${report.content.date || ''}" readonly></div>
+                <div><label>Activity / Context</label><input type="text" value="${report.content.activity || ''}" readonly></div>
+              </div>
+            </fieldset>
+            <fieldset style="border:2px solid #81c784; background:#f9f7fd;">
+              <legend>Observation</legend>
+              <label>Observation Notes</label>
+              <textarea readonly>${report.content.observation || ''}</textarea>
+            </fieldset>
+            <fieldset style="border:2px solid #ffb347; background:#fffbe7;">
+              <legend>Learning Outcomes</legend>
+              <label>Learning Outcomes</label>
+              <textarea readonly>${report.content.outcomes || ''}</textarea>
+            </fieldset>
+          `;
+        } else if (report.template_id == 3) {
+          // Summative
+          form.innerHTML = `
+            <fieldset style="border:2px solid #81c784; background:#e3ffe6;">
+              <legend>Child Details</legend>
+              <div class="two-col">
+                <div><label>Child</label><input type="text" value="${report.child_name || report.content.child_name || ''}" readonly></div>
+<div><label>Age</label><input type="text" value="${report.content.age || ''}" readonly></div>
+
+
+
+              </div>
+              <div class="two-col">
+                <div><label>Date</label><input type="text" value="${report.content.date || ''}" readonly></div>
+                <div><label>Assessment Period</label><input type="text" value="${report.content.period || ''}" readonly></div>
+              </div>
+            </fieldset>
+            <fieldset style="border:2px solid #4a90e2; background:#f9f7fd;">
+              <legend>Summary</legend>
+              <label>Summary of Achievement</label>
+              <textarea readonly>${report.content.summary || ''}</textarea>
+            </fieldset>
+            <fieldset style="border:2px solid #ffb347; background:#fffbe7;">
+              <legend>Developmental Domains & Outcomes</legend>
+              <label>Developmental Domains</label>
+              <textarea readonly>${report.content.domains || ''}</textarea>
+              <label>Learning Outcomes</label>
+              <textarea readonly>${report.content.outcomes || ''}</textarea>
+            </fieldset>
+          `;
+        }
+      } catch (err) {
+        document.getElementById('reportViewForm').innerHTML = `<p style="color:red;">Error loading report: ${err.message}</p>`;
+      }
+    }
+    loadReport();
+  </script>
 </body>
 </html>

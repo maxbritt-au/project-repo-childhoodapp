@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Work Sample Observation</title>
+  <title>Observation Report</title>
   <style>
-    :root { --gap: 12px; --fg: #111; --muted:#555; --border:#ddd; --accent:#0b5fff; }
+    /* Use similar styles as anecdotal-record.html for consistency */
+    :root { --gap: 12px; --fg: #111; --muted:#555; --border:#ddd; --accent:#4a90e2; }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--fg); margin: 0; background: #FFE6F2; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--fg); margin: 0; background: #E6F7FF; }
     header { padding: 20px; background:#fff; border-bottom:1px solid var(--border); position: sticky; top: 0; }
     main { max-width: 900px; margin: 0 auto; padding: 24px; }
     h1 { margin: 0 0 6px; font-size: 1.5rem; }
@@ -16,7 +17,7 @@
     fieldset { border: 1px solid var(--border); padding: 16px; border-radius: 12px; background:#fff; }
     legend { padding: 0 6px; font-weight: 600; }
     label { display: block; font-weight: 600; margin-bottom: 6px; }
-    input[type="text"], input[type="date"], textarea, select, input[type="file"] {
+    input[type="text"], input[type="date"], textarea, select {
       width: 100%; padding: 10px 12px; border:1px solid var(--border); border-radius: 10px; background: #fff;
     }
     textarea { min-height: 110px; resize: vertical; }
@@ -34,12 +35,16 @@
 </head>
 <body>
   <header>
-    <h1>Work Sample Observation</h1>
-    <p class="help">Attach or describe a sample of work and analyse the learning demonstrated.</p>
+    <h1>
+      <i class="fas fa-eye" style="color:#4a90e2;margin-right:8px;"></i>
+      Observation Report
+    </h1>
+    <p class="help">Record key observations from class or play activities, focusing on developmental progress and learning outcomes.</p>
   </header>
   <main>
     <form id="observationForm">
-      <fieldset>
+      <input type="hidden" name="template_id" value="1" />
+      <fieldset style="border:2px solid #4a90e2; background:#e3f6fc;">
         <legend>Child Details</legend>
         <div class="two-col">
           <div>
@@ -49,7 +54,7 @@
             </select>
           </div>
           <div>
-            <label for="age">Child’s age</label>
+            <label for="age">Age</label>
             <input id="age" name="age" type="text" readonly />
           </div>
         </div>
@@ -59,23 +64,22 @@
             <input id="date" name="date" type="date" required />
           </div>
           <div>
-            <label for="setting">Setting / Context</label>
-            <input id="setting" name="setting" type="text" />
+            <label for="activity">Activity / Context</label>
+            <input id="activity" name="activity" type="text" placeholder="" />
           </div>
         </div>
       </fieldset>
 
-      <fieldset>
-        <legend>Sample of work</legend>
-        <label for="sample_desc">Description (if no file upload)</label>
-        <textarea id="sample_desc" name="sample_desc" placeholder="e.g., drawing of a house with family members; Lego structure; writing sample ..."></textarea>
-        <label for="sample_file">Upload file (optional)</label>
-        <input id="sample_file" name="sample_file" type="file" accept="image/*,application/pdf" />
+      <fieldset style="border:2px solid #81c784; background:#f9f7fd;">
+        <legend>Observation</legend>
+        <label for="observation">Observation Notes</label>
+        <textarea id="observation" name="observation"></textarea>
       </fieldset>
 
-      <fieldset>
-        <legend>Analysis of learning</legend>
-        <textarea id="analysis" name="analysis" placeholder="Analyse what the work shows about the child’s learning, skills, dispositions and next steps."></textarea>
+      <fieldset style="border:2px solid #ffb347; background:#fffbe7;">
+        <legend>Learning Outcomes</legend>
+        <label for="outcomes">Learning Outcomes</label>
+        <textarea id="outcomes" name="outcomes"></textarea>
       </fieldset>
 
       <div class="actions">
@@ -87,13 +91,12 @@
 
   <script src="../js/report-helper.js"></script>
   <script>
-    // Populate child dropdown and auto-fill age from DOB
+    // Populate child dropdown
     async function loadChildren() {
       try {
         const res = await fetch('/api/children', { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to load children');
         const children = await res.json();
-
         const select = document.getElementById('childSelect');
         children.forEach(c => {
           const opt = document.createElement('option');
@@ -102,44 +105,44 @@
           select.appendChild(opt);
         });
 
-        // If a childId is present in the URL, preselect it
-        const childIdFromURL = new URLSearchParams(location.search).get('childId');
-        if (childIdFromURL) {
-          select.value = childIdFromURL;
-        }
-
-        // Update age when selection changes
-        function updateAge() {
-          const chosen = children.find(c => String(c.child_id) === String(select.value));
-          const ageEl = document.getElementById('age');
+        // auto-fill age
+        select.addEventListener('change', () => {
+          const chosen = children.find(c => c.child_id == select.value);
           if (chosen?.dob) {
             const dob = new Date(chosen.dob);
             const diff = Date.now() - dob.getTime();
-            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
-            ageEl.value = years;
+            const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+            document.getElementById('age').value = age;
           } else {
-            ageEl.value = '';
+            document.getElementById('age').value = '';
           }
-        }
-        select.addEventListener('change', updateAge);
-        updateAge(); // run once in case we preselected
+        });
       } catch (err) {
         console.error(err);
       }
     }
     loadChildren();
 
-    // Hook up submit to the API via the shared helper
-    attachReportForm('#observationForm', {
-      templateId: 1, // Observation template ID
-      getContent: () => ({
-        date: document.getElementById('date').value,
-        setting: document.getElementById('setting').value,
-        sample_desc: document.getElementById('sample_desc').value,
-        // NOTE: File uploads not handled yet — extend later
-        analysis: document.getElementById('analysis').value
-      })
-    });
+    // Hook form to backend
+// Hook form to backend
+attachReportForm('#observationForm', {
+  templateId: 1, // Observation template ID
+  getContent: () => {
+    const childSelect = document.getElementById('childSelect');
+    const selectedChild = childSelect.options[childSelect.selectedIndex];
+    const childName = selectedChild ? selectedChild.textContent : '';
+
+    return {
+      child_name: childName,                     // save child name
+      age: document.getElementById('age').value, // save age
+      date: document.getElementById('date').value,
+      activity: document.getElementById('activity').value,
+      observation: document.getElementById('observation').value,
+      outcomes: document.getElementById('outcomes').value
+    };
+  }
+});
+
   </script>
 </body>
 </html>

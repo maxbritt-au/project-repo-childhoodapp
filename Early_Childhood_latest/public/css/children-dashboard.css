@@ -401,3 +401,12 @@ body.dark-mode .dark-icon { display: block; }
   .child-card { flex-direction: column; text-align: center; }
   .children-actions { justify-content: center; }
 }
+.reports-list li:hover {
+  cursor: pointer; 
+  background-color: #e3f6fc;      /* Light blue background on hover */
+  box-shadow: 0 2px 8px rgba(92, 107, 192, 0.10); /* Subtle shadow */
+  color: var(--accent-color);     /* Accent text color */
+  border-radius: 12px;
+  transform: scale(1.02);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+}

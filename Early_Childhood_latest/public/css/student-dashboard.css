@@ -328,20 +328,100 @@ body.dark-mode .dark-icon { display: block; }
   gap: 20px;
 }
 
+/* Card styling for early childhood look */
 .card {
-  padding: 25px;
-  border-radius: 20px;
-  box-shadow: var(--shadow-subtle);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f9f7fd 70%, #e3f6fc 100%);
+  box-shadow: 0 4px 16px rgba(120, 180, 255, 0.12);
+  padding: 1.5rem 1.2rem;
+  margin-bottom: 1.5rem;
+  font-family: 'Comic Sans MS', 'Comic Neue', Arial, sans-serif;
+  border: 2px solid #e0e7ff;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-hover);
+.card h3 {
+  font-size: 1.3rem;
+  color: #4a90e2;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.card p, .card span {
+  font-size: 1.05rem;
+  color: #555;
+}
+
+.contact-btn, .action-btn, .modal-btn {
+  background: #ffb347;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem 1.5rem;
+  font-size: 1.1rem;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255, 179, 71, 0.15);
+  transition: background 0.2s;
+}
+
+.contact-btn:hover, .action-btn:hover, .modal-btn:hover {
+  background: #ffcc80;
+}
+
+.action-grid {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  gap: 20px;
+}
+
+.action-grid a {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: #e3f6fc;
+  border-radius: 12px;
+  padding: 0.7rem 1.2rem;
+  text-decoration: none;
+  color: #4a90e2;
+  font-weight: 500;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(120, 180, 255, 0.10);
+  transition: background 0.2s;
+}
+
+.action-grid a:hover {
+  background: #d0eaff;
+}
+
+.action-grid i {
+  font-size: 1.5rem;
+  color: #ffb347;
+}
+
+/* Recent Reports List */
+.reports-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.reports-list li {
+  background: #fffbe7;
+  border-radius: 10px;
+  margin-bottom: 0.7rem;
+  padding: 0.7rem 1rem;
+  box-shadow: 0 1px 4px rgba(255, 179, 71, 0.08);
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.reports-list li i {
+  color: #ffb347;
+  font-size: 1.2rem;
 }
 
 .contact-card p {

@@ -34,12 +34,16 @@
 </head>
 <body>
   <header>
-    <h1>Anecdotal Record</h1>
+    <h1>
+      <i class="fas fa-book-open" style="color:#ffb347;margin-right:8px;"></i>
+      Anecdotal Record
+    </h1>
     <p class="help">A detailed observation of a child's learning experience, capturing behaviour and linking it meaningfully to developmental domains, EYLF outcomes, and theory.</p>
   </header>
   <main>
     <form id="anecdotalForm">
-      <fieldset>
+      <input type="hidden" name="template_id" value="2" />
+      <fieldset style="border:2px solid #ffb347; background:#fffbe7;">
         <legend>Child Details</legend>
         <div class="two-col">
           <div>
@@ -65,13 +69,13 @@
         </div>
       </fieldset>
 
-      <fieldset>
+      <fieldset style="border:2px solid #81c784; background:#e3f6fc;">
         <legend>Observation</legend>
         <label for="observation">Narrative observation</label>
         <textarea id="observation" name="observation"></textarea>
       </fieldset>
 
-      <fieldset>
+      <fieldset style="border:2px solid #4a90e2; background:#f9f7fd;">
         <legend>Analysis</legend>
         <label for="domains">Developmental domain(s)</label>
         <textarea id="domains" name="domains"></textarea>
@@ -83,7 +87,7 @@
         <textarea id="theory" name="theory"></textarea>
       </fieldset>
 
-      <fieldset>
+      <fieldset style="border:2px solid #ffb347; background:#fffbe7;">
         <legend>Future Planning</legend>
         <label for="planning_ideas">Future planning ideas (at least two)</label>
         <textarea id="planning_ideas" name="planning_ideas"></textarea>
@@ -133,15 +137,25 @@
     // Hook form to backend
     attachReportForm('#anecdotalForm', {
       templateId: 2, // your Anecdotal template ID in DB
-      getContent: () => ({
-        date: document.getElementById('date').value,
-        setting: document.getElementById('setting').value,
-        observation: document.getElementById('observation').value,
-        domains: document.getElementById('domains').value,
-        eylf: document.getElementById('eylf').value,
-        theory: document.getElementById('theory').value,
-        planning_ideas: document.getElementById('planning_ideas').value
-      })
+getContent: () => {
+  const childSelect = document.getElementById('childSelect');
+  const selectedChild = childSelect.options[childSelect.selectedIndex];
+  const childName = selectedChild ? selectedChild.textContent : '';
+
+  return {
+    child_name: childName,         // save name
+    age: document.getElementById('age').value, // save age
+    date: document.getElementById('date').value,
+    setting: document.getElementById('setting').value,
+    observation: document.getElementById('observation').value,
+    domains: document.getElementById('domains').value,
+    eylf: document.getElementById('eylf').value,
+    theory: document.getElementById('theory').value,
+    planning_ideas: document.getElementById('planning_ideas').value
+  };
+}
+
+
     });
   </script>
 </body>

@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Summative Assessment</title>
   <style>
-    :root { --gap: 12px; --fg: #111; --muted:#555; --border:#ddd; --accent:#0b5fff; }
+    :root { --gap: 12px; --fg: #111; --muted:#555; --border:#ddd; --accent:#81c784; }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--fg); margin: 0; background: #FFE6F2; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--fg); margin: 0; background: #E6FFE6; }
     header { padding: 20px; background:#fff; border-bottom:1px solid var(--border); position: sticky; top: 0; }
     main { max-width: 900px; margin: 0 auto; padding: 24px; }
     h1 { margin: 0 0 6px; font-size: 1.5rem; }
@@ -20,7 +20,7 @@
       width: 100%; padding: 10px 12px; border:1px solid var(--border); border-radius: 10px; background: #fff;
     }
     textarea { min-height: 110px; resize: vertical; }
-    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); }
+    .row, .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
     .actions { display: flex; gap: 10px; justify-content: flex-end; }
     button { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background:#fff; cursor: pointer; }
     button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
@@ -34,15 +34,18 @@
 </head>
 <body>
   <header>
-    <h1>Summative Assessment</h1>
-    <p class="help">Use this form to summarise learning and development and link to EYLF outcomes, principles, and practices.</p>
+    <h1>
+      <i class="fas fa-chart-line" style="color:#81c784;margin-right:8px;"></i>
+      Summative Assessment
+    </h1>
+    <p class="help">Summarise achievement against learning outcomes and developmental domains for each child.</p>
   </header>
   <main>
-    <!-- ✅ Uses dropdown to select the child -->
     <form id="summativeForm">
-      <fieldset>
-        <legend>Summary of learning and development</legend>
-        <div class="row">
+      <input type="hidden" name="template_id" value="3" />
+      <fieldset style="border:2px solid #81c784; background:#e3ffe6;">
+        <legend>Child Details</legend>
+        <div class="two-col">
           <div>
             <label for="childSelect">Child</label>
             <select id="childSelect" name="child_id" required>
@@ -50,52 +53,34 @@
             </select>
           </div>
           <div>
+            <label for="age">Age</label>
+            <input id="age" name="age" type="text" readonly />
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
             <label for="date">Date</label>
             <input id="date" name="date" type="date" required />
           </div>
+          <div>
+            <label for="period">Assessment Period</label>
+            <input id="period" name="period" type="text" placeholder="e.g. Term 1" />
+          </div>
         </div>
-        <label for="recent_family_experiences">Recent family experiences</label>
-        <textarea id="recent_family_experiences" name="recent_family_experiences"></textarea>
-        <label for="current_interests">Current interests</label>
-        <textarea id="current_interests" name="current_interests"></textarea>
       </fieldset>
 
-      <fieldset>
-        <legend>Learning and development progress</legend>
-        <label for="identity">My strong sense of identity</label>
-        <textarea id="identity" name="identity"></textarea>
-        <label for="identity_links">Links to learning outcomes, principles, practices</label>
-        <textarea id="identity_links" name="identity_links"></textarea>
-
-        <label for="world">My connection &amp; contribution to the world</label>
-        <textarea id="world" name="world"></textarea>
-        <label for="world_links">Links to learning outcomes, principles, practices</label>
-        <textarea id="world_links" name="world_links"></textarea>
-
-        <label for="wellbeing">My strong sense of wellbeing</label>
-        <textarea id="wellbeing" name="wellbeing"></textarea>
-        <label for="wellbeing_links">Links to learning outcomes, principles, practices</label>
-        <textarea id="wellbeing_links" name="wellbeing_links"></textarea>
-
-        <label for="involvement">My involvement in learning</label>
-        <textarea id="involvement" name="involvement"></textarea>
-        <label for="involvement_links">Links to learning outcomes, principles, practices</label>
-        <textarea id="involvement_links" name="involvement_links"></textarea>
-
-        <label for="communicator">Being an effective communicator</label>
-        <textarea id="communicator" name="communicator"></textarea>
-        <label for="communicator_links">Links to learning outcomes, principles, practices</label>
-        <textarea id="communicator_links" name="communicator_links"></textarea>
+      <fieldset style="border:2px solid #4a90e2; background:#f9f7fd;">
+        <legend>Summary</legend>
+        <label for="summary">Summary of Achievement</label>
+        <textarea id="summary" name="summary"></textarea>
       </fieldset>
 
-      <fieldset>
-        <legend>Family comments &amp; goals</legend>
-        <textarea id="family_comments_goals" name="family_comments_goals"></textarea>
-      </fieldset>
-
-      <fieldset>
-        <legend>Planning to support further learning and development</legend>
-        <textarea id="planning_support" name="planning_support"></textarea>
+      <fieldset style="border:2px solid #ffb347; background:#fffbe7;">
+        <legend>Developmental Domains & Outcomes</legend>
+        <label for="domains">Developmental Domains</label>
+        <textarea id="domains" name="domains"></textarea>
+        <label for="outcomes">Learning Outcomes</label>
+        <textarea id="outcomes" name="outcomes"></textarea>
       </fieldset>
 
       <div class="actions">
@@ -105,17 +90,15 @@
     </form>
   </main>
 
-  <!-- ✅ Attach helper -->
   <script src="../js/report-helper.js"></script>
   <script>
-    // Populate child dropdown from /api/children and preselect ?childId=
+    // Populate child dropdown
     async function loadChildren() {
       try {
         const res = await fetch('/api/children', { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to load children');
         const children = await res.json();
         const select = document.getElementById('childSelect');
-
         children.forEach(c => {
           const opt = document.createElement('option');
           opt.value = c.child_id;
@@ -123,38 +106,44 @@
           select.appendChild(opt);
         });
 
-        // Preselect if childId provided in URL
-        const childIdFromURL = new URLSearchParams(location.search).get('childId');
-        if (childIdFromURL) {
-          select.value = childIdFromURL;
-        }
+        // auto-fill age
+        select.addEventListener('change', () => {
+          const chosen = children.find(c => c.child_id == select.value);
+          if (chosen?.dob) {
+            const dob = new Date(chosen.dob);
+            const diff = Date.now() - dob.getTime();
+            const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+            document.getElementById('age').value = age;
+          } else {
+            document.getElementById('age').value = '';
+          }
+        });
       } catch (err) {
         console.error(err);
       }
     }
     loadChildren();
 
-    // Submit via the shared helper; helper will read the selected child_id from #childSelect
-    attachReportForm('#summativeForm', {
-      templateId: 3, // Summative template ID in DB
-      getContent: () => ({
-        date: document.getElementById('date').value,
-        recent_family_experiences: document.getElementById('recent_family_experiences').value,
-        current_interests: document.getElementById('current_interests').value,
-        identity: document.getElementById('identity').value,
-        identity_links: document.getElementById('identity_links').value,
-        world: document.getElementById('world').value,
-        world_links: document.getElementById('world_links').value,
-        wellbeing: document.getElementById('wellbeing').value,
-        wellbeing_links: document.getElementById('wellbeing_links').value,
-        involvement: document.getElementById('involvement').value,
-        involvement_links: document.getElementById('involvement_links').value,
-        communicator: document.getElementById('communicator').value,
-        communicator_links: document.getElementById('communicator_links').value,
-        family_comments_goals: document.getElementById('family_comments_goals').value,
-        planning_support: document.getElementById('planning_support').value
-      })
-    });
+    // Hook form to backend
+attachReportForm('#summativeForm', {
+  templateId: 3, // Summative template ID
+  getContent: () => {
+    const childSelect = document.getElementById('childSelect');
+    const selectedChild = childSelect.options[childSelect.selectedIndex];
+    const childName = selectedChild ? selectedChild.textContent : '';
+
+    return {
+      child_name: childName,                     // save child name
+      age: document.getElementById('age').value, // save age
+      date: document.getElementById('date').value,
+      period: document.getElementById('period').value,
+      summary: document.getElementById('summary').value,
+      domains: document.getElementById('domains').value,
+      outcomes: document.getElementById('outcomes').value
+    };
+  }
+});
+
   </script>
 </body>
 </html>
