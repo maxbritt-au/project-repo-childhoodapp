@@ -40,15 +40,19 @@
           <ul class="student-list" id="students"></ul>
         </div>
 
-        <div class="card student-info-card">
-          <div class="info-header">
-            <h3 class="info-title">Student Profile</h3>
-            <span class="info-subtitle" id="info-subtitle">Select a student to view details.</span>
-          </div>
-          <div class="info-display-area" id="info-display-area">
-            <p class="placeholder-text">Click on a student's name to view their profile or reports.</p>
-          </div>
-        </div>
+        <div class="card recent-reports-card">
+        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+         <h3>Recent Reports</h3>
+         <a class="view-all-link" href="/report-list">View All</a>
+       </div>
+
+       <div id="recentReportsState" class="state-row">
+       <span id="recentReportsSpinner">Loading…</span>
+       <span id="recentReportsEmpty" class="hidden">No recent reports.</span>
+       </div>
+
+       <ul id="recentReportsList" class="reports-list"></ul>
+      </div>
 
         <div class="card quick-actions-card">
           <h3>Quick Actions</h3>
