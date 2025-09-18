@@ -29,11 +29,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 const userRoutes = require('./routes/userRoutes');
 const childrenRoutes = require('./routes/childrenRoutes');
 const reportRoutes = require('./routes/reportRoutes'); // NEW
+const feedbackRoutes = require('./routes/feedbackRoutes');
+
 
 // --- API routes
 app.use('/api', userRoutes);           // e.g. /api/login, /api/users
 app.use('/api/children', childrenRoutes); // e.g. /api/children, /api/children/:id
 app.use('/api/reports', reportRoutes);    // NEW  /api/reports?childId=...
+app.use('/api/feedbacks', feedbackRoutes);
+
 
 // --- Page routes
 app.get('/', (req, res) => {
@@ -90,6 +94,10 @@ app.get('/report-list', (req, res) => {
 
 app.get('/report-view', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'html', 'report-view.html'));
+});
+
+app.get('/feedback-view', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'html', 'feedback-view.html'));
 });
 
 app.listen(PORT, () => {
