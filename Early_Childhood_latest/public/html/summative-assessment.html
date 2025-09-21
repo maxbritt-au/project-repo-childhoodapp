@@ -144,5 +144,44 @@ attachReportForm('#summativeForm', {
 });
 
   </script>
+  <script>
+  function enableAutoSave(formId) {
+    const form = document.getElementById(formId);
+    if (!form) return; // if form doesn't exist on this page, skip
+    const storageKey = formId + "_draft";
+
+    // Load saved draft
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const data = JSON.parse(saved);
+        Object.keys(data).forEach(key => {
+          const field = form.elements[key];
+          if (field) field.value = data[key];
+        });
+      }
+    });
+
+    // Auto-save on input
+    form.addEventListener("input", () => {
+      const formData = {};
+      Array.from(form.elements).forEach(el => {
+        if (el.name) formData[el.name] = el.value;
+      });
+      localStorage.setItem(storageKey, JSON.stringify(formData));
+    });
+
+    // Clear draft after successful submit
+    form.addEventListener("submit", () => {
+      localStorage.removeItem(storageKey);
+    });
+  }
+
+  // Attach auto-save to all your forms
+  enableAutoSave("observationForm");
+  enableAutoSave("anecdotalForm");
+  enableAutoSave("summativeForm");
+</script>
+
 </body>
 </html>
