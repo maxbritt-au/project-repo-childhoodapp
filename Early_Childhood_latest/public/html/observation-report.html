@@ -158,5 +158,36 @@
       }
     });
   </script>
+  <script>
+  const form = document.getElementById("observationForm");
+  const storageKey = "observationFormDraft";
+
+  // Load saved draft
+  window.addEventListener("DOMContentLoaded", () => {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      const data = JSON.parse(saved);
+      Object.keys(data).forEach(key => {
+        const field = form.elements[key];
+        if (field) field.value = data[key];
+      });
+    }
+  });
+
+  // Auto-save on input
+  form.addEventListener("input", () => {
+    const formData = {};
+    Array.from(form.elements).forEach(el => {
+      if (el.name) formData[el.name] = el.value;
+    });
+    localStorage.setItem(storageKey, JSON.stringify(formData));
+  });
+
+  // Clear draft after successful submit
+  form.addEventListener("submit", () => {
+    localStorage.removeItem(storageKey);
+  });
+</script>
+
 </body>
 </html>
