@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>View Feedback</title>
+
+  <link rel="stylesheet" href="../css/teacher-feedback.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* minor list tweaks (optional—move to CSS file if you prefer) */
+    .feedback-list.card { margin-top: 16px; padding: 16px; border-radius: 16px; background: rgba(255,255,255,.85); box-shadow: 0 4px 18px rgba(0,0,0,.1); }
+    .feedback-item { padding: 12px 0; border-top: 1px solid #eee; }
+    .feedback-item:first-child { border-top: 0; }
+    .feedback-head { display:flex; gap:8px; align-items:center; justify-content:space-between; }
+    .feedback-title { font-weight: 600; }
+    .feedback-date { font-size:.9rem; color:#666; }
+    .feedback-body { margin-top:6px; white-space:pre-wrap; }
+    .empty-hint { color:#666; font-style:italic; }
+    .actions-row { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
+    .btn { border: 1px solid #e0e0e0; background: #fff; padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: .92rem; text-decoration: none; display:inline-flex; align-items:center; gap:8px; }
+    .btn:hover { background:#fafafa; }
+  </style>
+</head>
+<body class="light-mode">
+  <div class="dashboard-container">
+    <nav class="navbar">
+      <div class="navbar-left">
+        <a href="/html/teacher-dashboard.html" id="dashboardLogoLink" class="logo-link">
+          <img src="../img/logo-2.png" alt="Logo" class="logo" />
+        </a>
+      </div>
+      <div class="navbar-center">
+        <ul class="nav-links">
+          <li><a href="/html/teacher-dashboard.html" id="dashboardLink">Dashboard</a></li>
+          <li><a href="/report-list">Reports</a></li>
+          <li><a href="/children-dashboard">Child Dashboard</a></li>
+        </ul>
+      </div>
+      <div class="navbar-right">
+        <i class="fas fa-bell notification-icon"></i>
+        <div class="theme-icons">
+          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
+          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
+        </div>
+        <button id="open-logout-modal" class="logout-link">Logout</button>
+      </div>
+    </nav>
+
+    <div class="main-content">
+      <div class="feedback-grid">
+        <!-- LEFT: Report preview -->
+        <div class="report-viewer card">
+          <div class="actions-row">
+            <a class="btn" id="backBtn" href="/report-list"><i class="fa-solid fa-arrow-left"></i> Back to Reports</a>
+          </div>
+
+          <div class="report-header">
+            <h3 class="report-title" id="reportTitle">Loading report...</h3>
+            <p class="student-info" id="studentInfo"></p>
+          </div>
+          <div class="report-body" id="reportBody">
+            <p class="report-text">Fetching report details...</p>
+          </div>
+        </div>
+
+        <!-- RIGHT: Feedback list only -->
+        <div class="feedback-form card">
+          <h3 class="form-title">Feedback</h3>
+          <div id="feedbackList" class="feedback-list card">Loading feedback…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout modal (unchanged) -->
+  <div id="logout-modal" class="modal">
+    <div class="modal-content">
+      <h3>Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
+  <script defer src="../js/navbar.js"></script>
+
+  <script>
+    const FEEDBACK_ENDPOINT = '/api/feedbacks';
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    const toDate = (x) => x ? new Date(x).toLocaleString() : '';
+
+    async function loadReport() {
+      const params = new URLSearchParams(window.location.search);
+      const reportId = params.get('reportId') || params.get('id');
+      const childId = params.get('childId');
+
+      // keep childId in back link if present
+      const backBtn = document.getElementById('backBtn');
+      if (backBtn) backBtn.href = childId ? `/report-list?childId=${encodeURIComponent(childId)}` : '/report-list';
+
+      if (!reportId) {
+        document.getElementById("reportBody").innerHTML = "<p>No report ID provided.</p>";
+        document.getElementById("feedbackList").textContent = 'No report ID provided.';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/reports/${encodeURIComponent(reportId)}`, { credentials: 'include' });
+        if (!res.ok) throw new Error('Failed to fetch report');
+        const report = await res.json();
+
+        document.getElementById('reportTitle').textContent =
+          report.template_title || (String(report.template_id) === '1' ? 'Observation Report'
+                                  : String(report.template_id) === '2' ? 'Anecdotal Record'
+                                  : 'Student Report');
+
+        const name = report.student_name || report.child_name || 'Unknown';
+        const sid  = report.student_id || report.child_id || 'N/A';
+        const dateStr = report.submitted_at ? new Date(report.submitted_at).toLocaleDateString()
+                                            : (report.content?.date || '');
+        document.getElementById('studentInfo').textContent =
+          `${name} (ID: ${sid})${dateStr ? ' — ' + dateStr : ''}`;
+
+        let content = {};
+        try { content = typeof report.content === 'string' ? JSON.parse(report.content) : (report.content || {}); }
+        catch { content = report.content || {}; }
+
+        const body = document.getElementById('reportBody');
+        const blocks = [];
+
+        if (String(report.template_id) === '1') {
+          if (content.observation) blocks.push(['Observation', content.observation]);
+          if (content.activity)    blocks.push(['Activity / Context', content.activity]);
+          if (content.outcomes)    blocks.push(['Learning Outcomes', content.outcomes]);
+        } else if (String(report.template_id) === '2') {
+          if (content.observation) blocks.push(['Narrative Observation', content.observation]);
+          if (content.domains)     blocks.push(['Domains', content.domains]);
+          if (content.eylf)        blocks.push(['EYLF Links', content.eylf]);
+          if (content.theory)      blocks.push(['Theory', content.theory]);
+          if (content.planning_ideas) blocks.push(['Future Planning', content.planning_ideas]);
+        } else {
+          if (content.summary)  blocks.push(['Summary', content.summary]);
+          if (content.domains)  blocks.push(['Domains', content.domains]);
+          if (content.outcomes) blocks.push(['Outcomes', content.outcomes]);
+          if (content.period)   blocks.push(['Assessment Period', content.period]);
+        }
+
+        body.innerHTML = blocks.length
+          ? blocks.map(([label, value]) =>
+              `<section class="report-chunk">
+                 <h4 class="report-sub-title">${esc(label)}</h4>
+                 <p class="report-text">${esc(value)}</p>
+               </section>`
+            ).join('')
+          : '<p class="report-text">No detailed content available.</p>';
+
+        // now load feedback for this report
+        await loadFeedbackList(reportId);
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('reportBody').innerHTML = `<p style="color:#b00020;">Error: ${esc(err.message)}</p>`;
+        document.getElementById('feedbackList').textContent = 'Failed to load feedback.';
+      }
+    }
+
+    async function loadFeedbackList(reportId) {
+      const box = document.getElementById('feedbackList');
+      box.textContent = 'Loading feedback…';
+      try {
+        const res = await fetch(`${FEEDBACK_ENDPOINT}?reportId=${encodeURIComponent(reportId)}`, { credentials: 'include' });
+        if (!res.ok) throw new Error('Failed to fetch feedback');
+        const rows = await res.json();
+
+        if (!rows.length) {
+          box.innerHTML = '<p class="empty-hint">No feedback yet.</p>';
+          return;
+        }
+
+        box.innerHTML = rows.map(r => `
+          <div class="feedback-item">
+            <div class="feedback-head">
+              <span class="feedback-title">${esc(r.title || 'Feedback')}</span>
+              <span class="feedback-date">${esc(toDate(r.created_at))}${r.teacher_id ? ' • Teacher #' + esc(r.teacher_id) : ''}</span>
+            </div>
+            <div class="feedback-body">${esc(r.comment || '')}</div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error(e);
+        box.textContent = 'Failed to load feedback.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadReport);
+  </script>
+</body>
+</html>
