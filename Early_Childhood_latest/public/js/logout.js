@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Remove user session data from local storage
             localStorage.removeItem('user');
             // Redirect to the login page
-            window.location.href = '/login.html';
+            window.location.href = '/';
         });
     }
 });

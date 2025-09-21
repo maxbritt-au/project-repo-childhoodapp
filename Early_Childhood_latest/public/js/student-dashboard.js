@@ -1,90 +1,137 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Student Dashboard</title>
-  <link rel="stylesheet" href="../css/student-dashboard.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script defer src="../js/router.js"></script>
-  <script defer src="../js/theme-toggle.js"></script>
-  <script defer src="../js/student-dashboard.js"></script>
-</head>
-<body class="light-mode">
-  <div class="dashboard-container">
-    <nav class="navbar">
-      <div class="navbar-left">
-        <a href="#" id="dashboardLogoLink" class="logo-link">
-          <img src="../img/logo-2.png" alt="Logo" class="logo" />
-        </a>
-      </div>
-      <div class="navbar-center">
-        <ul class="nav-links">
-          <li><a href="#" id="dashboardLink" class="active">Dashboard</a></li>
-          <li><a href="/student-report">Reports</a></li>
-          <li><a href="/children-dashboard">Child Dashboard</a></li>
-        </ul>
-      </div>
-      <div class="navbar-right">
-        <div class="theme-icons">
-          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
-          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
-        </div>
-        <button id="open-logout-modal" class="logout-link">Logout</button>
-      </div>
-    </nav>
+// public/js/student-dashboard.js
+document.addEventListener('DOMContentLoaded', () => {
+  // --- Auth gate via localStorage
+  const stored = localStorage.getItem('user');
+  const user = stored ? JSON.parse(stored) : null;
 
-    <div class="main-content">
-      <div class="profile-hero-card glassy-card">
-        <img src="../img/student-main.png" alt="Nesar" class="hero-profile-pic"/>
-        <div class="hero-profile-info">
-          <h2 id="greeting">Hello!</h2>
-          <p class="hero-course" id="studentCourse">Bachelor in Information Technology</p>
-          <p class="hero-id" id="studentId">Student ID: </p>
-          <div class="hero-actions">
-            <button class="action-btn primary-btn">Edit Profile</button>
-          </div>
-        </div>
-      </div>
+  if (!user) {
+    window.location.href = '/';
+    return;
+  }
 
-      <div class="content-grid">
-        <div class="card contact-card">
-          <h3>Contact Teacher</h3>
-          <p>Send an Email directly to your teacher for feedback or questions about your reports.</p>
-          <button class="contact-btn">Send Mail</button>
-        </div>
+  // --- Greeting / header
+  const greetingEl = document.getElementById('greeting');
+  if (greetingEl) {
+    greetingEl.textContent = `Hello, ${user.name}!`;
+  } else {
+    const fallbackH2 = document.querySelector('.hero-profile-info h2');
+    if (fallbackH2) fallbackH2.textContent = `Hello, ${user.name}!`;
+  }
 
-        <div class="card recent-reports-card">
-          <h3>Recent Reports</h3>
-          <ul class="reports-list">
-          </ul>
-        </div>
-        
-        <div class="card quick-actions-card">
-          <h3>Quick Actions</h3>
-          <div class="action-grid">
-            <a href="/student-report">
-              <i class="fas fa-file-alt"></i>
-              <span>Submit Report</span>
-            </a>
-            <a href="/report-list?childId=1">
-              <i class="fas fa-chart-line"></i>
-              <span>View All Reports</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div id="logout-modal" class="modal">
-    <div class="modal-content">
-      <h3>Are you sure you want to log out?</h3>
-      <div class="modal-actions">
-        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
-        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+  const idEl = document.getElementById('studentId');
+  if (idEl) idEl.textContent = user.userId ? `Student ID: ${user.userId}` : '';
+
+  // --- Recent Reports
+  const recentListEl = document.querySelector('.reports-list');
+  const recentEmptyMsg = 'No reports found.';
+  const recentErrorMsg = 'Failed to load recent reports.';
+
+  function fmtDate(iso) {
+    try {
+      return new Date(iso).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+      });
+    } catch {
+      return '';
+    }
+  }
+
+  function renderRecent(rows) {
+    if (!recentListEl) return;
+
+    recentListEl.innerHTML = '';
+    if (!rows || !rows.length) {
+      recentListEl.innerHTML = `<li><p>${recentEmptyMsg}</p></li>`;
+      return;
+    }
+
+    rows.forEach(r => {
+      const childName = [r.child_first_name, r.child_last_name].filter(Boolean).join(' ');
+      const dateStr = fmtDate(r.submitted_at);
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <i class="fas fa-file-pdf"></i>
+        <span><strong>${r.template_title || 'Report'}</strong>${childName ? ` — ${childName}` : ''}</span>
+        <span class="muted">${dateStr}</span>
+      `;
+      li.addEventListener('click', () => {
+        if (r.child_id) {
+          window.location.href = `/report-list?childId=${encodeURIComponent(r.child_id)}`;
+        }
+      });
+      recentListEl.appendChild(li);
+    });
+  }
+
+  async function loadRecent() {
+    if (!recentListEl) return;
+    try {
+      const res = await fetch('/api/reports/recent/my?limit=5', { credentials: 'include' });
+      if (!res.ok) throw new Error(await res.text().catch(() => recentErrorMsg));
+      const rows = await res.json();
+      renderRecent(rows);
+    } catch (err) {
+      console.error('Error loading recent reports:', err);
+      recentListEl.innerHTML = `<li><p>${recentErrorMsg}</p></li>`;
+    }
+  }
+
+  loadRecent();
+
+  // --- Click logging (optional)
+  recentListEl?.addEventListener('click', (event) => {
+    const li = event.target.closest('li');
+    if (li) {
+      const firstSpan = li.querySelector('span');
+      console.log('Report clicked:', firstSpan ? firstSpan.textContent : '(unknown)');
+    }
+  });
+
+  // --- Logout modal wiring (robust)
+  const logoutModal = document.getElementById('logout-modal');
+  const openLogoutBtn = document.getElementById('open-logout-modal');
+  const cancelLogoutBtn = document.getElementById('cancel-logout-btn');
+  const confirmLogoutBtn = document.getElementById('confirm-logout-btn');
+
+  // Ensure modal is hidden on page load
+  if (logoutModal) {
+    logoutModal.classList.remove('open');
+    logoutModal.setAttribute('aria-hidden', 'true');
+    logoutModal.style.display = 'none';
+  }
+
+  function showLogout() {
+    if (!logoutModal) return;
+    logoutModal.classList.add('open');
+    logoutModal.removeAttribute('aria-hidden');
+    logoutModal.style.display = 'flex';
+  }
+
+  function hideLogout() {
+    if (!logoutModal) return;
+    logoutModal.classList.remove('open');
+    logoutModal.setAttribute('aria-hidden', 'true');
+    logoutModal.style.display = 'none';
+  }
+
+  openLogoutBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    showLogout();
+  });
+
+  cancelLogoutBtn?.addEventListener('click', hideLogout);
+
+  confirmLogoutBtn?.addEventListener('click', () => {
+    localStorage.removeItem('user');
+    hideLogout();
+    window.location.href = '/';
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === logoutModal) {
+      hideLogout();
+    }
+  });
+});
