@@ -4,33 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Children Dashboard</title>
-  
-  <!-- Styles -->
   <link rel="stylesheet" href="../css/children-dashboard.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
+  <script defer src="../js/children-dashboard.js"></script>
+  <script defer src="../js/logout.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
-        <!-- Safe default; navbar.js will overwrite based on /api/me -->
-        <a href="/html/teacher-dashboard.html" id="dashboardLogoLink" class="logo-link">
+        <a href="/html/student-dashboard.html" id="dashboardLogoLink" class="logo-link">
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
       <div class="navbar-center">
         <ul class="nav-links">
-          <li><a href="/html/teacher-dashboard.html" id="dashboardLink">Dashboard</a></li>
-          <li><a href="/student-report">Reports</a></li>
-          <li><a href="/children-dashboard" class="active">Child Dashboard</a></li>
+          <li><a href="/html/student-dashboard.html" id="dashboardLink">Dashboard</a></li>
+          <li><a href="/html/student-report.html">Reports</a></li>
+          <li><a href="/html/children-dashboard.html" class="active">Child Dashboard</a></li>
         </ul>
       </div>
       <div class="navbar-right">
-        <i class="fas fa-bell notification-icon"></i>
-        <div class="theme-icons">
-          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
-          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
-        </div>
+        <i class="fas fa-sun theme-icon sun-icon"></i>
+        <label class="theme-switch" for="theme-toggle">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon"></i>
         <button id="open-logout-modal" class="logout-link">Logout</button>
       </div>
     </nav>
@@ -46,8 +48,8 @@
           <option value="dob-asc">DOB ↑</option>
           <option value="dob-desc">DOB ↓</option>
         </select>
-        <button id="refresh" class="btn">Refresh</button>
-        <a href="/add-child" id="addChild" class="btn primary">Add Child</a>
+        <button id="refresh" class="action-btn secondary-btn">Refresh</button>
+        <a href="/add-child" id="addChild" class="action-btn primary-btn">Add Child</a>
         <span id="childrenSpinner" class="hidden">Loading…</span>
       </div>
 
@@ -66,12 +68,5 @@
       </div>
     </div>
   </div>
-  
-  <!-- Scripts (defer so DOM is ready) -->
-  <script defer src="../js/children-dashboard.js"></script>
-  <script defer src="../js/router.js"></script>
-  <script defer src="../js/theme-toggle.js"></script>
-  <!-- 🔑 Include navbar.js -->
-  <script defer src="../js/navbar.js"></script>
 </body>
 </html>

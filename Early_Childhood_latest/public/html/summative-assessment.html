@@ -92,7 +92,6 @@
 
   <script src="../js/report-helper.js"></script>
   <script>
-    // Populate child dropdown
     async function loadChildren() {
       try {
         const res = await fetch('/api/children', { credentials: 'include' });
@@ -106,7 +105,7 @@
           select.appendChild(opt);
         });
 
-        // auto-fill age
+ 
         select.addEventListener('change', () => {
           const chosen = children.find(c => c.child_id == select.value);
           if (chosen?.dob) {
@@ -124,17 +123,17 @@
     }
     loadChildren();
 
-    // Hook form to backend
+
 attachReportForm('#summativeForm', {
-  templateId: 3, // Summative template ID
+  templateId: 3,
   getContent: () => {
     const childSelect = document.getElementById('childSelect');
     const selectedChild = childSelect.options[childSelect.selectedIndex];
     const childName = selectedChild ? selectedChild.textContent : '';
 
     return {
-      child_name: childName,                     // save child name
-      age: document.getElementById('age').value, // save age
+      child_name: childName,
+      age: document.getElementById('age').value, 
       date: document.getElementById('date').value,
       period: document.getElementById('period').value,
       summary: document.getElementById('summary').value,

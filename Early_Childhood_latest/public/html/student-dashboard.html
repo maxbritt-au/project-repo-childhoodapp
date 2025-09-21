@@ -7,28 +7,32 @@
   <link rel="stylesheet" href="../css/student-dashboard.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script defer src="../js/router.js"></script>
-  <script defer src="../js/student-dashboard.js"></script>
   <script defer src="../js/theme-toggle.js"></script>
+  <script defer src="../js/student-dashboard.js"></script>
+  <script defer src="../js/logout.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
-        <img src="../img/logo-2.png" alt="Logo" class="logo" />
+        <a href="#" id="dashboardLogoLink" class="logo-link">
+          <img src="../img/logo-2.png" alt="Logo" class="logo" />
+        </a>
       </div>
       <div class="navbar-center">
         <ul class="nav-links">
-          <li><a href="/student-dashboard" class="active">Dashboard</a></li>
+          <li><a href="#" id="dashboardLink" class="active">Dashboard</a></li>
           <li><a href="/student-report">Reports</a></li>
           <li><a href="/children-dashboard">Child Dashboard</a></li>
         </ul>
       </div>
       <div class="navbar-right">
-        <i class="fas fa-bell notification-icon"></i>
-        <div class="theme-icons">
-          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
-          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
-        </div>
+        <i class="fas fa-sun theme-icon sun-icon"></i>
+        <label class="theme-switch" for="theme-toggle">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon"></i>
         <button id="open-logout-modal" class="logout-link">Logout</button>
       </div>
     </nav>
@@ -37,9 +41,7 @@
       <div class="profile-hero-card glassy-card">
         <img src="../img/student-main.png" alt="Nesar" class="hero-profile-pic"/>
         <div class="hero-profile-info">
-          <h2 id="greeting">Hello!</h2>
-          <p class="hero-course" id="studentCourse">Bachelor in Information Technology</p>
-          <p class="hero-id" id="studentId">Student ID: </p>
+          <h2 id="greeting">Hello, Nesar!</h2>
           <div class="hero-actions">
             <button class="action-btn primary-btn">Edit Profile</button>
           </div>

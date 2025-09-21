@@ -4,19 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Report Detail</title>
-
-  <!-- Site-wide styles (keeps your navbar + background) -->
   <link rel="stylesheet" href="../css/children-dashboard.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+  <script defer src="../js/logout.js"></script>
   <script defer src="../js/navbar.js"></script>
-
-  <!-- Page-specific styles (you can move this into ../css/report-view.css) -->
   <style>
-    /* --------------------------------------------------------
-       Report View Page
-       Matches overall dashboard look
-    ---------------------------------------------------------*/
     .report-wrapper {
       display: flex;
       justify-content: center;
@@ -34,7 +26,6 @@
       padding: 28px 32px;
     }
 
-    /* Header */
     .report-header {
       display: flex;
       flex-direction: column;
@@ -56,7 +47,6 @@
       margin: 0 0 10px 0;
     }
 
-    /* Quick actions row */
     .report-actions {
       display: flex;
       gap: 8px;
@@ -78,7 +68,6 @@
     .btn.danger { border-color: #ffd4d4; background: #ffecec; color: #b00020; }
     .btn.icon { padding: 8px 10px; }
 
-    /* Fieldsets */
     .report-card fieldset {
       border: none;
       border-radius: 14px;
@@ -95,7 +84,6 @@
       color: #333;
     }
 
-    /* Labels + Inputs */
     .report-card label {
       font-weight: 600;
       margin-bottom: 6px;
@@ -126,7 +114,6 @@
       font-family: inherit;
     }
 
-    /* Two column */
     .two-col {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -136,12 +123,10 @@
       .two-col { grid-template-columns: 1fr; }
     }
 
-    /* Template tints (left stripe) */
     .template-1 fieldset { border-left: 4px solid #4a90e2; }
     .template-2 fieldset { border-left: 4px solid #ffb347; }
     .template-3 fieldset { border-left: 4px solid #81c784; }
 
-    /* Title icons */
     .title-icon.eye   { color: #4a90e2; }
     .title-icon.book  { color: #ffb347; }
     .title-icon.chart { color: #81c784; }
@@ -194,14 +179,9 @@
     </main>
   </div>
 
-  <!-- Optional: if you have page-specific JS, you can include it too -->
-  <!-- <script src="../js/report-view.js" defer></script> -->
 
   <script>
-    // Simple print action
     document.getElementById('printBtn')?.addEventListener('click', () => window.print());
-
-    // Load and render the report
     async function loadReport() {
       const params = new URLSearchParams(window.location.search);
       const reportId = params.get('reportId') || params.get('id');
@@ -221,21 +201,17 @@
           form.innerHTML = '<p style="color:#b00020;">Report not found or invalid data.</p>';
           return;
         }
-
-        // Parse content JSON if necessary
         if (typeof report.content === 'string') {
           try { report.content = JSON.parse(report.content); } catch { report.content = {}; }
         }
         report.content = report.content || {};
 
-        // Compute age if missing and dob present
         if (!report.content.age && report.child_dob) {
           const dob = new Date(report.child_dob);
           const diff = Date.now() - dob.getTime();
           report.content.age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
         }
 
-        // Title + icon based on template
         const titleEl = document.getElementById('reportTitle');
         const cardEl  = document.getElementById('reportCard');
         let iconHtml = '';
@@ -253,22 +229,21 @@
         }
         titleEl.innerHTML = iconHtml + ' ' + titleTxt;
 
-        // Template class for tint
+      
         cardEl.classList.remove('template-1','template-2','template-3');
         cardEl.classList.add('template-' + String(report.template_id));
 
-        // Meta info
+    
         const childName = report.child_name || report.content.child_name || 'Unknown';
         const childAge  = report.content.age ?? '';
         const dateStr   = report.content.date || (report.submitted_at ? new Date(report.submitted_at).toLocaleDateString() : '');
         document.getElementById('reportMeta').textContent =
           `Child: ${childName}${childAge ? ' | Age: ' + childAge : ''}${dateStr ? ' | Date: ' + dateStr : ''}`;
 
-        // Render fieldsets by template
         const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
         if (String(report.template_id) === '2') {
-          // Anecdotal
+      
           form.innerHTML = `
             <fieldset>
               <legend>Child Details</legend>
@@ -305,7 +280,7 @@
             </fieldset>
           `;
         } else if (String(report.template_id) === '1') {
-          // Observation
+         
           form.innerHTML = `
             <fieldset>
               <legend>Child Details</legend>
@@ -332,7 +307,7 @@
             </fieldset>
           `;
         } else {
-          // Summative (template_id 3) or fallback
+      
           form.innerHTML = `
             <fieldset>
               <legend>Child Details</legend>

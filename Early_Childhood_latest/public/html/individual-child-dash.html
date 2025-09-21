@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Individual Child Dashboard</title>
-
+  <script defer src="../js/logout.js"></script>
   <link rel="stylesheet" href="../css/individual-child-dash.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -12,7 +12,6 @@
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
-        <!-- Safe default; navbar.js will overwrite based on /api/me -->
         <a href="/html/teacher-dashboard.html" id="dashboardLogoLink" class="logo-link">
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
@@ -42,7 +41,6 @@
           <a id="editProfileLink" class="action-btn primary-btn" href="#">
             <i class="fa-solid fa-pen-to-square"></i> Edit Profile
           </a>
-          <!-- 🔴 New Delete Child button -->
           <button id="deleteChildBtn" class="action-btn danger-btn">
             <i class="fa-solid fa-trash"></i> Delete Child
           </button>
@@ -89,8 +87,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Scripts -->
   <script defer src="../js/router.js"></script>
   <script defer src="../js/individual-child-dash.js"></script>
   <script defer src="../js/theme-toggle.js"></script>

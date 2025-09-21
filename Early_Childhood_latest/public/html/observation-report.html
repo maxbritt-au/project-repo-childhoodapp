@@ -4,108 +4,122 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Observation Report</title>
-  <style>
-    /* Use similar styles as anecdotal-record.html for consistency */
-    :root { --gap: 12px; --fg: #111; --muted:#555; --border:#ddd; --accent:#4a90e2; }
-    * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--fg); margin: 0; background: #E6F7FF; }
-    header { padding: 20px; background:#fff; border-bottom:1px solid var(--border); position: sticky; top: 0; }
-    main { max-width: 900px; margin: 0 auto; padding: 24px; }
-    h1 { margin: 0 0 6px; font-size: 1.5rem; }
-    p.help { margin: 0; color: var(--muted); font-size: 0.92rem; }
-    form { display: grid; gap: var(--gap); }
-    fieldset { border: 1px solid var(--border); padding: 16px; border-radius: 12px; background:#fff; }
-    legend { padding: 0 6px; font-weight: 600; }
-    label { display: block; font-weight: 600; margin-bottom: 6px; }
-    input[type="text"], input[type="date"], textarea, select {
-      width: 100%; padding: 10px 12px; border:1px solid var(--border); border-radius: 10px; background: #fff;
-    }
-    textarea { min-height: 110px; resize: vertical; }
-    .row, .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
-    .actions { display: flex; gap: 10px; justify-content: flex-end; }
-    button { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background:#fff; cursor: pointer; }
-    button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-    @media print {
-      header { display: none; }
-      body { background: #fff; }
-      fieldset { page-break-inside: avoid; }
-      textarea { height: auto; }
-    }
-  </style>
+  <link rel="stylesheet" href="../css/observation-report.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
+  <script defer src="../js/report-helper.js"></script>
+  <script defer src="../js/logout.js"></script>
 </head>
-<body>
-  <header>
-    <h1>
-      <i class="fas fa-eye" style="color:#4a90e2;margin-right:8px;"></i>
-      Observation Report
-    </h1>
-    <p class="help">Record key observations from class or play activities, focusing on developmental progress and learning outcomes.</p>
-  </header>
-  <main>
-    <form id="observationForm">
-      <input type="hidden" name="template_id" value="1" />
-      <fieldset style="border:2px solid #4a90e2; background:#e3f6fc;">
-        <legend>Child Details</legend>
-        <div class="two-col">
-          <div>
-            <label for="childSelect">Child</label>
-            <select id="childSelect" name="child_id" required>
-              <option value="">— Select a child —</option>
-            </select>
-          </div>
-          <div>
-            <label for="age">Age</label>
-            <input id="age" name="age" type="text" readonly />
-          </div>
-        </div>
-        <div class="two-col">
-          <div>
-            <label for="date">Date</label>
-            <input id="date" name="date" type="date" required />
-          </div>
-          <div>
-            <label for="activity">Activity / Context</label>
-            <input id="activity" name="activity" type="text" placeholder="" />
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset style="border:2px solid #81c784; background:#f9f7fd;">
-        <legend>Observation</legend>
-        <label for="observation">Observation Notes</label>
-        <textarea id="observation" name="observation"></textarea>
-      </fieldset>
-
-      <fieldset style="border:2px solid #ffb347; background:#fffbe7;">
-        <legend>Learning Outcomes</legend>
-        <label for="outcomes">Learning Outcomes</label>
-        <textarea id="outcomes" name="outcomes"></textarea>
-      </fieldset>
-
-      <div class="actions">
-        <button type="reset">Reset</button>
-        <button class="primary" type="submit">Save Report</button>
+<body class="light-mode">
+  <div class="dashboard-container">
+    <nav class="navbar">
+      <div class="navbar-left">
+        <a href="#" id="dashboardLogoLink" class="logo-link">
+          <img src="../img/logo-2.png" alt="Logo" class="logo" />
+        </a>
       </div>
-    </form>
-  </main>
+      <div class="navbar-center">
+        <ul class="nav-links">
+          <li><a href="#" id="dashboardLink">Dashboard</a></li>
+          <li><a href="/student-report" class="active">Reports</a></li>
+          <li><a href="/children-dashboard">Child Dashboard</a></li>
+        </ul>
+      </div>
+      <div class="navbar-right">
+        <i class="fas fa-sun theme-icon sun-icon"></i>
+        <label class="theme-switch" for="theme-toggle">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon"></i>
+        <button id="open-logout-modal" class="logout-link">Logout</button>
+      </div>
+    </nav>
 
-  <script src="../js/report-helper.js"></script>
+    <main class="main-content">
+      <div class="report-header card">
+        <h1>
+          <i class="fas fa-eye report-icon"></i>
+          Observation Report
+        </h1>
+        <p class="help">Record key observations from class or play activities, focusing on developmental progress and learning outcomes.</p>
+      </div>
+
+      <form id="observationForm" class="report-form">
+        <div class="card form-section">
+          <h3>Child Details</h3>
+          <div class="form-grid">
+            <div>
+              <label for="childSelect">Child</label>
+              <select id="childSelect" name="child_id" required>
+                <option value="">— Select a child —</option>
+              </select>
+            </div>
+            <div>
+              <label for="age">Age</label>
+              <input id="age" name="age" type="text" readonly />
+            </div>
+            <div>
+              <label for="date">Date</label>
+              <input id="date" name="date" type="date" required />
+            </div>
+            <div>
+              <label for="activity">Activity / Context</label>
+              <input id="activity" name="activity" type="text" placeholder="" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card form-section">
+          <h3>Observation</h3>
+          <label for="observation">Observation Notes</label>
+          <textarea id="observation" name="observation"></textarea>
+        </div>
+
+        <div class="card form-section">
+          <h3>Learning Outcomes</h3>
+          <label for="outcomes">Learning Outcomes</label>
+          <textarea id="outcomes" name="outcomes"></textarea>
+        </div>
+
+        <div class="actions">
+          <button type="reset" class="action-btn secondary-btn">Reset</button>
+          <button class="action-btn primary-btn" type="submit">Save Report</button>
+        </div>
+      </form>
+    </main>
+  </div>
+  
+  <div id="logout-modal" class="modal">
+    <div class="modal-content">
+      <h3>Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Populate child dropdown
     async function loadChildren() {
       try {
         const res = await fetch('/api/children', { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to load children');
         const children = await res.json();
         const select = document.getElementById('childSelect');
+        const urlParams = new URLSearchParams(window.location.search);
+        const childIdFromUrl = urlParams.get('childId');
         children.forEach(c => {
           const opt = document.createElement('option');
           opt.value = c.child_id;
           opt.textContent = `${c.first_name} ${c.last_name}`;
           select.appendChild(opt);
         });
+        if(childIdFromUrl) {
+            select.value = childIdFromUrl;
+        }
 
-        // auto-fill age
         select.addEventListener('change', () => {
           const chosen = children.find(c => c.child_id == select.value);
           if (chosen?.dob) {
@@ -117,32 +131,32 @@
             document.getElementById('age').value = '';
           }
         });
+        if(childIdFromUrl) {
+            select.dispatchEvent(new Event('change'));
+        }
       } catch (err) {
         console.error(err);
       }
     }
     loadChildren();
 
-    // Hook form to backend
-// Hook form to backend
-attachReportForm('#observationForm', {
-  templateId: 1, // Observation template ID
-  getContent: () => {
-    const childSelect = document.getElementById('childSelect');
-    const selectedChild = childSelect.options[childSelect.selectedIndex];
-    const childName = selectedChild ? selectedChild.textContent : '';
+    attachReportForm('#observationForm', {
+      templateId: 1,
+      getContent: () => {
+        const childSelect = document.getElementById('childSelect');
+        const selectedChild = childSelect.options[childSelect.selectedIndex];
+        const childName = selectedChild ? selectedChild.textContent : '';
 
-    return {
-      child_name: childName,                     // save child name
-      age: document.getElementById('age').value, // save age
-      date: document.getElementById('date').value,
-      activity: document.getElementById('activity').value,
-      observation: document.getElementById('observation').value,
-      outcomes: document.getElementById('outcomes').value
-    };
-  }
-});
-
+        return {
+          child_name: childName,
+          age: document.getElementById('age').value,
+          date: document.getElementById('date').value,
+          activity: document.getElementById('activity').value,
+          observation: document.getElementById('observation').value,
+          outcomes: document.getElementById('outcomes').value
+        };
+      }
+    });
   </script>
 </body>
 </html>

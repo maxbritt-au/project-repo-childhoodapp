@@ -3,76 +3,67 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Report Templates</title>
-
-  <!-- Reuse your existing dashboard look -->
-  <link rel="stylesheet" href="../css/children-dashboard.css" />
-  <!-- Page-specific styles for the template gallery -->
+  <title>Student Reports</title>
   <link rel="stylesheet" href="../css/student-report.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
+  <script defer src="../js/report-templates.js"></script>
+  <script defer src="../js/logout.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
-        <!-- Safe default; navbar.js will overwrite href based on /api/me -->
-        <a href="/html/teacher-dashboard.html" id="dashboardLogoLink" class="logo-link">
+        <a href="/html/student-dashboard.html" id="dashboardLogoLink" class="logo-link">
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
       <div class="navbar-center">
         <ul class="nav-links">
-          <li><a href="/html/teacher-dashboard.html" id="dashboardLink">Dashboard</a></li>
+          <li><a href="/html/student-dashboard.html" id="dashboardLink">Dashboard</a></li>
           <li><a href="/html/student-report.html" class="active">Reports</a></li>
-          <li><a href="/children-dashboard">Child Dashboard</a></li>
+          <li><a href="/html/children-dashboard.html">Child Dashboard</a></li>
         </ul>
       </div>
       <div class="navbar-right">
-        <i class="fas fa-bell notification-icon" aria-hidden="true"></i>
-        <div class="theme-icons">
-          <i class="fas fa-sun light-icon theme-toggle-btn" aria-hidden="true"></i>
-          <i class="fas fa-moon dark-icon theme-toggle-btn" aria-hidden="true"></i>
-        </div>
-        <button id="open-logout-modal" class="logout-link" type="button">Logout</button>
+        <i class="fas fa-sun theme-icon sun-icon"></i>
+        <label class="theme-switch" for="theme-toggle">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon"></i>
+        <button id="open-logout-modal" class="logout-link">Logout</button>
       </div>
     </nav>
 
     <main class="main-content">
-      <!-- Two-column wrapper -->
       <div class="reports-layout">
-        <!-- LEFT: Recent Reports -->
-        <aside class="recent-reports">
-          <h2>Recent Reports</h2>
+        <aside class="recent-reports card">
+          <h2 class="page-title">Recent Reports</h2>
           <div class="filters">
             <input id="recentSearch" type="text" placeholder="Search by child, student, type…" aria-label="Search recent reports" />
           </div>
           <ul id="recentReportsList" class="recent-list" aria-live="polite"></ul>
-          <button id="viewAllReports" class="btn-link" type="button">View all</button>
+          <a id="viewAllReports" class="btn-link" href="/html/report-list.html">View all</a>
         </aside>
 
-        <!-- RIGHT: Title + Intro + Templates ALL inside this panel -->
-        <section class="templates-panel">
+        <section class="reports-panel card">
           <h1 class="page-title">Choose a Report Template</h1>
           <p class="intro-text">
             Select a report type below to quickly start documenting your observations and assessments for each child.
           </p>
-
           <div class="template-grid">
-            <!-- Observation Report -->
             <a href="/html/observation-report.html" class="template-card" title="Record key observations from class or play activities.">
               <i class="fa-solid fa-eye template-icon" aria-hidden="true"></i>
               <h3>Observation Report</h3>
               <p>Document key observations from class or play activities.</p>
             </a>
-
-            <!-- Anecdotal Record -->
             <a href="/html/anecdotal-record.html" class="template-card" title="Capture brief, narrative notes of significant moments.">
               <i class="fa-solid fa-book-open template-icon" aria-hidden="true"></i>
               <h3>Anecdotal Record</h3>
               <p>Capture brief, narrative notes of significant moments.</p>
             </a>
-
-            <!-- Summative Assessment -->
             <a href="/html/summative-assessment.html" class="template-card" title="Summarise achievement against learning outcomes.">
               <i class="fa-solid fa-chart-line template-icon" aria-hidden="true"></i>
               <h3>Summative Assessment</h3>
@@ -84,115 +75,14 @@
     </main>
   </div>
 
-  <!-- Scripts -->
-  <script defer src="../js/router.js"></script>
-  <script defer src="../js/theme-toggle.js"></script>
-  <script defer src="../js/navbar.js"></script>
-
-  <!-- Auto-append ?childId=... to each template link if present -->
-  <script>
-    (function () {
-      const params = new URLSearchParams(window.location.search);
-      const childId = params.get('childId');
-      if (!childId) return;
-      document.querySelectorAll('.template-card[href]').forEach(a => {
-        const url = new URL(a.getAttribute('href'), window.location.origin);
-        url.searchParams.set('childId', childId);
-        a.setAttribute('href', url.pathname + '?' + url.searchParams.toString());
-      });
-    })();
-  </script>
-
-  <!-- Recent Reports loader + filter (pill links to WRITTEN report) -->
-  <script>
-    (function () {
-      const listEl = document.getElementById('recentReportsList');
-      const searchEl = document.getElementById('recentSearch');
-      const viewAllBtn = document.getElementById('viewAllReports');
-
-      let allReports = [];
-
-      async function loadRecent() {
-        try {
-          const res = await fetch('/api/reports/recent?limit=8');
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          allReports = await res.json();
-          render(allReports);
-        } catch (e) {
-          console.error('Failed to load recent reports', e);
-          listEl.innerHTML = '<li class="muted">Could not load recent reports.</li>';
-        }
-      }
-
-      function render(items) {
-        if (!items.length) {
-          listEl.innerHTML = '<li class="muted">No recent reports.</li>';
-          return;
-        }
-
-        listEl.innerHTML = items.map(r => `
-          <li class="recent-item">
-            <!-- Pill opens the actual saved report -->
-            <a class="pill pill-link"
-               href="/html/report-view.html?reportId=${encodeURIComponent(r.id)}"
-               title="View this ${escapeHtml(r.report_type)}">
-              ${escapeHtml(r.report_type)}
-            </a>
-            <div class="meta">
-              <span class="label">Student:</span> ${escapeHtml(r.student_name)}
-              <span class="sep">•</span>
-              <span class="label">Child:</span> ${escapeHtml(r.child_name)}
-            </div>
-            <div class="time" title="${new Date(r.created_at).toLocaleString()}">
-              ${timeAgo(r.created_at)}
-            </div>
-          </li>
-        `).join('');
-
-        // (Optional) Make the whole row clickable to the same link:
-        // listEl.querySelectorAll('.recent-item').forEach(li => {
-        //   const a = li.querySelector('.pill-link');
-        //   if (!a) return;
-        //   li.style.position = 'relative';
-        //   const overlay = document.createElement('a');
-        //   overlay.href = a.href;
-        //   overlay.className = 'row-link';
-        //   overlay.setAttribute('aria-label', 'Open report');
-        //   li.appendChild(overlay);
-        // });
-      }
-
-      function filter() {
-        const q = (searchEl.value || '').toLowerCase();
-        const filtered = allReports.filter(r =>
-          (r.report_type || '').toLowerCase().includes(q) ||
-          (r.student_name || '').toLowerCase().includes(q) ||
-          (r.child_name || '').toLowerCase().includes(q)
-        );
-        render(filtered);
-      }
-
-      function timeAgo(iso) {
-        const d = new Date(iso);
-        const s = Math.floor((Date.now() - d.getTime()) / 1000);
-        const m = Math.floor(s / 60), h = Math.floor(m / 60), dys = Math.floor(h / 24);
-        if (dys > 0) return `${dys}d ago`;
-        if (h > 0) return `${h}h ago`;
-        if (m > 0) return `${m}m ago`;
-        return 'just now';
-      }
-
-      function escapeHtml(str='') {
-        return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-      }
-
-      searchEl?.addEventListener('input', filter);
-      viewAllBtn?.addEventListener('click', () => {
-        window.location.href = '/report-list';
-      });
-
-      loadRecent();
-    })();
-  </script>
+  <div id="logout-modal" class="modal">
+    <div class="modal-content">
+      <h3>Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

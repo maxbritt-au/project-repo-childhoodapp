@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Teacher Feedback</title>
 
-  <!-- Styles -->
   <link rel="stylesheet" href="../css/teacher-feedback.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -19,7 +18,6 @@
       </div>
       <div class="navbar-center">
         <ul class="nav-links">
-          <!-- Safe default; navbar.js will overwrite href based on role -->
           <li><a href="/html/teacher-dashboard.html" id="dashboardLink">Dashboard</a></li>
           <li><a href="/teacher-feedback" class="active">Feedback</a></li>
           <li><a href="/children-dashboard">Child Dashboard</a></li>
@@ -81,13 +79,10 @@
     </div>
   </div>
 
-  <!-- Scripts (defer so DOM is ready) -->
   <script defer src="../js/router.js"></script>
   <script defer src="../js/theme-toggle.js"></script>
   <script defer src="../js/teacher-feedback.js"></script>
-  <!-- 🔑 Include navbar.js so it can set Dashboard link based on /api/me -->
   <script defer src="../js/navbar.js"></script>
-  <!-- Optional: jsPDF if used by exportPDF() -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>

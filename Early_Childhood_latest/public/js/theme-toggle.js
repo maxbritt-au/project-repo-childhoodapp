@@ -1,25 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.querySelector('.theme-icons');
-    const body = document.body;
-  
-    // Set initial theme based on local storage
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme) {
-      body.classList.add(currentTheme);
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
+
+  const currentTheme = localStorage.getItem('theme');
+  if (currentTheme === 'dark-mode') {
+    body.classList.add('dark-mode');
+    themeToggle.checked = true;
+  } else {
+    body.classList.remove('dark-mode');
+    body.classList.add('light-mode');
+    themeToggle.checked = false;
+  }
+
+  themeToggle.addEventListener('change', () => {
+    if (themeToggle.checked) {
+      body.classList.remove('light-mode');
+      body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark-mode');
     } else {
+      body.classList.remove('dark-mode');
       body.classList.add('light-mode');
+      localStorage.setItem('theme', 'light-mode');
     }
-  
-    // Add event listener for toggling the theme
-    themeToggle?.addEventListener('click', () => {
-      if (body.classList.contains('light-mode')) {
-        body.classList.remove('light-mode');
-        body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark-mode');
-      } else {
-        body.classList.remove('dark-mode');
-        body.classList.add('light-mode');
-        localStorage.setItem('theme', 'light-mode');
-      }
-    });
   });
+});
