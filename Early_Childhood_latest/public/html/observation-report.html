@@ -6,10 +6,10 @@
   <title>Observation Report</title>
   <link rel="stylesheet" href="../css/observation-report.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script defer src="../js/router.js"></script>
-  <script defer src="../js/theme-toggle.js"></script>
-  <script defer src="../js/report-helper.js"></script>
-  <script defer src="../js/logout.js"></script>
+  <script defer src="/js/router.js"></script>
+  <script defer src="/js/theme-toggle.js"></script>
+  <script defer src="/js/report-helper.js"></script>
+  <script defer src="/js/logout.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
@@ -47,6 +47,9 @@
       </div>
 
       <form id="observationForm" class="report-form">
+        <!-- Hidden fallback for helper.resolveChildId() -->
+        <input type="hidden" id="childId" name="childId" />
+
         <div class="card form-section">
           <h3>Child Details</h3>
           <div class="form-grid">
@@ -90,7 +93,7 @@
       </form>
     </main>
   </div>
-  
+
   <div id="logout-modal" class="modal">
     <div class="modal-content">
       <h3>Are you sure you want to log out?</h3>
@@ -102,26 +105,35 @@
   </div>
 
   <script>
+    // Load children & wire age + hidden childId
     async function loadChildren() {
       try {
         const res = await fetch('/api/children', { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to load children');
+
         const children = await res.json();
         const select = document.getElementById('childSelect');
+        const hiddenChild = document.getElementById('childId');
+
+        // Respect ?childId= in URL
         const urlParams = new URLSearchParams(window.location.search);
         const childIdFromUrl = urlParams.get('childId');
+
         children.forEach(c => {
           const opt = document.createElement('option');
           opt.value = c.child_id;
           opt.textContent = `${c.first_name} ${c.last_name}`;
           select.appendChild(opt);
         });
-        if(childIdFromUrl) {
-            select.value = childIdFromUrl;
+
+        if (childIdFromUrl) {
+          select.value = childIdFromUrl;
+          hiddenChild.value = childIdFromUrl;
         }
 
-        select.addEventListener('change', () => {
-          const chosen = children.find(c => c.child_id == select.value);
+        function updateDerived() {
+          hiddenChild.value = select.value || '';
+          const chosen = children.find(c => String(c.child_id) === String(select.value));
           if (chosen?.dob) {
             const dob = new Date(chosen.dob);
             const diff = Date.now() - dob.getTime();
@@ -130,64 +142,73 @@
           } else {
             document.getElementById('age').value = '';
           }
-        });
-        if(childIdFromUrl) {
-            select.dispatchEvent(new Event('change'));
         }
+
+        select.addEventListener('change', updateDerived);
+        updateDerived();
       } catch (err) {
         console.error(err);
       }
     }
     loadChildren();
 
-    attachReportForm('#observationForm', {
-      templateId: 1,
-      getContent: () => {
-        const childSelect = document.getElementById('childSelect');
-        const selectedChild = childSelect.options[childSelect.selectedIndex];
-        const childName = selectedChild ? selectedChild.textContent : '';
-
-        return {
-          child_name: childName,
-          age: document.getElementById('age').value,
-          date: document.getElementById('date').value,
-          activity: document.getElementById('activity').value,
-          observation: document.getElementById('observation').value,
-          outcomes: document.getElementById('outcomes').value
-        };
+    // Default today's date
+    (function setDefaultDate() {
+      const dateEl = document.getElementById('date');
+      if (dateEl && !dateEl.value) {
+        const today = new Date();
+        dateEl.value = today.toISOString().slice(0,10);
       }
+    })();
+
+    // Hook up your helper AFTER it's loaded
+    window.addEventListener('DOMContentLoaded', () => {
+      attachReportForm('#observationForm', {
+        templateId: 1,
+        getContent: () => {
+          const select = document.getElementById('childSelect');
+          const selectedOption = select.options[select.selectedIndex];
+          const payload = {
+            child_name: selectedOption ? selectedOption.textContent : '',
+            age: document.getElementById('age').value,
+            date: document.getElementById('date').value || new Date().toISOString().slice(0,10),
+            activity: document.getElementById('activity').value.trim(),
+            observation: document.getElementById('observation').value.trim(),
+            outcomes: document.getElementById('outcomes').value.trim()
+          };
+          return JSON.stringify(payload);
+        }
+      });
     });
   </script>
+
+  <!-- Draft autosave -->
   <script>
-  const form = document.getElementById("observationForm");
-  const storageKey = "observationFormDraft";
+    const form = document.getElementById("observationForm");
+    const storageKey = "observationFormDraft";
 
-  // Load saved draft
-  window.addEventListener("DOMContentLoaded", () => {
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      const data = JSON.parse(saved);
-      Object.keys(data).forEach(key => {
-        const field = form.elements[key];
-        if (field) field.value = data[key];
-      });
-    }
-  });
-
-  // Auto-save on input
-  form.addEventListener("input", () => {
-    const formData = {};
-    Array.from(form.elements).forEach(el => {
-      if (el.name) formData[el.name] = el.value;
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const data = JSON.parse(saved);
+        Object.keys(data).forEach(key => {
+          const field = form.elements[key];
+          if (field) field.value = data[key];
+        });
+      }
     });
-    localStorage.setItem(storageKey, JSON.stringify(formData));
-  });
 
-  // Clear draft after successful submit
-  form.addEventListener("submit", () => {
-    localStorage.removeItem(storageKey);
-  });
-</script>
+    form.addEventListener("input", () => {
+      const formData = {};
+      Array.from(form.elements).forEach(el => {
+        if (el.name) formData[el.name] = el.value;
+      });
+      localStorage.setItem(storageKey, JSON.stringify(formData));
+    });
 
+    form.addEventListener("submit", () => {
+      localStorage.removeItem(storageKey);
+    });
+  </script>
 </body>
 </html>
