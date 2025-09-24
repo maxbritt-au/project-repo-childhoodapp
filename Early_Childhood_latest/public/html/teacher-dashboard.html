@@ -35,44 +35,46 @@
     </nav>
 
     <div class="main-content">
-      <div class="teacher-dashboard-grid">
-        <div class="card student-list-card">
-          <h3>Students</h3>
-          <ul class="student-list" id="students"></ul>
-        </div>
-
-        <div class="card recent-reports-card">
-        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-         <h3>Recent Reports</h3>
-         <a class="view-all-link" href="/report-list">View All</a>
-       </div>
-
-       <div id="recentReportsState" class="state-row">
-       </div>
-
-       <ul id="recentReportsList" class="reports-list"></ul>
-      </div>
-
-        <div class="card quick-actions-card">
-          <h3>Quick Actions</h3>
-          <div class="action-grid">
-            <a href="/teacher-feedback" id="add-feedback-btn">
-              <i class="fas fa-comment-medical"></i>
-              <span>Add Feedback</span>
-            </a>
-            <a href="#">
-              <i class="fas fa-file-export"></i>
-              <span>Export Report</span>
-            </a>
-            <a href="/add-child">
-              <i class="fas fa-child"></i>
-              <span>Add New Child</span>
-            </a>
-          </div>
-        </div>
+  <!-- Keep the 2-column grid: left = Quick Actions, right = Recent Reports -->
+  <div class="teacher-dashboard-grid">
+    
+    <!-- LEFT: Quick Actions -->
+    <div class="card quick-actions-card">
+      <h3>Quick Actions</h3>
+      <div class="action-grid">
+        <a href="/teacher-feedback" id="add-feedback-btn">
+          <i class="fas fa-comment-medical"></i>
+          <span>Add Feedback</span>
+        </a>
+        <a href="#">
+          <i class="fas fa-file-export"></i>
+          <span>Export Report</span>
+        </a>
+        <a href="/add-child">
+          <i class="fas fa-child"></i>
+          <span>Add New Child</span>
+        </a>
       </div>
     </div>
-  </div>
+
+    <!-- RIGHT: Recent Reports -->
+    <div class="card recent-reports-card">
+      <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <h3>Recent Reports</h3>
+        <a class="view-all-link" href="/report-list">View All</a>
+      </div>
+
+      <div id="recentReportsState" class="state-row" hidden>
+        <span id="recentReportsSpinner" hidden>Loading…</span>
+        <span id="recentReportsEmpty" hidden>No recent reports yet.</span>
+      </div>
+
+      <ul id="recentReportsList" class="reports-list"></ul>
+    </div>
+
+  </div> <!-- /.teacher-dashboard-grid -->
+</div> <!-- /.main-content -->
+
 
   <div id="logout-modal" class="modal">
     <div class="modal-content">
