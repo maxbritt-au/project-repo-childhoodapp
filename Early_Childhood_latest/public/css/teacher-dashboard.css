@@ -482,3 +482,74 @@ h3 {
   .nav-links { flex-wrap: wrap; justify-content: center; gap: 10px; }
   .student-list-item .student-info span { display: none; }
 }
+/* ---- Recent Reports: glass match ---- */
+.recent-reports-card {
+  /* keep your local vars if you like, but don't set a white card bg */
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --ring: rgba(0,0,0,0.06);
+  --accent: #6366f1;
+
+  /* ⬇️ make it look like the other .card elements */
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-subtle);
+  padding: 25px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.recent-reports-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* List container stays the same */
+.recent-reports-card .reports-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+/* ⬇️ rows also use the glass look, not flat white */
+.recent-reports-card .reports-list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 10px 12px;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.recent-reports-card .reports-list li:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-subtle);
+}
+
+/* text + badge + meta remain as you had */
+.recent-reports-card .reports-list li p { margin: 0 0 2px 0; color: var(--ink); display:flex; align-items:center; gap:8px; }
+.type-badge { font-size:.72rem; font-weight:600; padding:4px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; border:1px solid rgba(99,102,241,.25); }
+.recent-reports-card .meta { display:inline-block; font-size:.84rem; color: var(--muted); }
+
+/* button unchanged */
+.recent-reports-card .btn.small {
+  display:inline-flex; align-items:center; gap:6px; font-size:.85rem;
+  padding:8px 12px; border-radius:999px; border:1px solid rgba(99,102,241,.35);
+  color: var(--accent); background:#fff; text-decoration:none; transition: background .12s ease, box-shadow .12s ease;
+}
+.recent-reports-card .btn.small:hover { background: rgba(99,102,241,.06); box-shadow: 0 3px 12px var(--ring); }
+
+/* state row */
+#recentReportsState { display:flex; align-items:center; gap:10px; padding:8px 10px; color: var(--muted); font-size:.92rem; }
+
+/* Dark mode: rely on your global variables for consistency */
+body.dark-mode .recent-reports-card .reports-list li {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
