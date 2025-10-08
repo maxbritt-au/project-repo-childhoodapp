@@ -1,13 +1,16 @@
 // middleware/auth.js
-function requireTeacher(req, res, next) {
-  const role =
-    req.session?.user?.role ||
-    req.user?.role ||
-    req.headers['x-user-role']; // dev fallback
+function requireRoles(...allowed) {
+  return (req, res, next) => {
+    const role =
+      req.session?.user?.role ||
+      req.user?.role ||
+      req.headers['x-user-role']; // dev fallback
 
-  return role === 'teacher'
-    ? next()
-    : res.status(403).json({ error: 'Forbidden: teachers only' });
+    if (!role) return res.status(401).json({ error: 'Unauthorized' });
+
+    const ok = allowed.map(r => r.toLowerCase()).includes(String(role).toLowerCase());
+    return ok ? next() : res.status(403).json({ error: `Forbidden: requires one of [${allowed.join(', ')}]` });
+  };
 }
 
 function requireLogin(req, res, next) {
@@ -15,5 +18,4 @@ function requireLogin(req, res, next) {
   return res.status(401).json({ error: 'Unauthorized' });
 }
 
-// IMPORTANT: use module.exports, not `exports = {...}`
-module.exports = { requireTeacher, requireLogin };
+module.exports = { requireRoles, requireLogin };

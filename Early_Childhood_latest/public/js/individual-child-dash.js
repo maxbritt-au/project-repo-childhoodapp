@@ -1,6 +1,12 @@
+// individual-child-dash.js
+
 function getChildId() {
   const url = new URL(window.location.href);
-  return url.searchParams.get('childId');
+  return (
+    url.searchParams.get('childId') ||
+    url.searchParams.get('childID') ||
+    url.searchParams.get('childid')
+  );
 }
 
 const nameEl = document.getElementById('childName');
@@ -12,7 +18,7 @@ const newReportLink = document.getElementById('newReportLink');
 const allReportsLink = document.getElementById('allReportsLink');
 const qaNewReport = document.getElementById('qaNewReport');
 const qaAllReports = document.getElementById('qaAllReports');
-const deleteChildBtn = document.getElementById('deleteChildBtn'); // 🔑 new
+const deleteChildBtn = document.getElementById('deleteChildBtn'); // 🔑 delete button
 
 async function fetchJSON(url) {
   const res = await fetch(url, { credentials: 'include' });
@@ -49,18 +55,24 @@ async function loadChild(childId) {
   try {
     const child = await fetchJSON(`/api/children/${encodeURIComponent(childId)}`);
     const fullName = [child.first_name, child.last_name].filter(Boolean).join(' ') || 'Unknown';
-    nameEl.textContent = fullName;
 
-    if (child.profile_url) avatarEl.src = child.profile_url;
+    if (nameEl) nameEl.textContent = fullName;
+    if (avatarEl && child.profile_url) avatarEl.src = child.profile_url;
 
-    editProfileLink.href = `/html/edit-child-profile.html?childId=${encodeURIComponent(childId)}`;
-    newReportLink.href = `/html/student-report.html?childId=${encodeURIComponent(childId)}`;
-    allReportsLink.href = `/html/report-list.html?childId=${encodeURIComponent(childId)}`;
-    qaNewReport.href = newReportLink.href;
-    qaAllReports.href = allReportsLink.href;
+    const editUrl = `/html/edit-child-profile.html?childId=${encodeURIComponent(childId)}`;
+    const newUrl = `/html/student-report.html?childId=${encodeURIComponent(childId)}`;
+    const allUrl = `/html/report-list.html?childId=${encodeURIComponent(childId)}`;
+
+    // ✅ Guard against missing elements
+    if (editProfileLink) editProfileLink.href = editUrl;
+    if (newReportLink) newReportLink.href = newUrl;
+    if (allReportsLink) allReportsLink.href = allUrl;
+    if (qaNewReport) qaNewReport.href = newUrl;
+    if (qaAllReports) qaAllReports.href = allUrl;
+
   } catch (e) {
-    console.error(e);
-    nameEl.textContent = 'Unknown Child';
+    console.error('Error loading child:', e);
+    if (nameEl) nameEl.textContent = 'Unknown Child';
   }
 }
 
@@ -69,12 +81,12 @@ async function loadReports(childId) {
     const reports = await fetchJSON(`/api/reports?childId=${encodeURIComponent(childId)}&limit=10`);
     renderReports(reports);
   } catch (e) {
-    console.error(e);
+    console.error('Error loading reports:', e);
     renderReports([]);
   }
 }
 
-// 🔴 New delete handler
+// 🔴 Delete handler
 async function deleteChild(childId) {
   if (!childId) return alert('No child ID provided.');
 
@@ -101,10 +113,14 @@ async function deleteChild(childId) {
   }
 }
 
+// ==============================
+// ✅ Init script
+// ==============================
 (async function init() {
+  console.log('Child dashboard script loaded');
   const childId = getChildId();
   if (!childId) {
-    nameEl.textContent = 'No child selected';
+    if (nameEl) nameEl.textContent = 'No child selected';
     renderReports([]);
     return;
   }

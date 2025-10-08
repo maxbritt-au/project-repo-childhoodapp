@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db'); // <-- your mysql2 (callbacks) connection
-const { requireLogin, requireTeacher } = require('../middleware/auth');
+const { requireLogin, requireRoles } = require('../middleware/auth');
 
 // ---- helpers ----
 const ALLOWED_GENDERS = ['Male', 'Female', 'Other'];
@@ -16,13 +16,11 @@ function nonEmpty(v) {
 // ================================
 // GET /api/children
 // - Everyone logged-in can view
-// - Optional query params: q, gender, sort, limit, offset
-//   sort: last_asc | last_desc | age_asc | age_desc
 // ================================
 router.get('/', requireLogin, (req, res) => {
   const { q = '', gender = '', sort = 'last_asc' } = req.query;
 
-  // pagination (optional)
+  // pagination
   const limit = Math.min(parseInt(req.query.limit || '100', 10), 200);
   const offset = Math.max(parseInt(req.query.offset || '0', 10), 0);
 
@@ -40,12 +38,11 @@ router.get('/', requireLogin, (req, res) => {
 
   const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
 
-  // Sort handling
-  // age = derived from dob; for SQL we can sort by dob (older = smaller dob)
+  // sort
   let orderSql = 'ORDER BY last_name ASC, first_name ASC';
   if (sort === 'last_desc') orderSql = 'ORDER BY last_name DESC, first_name DESC';
-  else if (sort === 'age_desc') orderSql = 'ORDER BY dob ASC';   // oldest first
-  else if (sort === 'age_asc') orderSql = 'ORDER BY dob DESC';   // youngest first
+  else if (sort === 'age_desc') orderSql = 'ORDER BY dob ASC';
+  else if (sort === 'age_asc') orderSql = 'ORDER BY dob DESC';
 
   const sql = `
     SELECT child_id, first_name, last_name, dob, gender
@@ -92,10 +89,9 @@ router.get('/:id', requireLogin, (req, res) => {
 
 // ================================
 // POST /api/children
-// - Teachers only (create)
-// Body: { first_name, last_name, dob, gender }
+// - Teachers, Students, Admins, Principals can create
 // ================================
-router.post('/', requireTeacher, (req, res) => {
+router.post('/', requireRoles('teacher', 'student', 'admin', 'principal', 'director'), (req, res) => {
   const { first_name, last_name, dob, gender } = req.body || {};
 
   if (!nonEmpty(first_name) || !nonEmpty(last_name) || !nonEmpty(dob) || !nonEmpty(gender)) {
@@ -120,10 +116,9 @@ router.post('/', requireTeacher, (req, res) => {
 
 // ================================
 // PUT /api/children/:id
-// - Teachers only (update)
-// Body: any subset of { first_name, last_name, dob, gender }
+// - Teachers, Students, Admins, Principals can update
 // ================================
-router.put('/:id', requireTeacher, (req, res) => {
+router.put('/:id', requireRoles('teacher', 'student', 'admin', 'principal', 'director'), (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
     return res.status(400).json({ error: 'Invalid child id' });
@@ -156,9 +151,9 @@ router.put('/:id', requireTeacher, (req, res) => {
 
 // ================================
 // DELETE /api/children/:id
-// - Teachers only (delete)
+// - Teachers, Students, Admins, Principals can delete
 // ================================
-router.delete('/:id', requireTeacher, (req, res) => {
+router.delete('/:id', requireRoles('teacher', 'student', 'admin', 'principal', 'director'), (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
     return res.status(400).json({ error: 'Invalid child id' });
@@ -167,7 +162,6 @@ router.delete('/:id', requireTeacher, (req, res) => {
   db.query('DELETE FROM children WHERE child_id = ?', [id], (err, result) => {
     if (err) {
       console.error('Delete child error:', err);
-      // likely foreign key constraint (e.g., reports) — surface a friendly message
       if (err.code === 'ER_ROW_IS_REFERENCED_2') {
         return res.status(409).json({ error: 'Cannot delete: child has related records' });
       }
