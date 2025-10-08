@@ -4,184 +4,119 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Summative Assessment</title>
-  <style>
-    :root { --gap: 12px; --fg: #111; --muted:#555; --border:#ddd; --accent:#81c784; }
-    * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--fg); margin: 0; background: #E6FFE6; }
-    header { padding: 20px; background:#fff; border-bottom:1px solid var(--border); position: sticky; top: 0; }
-    main { max-width: 900px; margin: 0 auto; padding: 24px; }
-    h1 { margin: 0 0 6px; font-size: 1.5rem; }
-    p.help { margin: 0; color: var(--muted); font-size: 0.92rem; }
-    form { display: grid; gap: var(--gap); }
-    fieldset { border: 1px solid var(--border); padding: 16px; border-radius: 12px; background:#fff; }
-    legend { padding: 0 6px; font-weight: 600; }
-    label { display: block; font-weight: 600; margin-bottom: 6px; }
-    input[type="text"], input[type="date"], textarea, select {
-      width: 100%; padding: 10px 12px; border:1px solid var(--border); border-radius: 10px; background: #fff;
-    }
-    textarea { min-height: 110px; resize: vertical; }
-    .row, .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
-    .actions { display: flex; gap: 10px; justify-content: flex-end; }
-    button { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background:#fff; cursor: pointer; }
-    button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-    @media print {
-      header { display: none; }
-      body { background: #fff; }
-      fieldset { page-break-inside: avoid; }
-      textarea { height: auto; }
-    }
-  </style>
+  <link rel="stylesheet" href="../css/summative-assessment.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
+  <script defer src="../js/logout.js"></script>
 </head>
-<body>
-  <header>
-    <h1>
-      <i class="fas fa-chart-line" style="color:#81c784;margin-right:8px;"></i>
-      Summative Assessment
-    </h1>
-    <p class="help">Summarise achievement against learning outcomes and developmental domains for each child.</p>
-  </header>
-  <main>
-    <form id="summativeForm">
-      <input type="hidden" name="template_id" value="3" />
-      <fieldset style="border:2px solid #81c784; background:#e3ffe6;">
-        <legend>Child Details</legend>
-        <div class="two-col">
-          <div>
-            <label for="childSelect">Child</label>
-            <select id="childSelect" name="child_id" required>
-              <option value="">— Select a child —</option>
-            </select>
-          </div>
-          <div>
-            <label for="age">Age</label>
-            <input id="age" name="age" type="text" readonly />
-          </div>
-        </div>
-        <div class="two-col">
-          <div>
-            <label for="date">Date</label>
-            <input id="date" name="date" type="date" required />
-          </div>
-          <div>
-            <label for="period">Assessment Period</label>
-            <input id="period" name="period" type="text" placeholder="e.g. Term 1" />
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset style="border:2px solid #4a90e2; background:#f9f7fd;">
-        <legend>Summary</legend>
-        <label for="summary">Summary of Achievement</label>
-        <textarea id="summary" name="summary"></textarea>
-      </fieldset>
-
-      <fieldset style="border:2px solid #ffb347; background:#fffbe7;">
-        <legend>Developmental Domains & Outcomes</legend>
-        <label for="domains">Developmental Domains</label>
-        <textarea id="domains" name="domains"></textarea>
-        <label for="outcomes">Learning Outcomes</label>
-        <textarea id="outcomes" name="outcomes"></textarea>
-      </fieldset>
-
-      <div class="actions">
-        <button type="reset">Reset</button>
-        <button class="primary" type="submit">Save Report</button>
+<body class="light-mode">
+  <div class="dashboard-container">
+    <nav class="navbar">
+      <div class="navbar-left">
+        <a href="/html/student-dashboard.html" id="dashboardLogoLink" class="logo-link">
+          <img src="../img/logo-2.png" alt="Logo" class="logo" />
+        </a>
       </div>
-    </form>
-  </main>
+      <div class="navbar-center">
+        <ul class="nav-links">
+          <li><a href="/html/student-dashboard.html" id="dashboardLink">Dashboard</a></li>
+          <li><a href="/html/student-report.html" class="active">Reports</a></li>
+          <li><a href="/html/children-dashboard.html">Child Dashboard</a></li>
+        </ul>
+      </div>
+      <div class="navbar-right">
+        <i class="fas fa-sun theme-icon sun-icon"></i>
+        <label class="theme-switch" for="theme-toggle">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon"></i>
+        <button id="open-logout-modal" class="logout-link">Logout</button>
+      </div>
+    </nav>
 
-  <script src="../js/report-helper.js"></script>
-  <script>
-    async function loadChildren() {
-      try {
-        const res = await fetch('/api/children', { credentials: 'include' });
-        if (!res.ok) throw new Error('Failed to load children');
-        const children = await res.json();
-        const select = document.getElementById('childSelect');
-        children.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c.child_id;
-          opt.textContent = `${c.first_name} ${c.last_name}`;
-          select.appendChild(opt);
-        });
+    <main class="main-content">
+      <div class="form-layout">
+        <section class="form-panel card">
+          <h1 class="page-title">
+            <i class="fas fa-chart-line" style="margin-right: 10px;"></i>
+            Summative Assessment
+          </h1>
+          <p class="intro-text">
+            Summarise achievement against learning outcomes and developmental domains for each child.
+          </p>
+          
+          <div class="form-container">
+            <form id="summativeForm">
+              <input type="hidden" name="template_id" value="3" />
+              
+              <fieldset class="form-fieldset child-details">
+                <legend>Child Details</legend>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="childSelect">Child</label>
+                    <select id="childSelect" name="child_id" required>
+                      <option value="">— Select a child —</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="age">Age</label>
+                    <input id="age" name="age" type="text" readonly />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="date">Date</label>
+                    <input id="date" name="date" type="date" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="period">Assessment Period</label>
+                    <input id="period" name="period" type="text" placeholder="e.g. Term 1" />
+                  </div>
+                </div>
+              </fieldset>
 
- 
-        select.addEventListener('change', () => {
-          const chosen = children.find(c => c.child_id == select.value);
-          if (chosen?.dob) {
-            const dob = new Date(chosen.dob);
-            const diff = Date.now() - dob.getTime();
-            const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
-            document.getElementById('age').value = age;
-          } else {
-            document.getElementById('age').value = '';
-          }
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    loadChildren();
+              <fieldset class="form-fieldset summary-section">
+                <legend>Summary</legend>
+                <div class="form-group">
+                  <label for="summary">Summary of Achievement</label>
+                  <textarea id="summary" name="summary" rows="4"></textarea>
+                </div>
+              </fieldset>
 
+              <fieldset class="form-fieldset domains-section">
+                <legend>Developmental Domains & Outcomes</legend>
+                <div class="form-group">
+                  <label for="domains">Developmental Domains</label>
+                  <textarea id="domains" name="domains" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="outcomes">Learning Outcomes</label>
+                  <textarea id="outcomes" name="outcomes" rows="4"></textarea>
+                </div>
+              </fieldset>
 
-attachReportForm('#summativeForm', {
-  templateId: 3,
-  getContent: () => {
-    const childSelect = document.getElementById('childSelect');
-    const selectedChild = childSelect.options[childSelect.selectedIndex];
-    const childName = selectedChild ? selectedChild.textContent : '';
+              <div class="form-actions">
+                <button type="button" class="modal-btn secondary" id="cancelBtn">Cancel</button>
+                <button type="submit" class="modal-btn primary" id="submitBtn">Save Report</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
 
-    return {
-      child_name: childName,
-      age: document.getElementById('age').value, 
-      date: document.getElementById('date').value,
-      period: document.getElementById('period').value,
-      summary: document.getElementById('summary').value,
-      domains: document.getElementById('domains').value,
-      outcomes: document.getElementById('outcomes').value
-    };
-  }
-});
-
-  </script>
-  <script>
-  function enableAutoSave(formId) {
-    const form = document.getElementById(formId);
-    if (!form) return; // if form doesn't exist on this page, skip
-    const storageKey = formId + "_draft";
-
-    // Load saved draft
-    window.addEventListener("DOMContentLoaded", () => {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        const data = JSON.parse(saved);
-        Object.keys(data).forEach(key => {
-          const field = form.elements[key];
-          if (field) field.value = data[key];
-        });
-      }
-    });
-
-    // Auto-save on input
-    form.addEventListener("input", () => {
-      const formData = {};
-      Array.from(form.elements).forEach(el => {
-        if (el.name) formData[el.name] = el.value;
-      });
-      localStorage.setItem(storageKey, JSON.stringify(formData));
-    });
-
-    // Clear draft after successful submit
-    form.addEventListener("submit", () => {
-      localStorage.removeItem(storageKey);
-    });
-  }
-
-  // Attach auto-save to all your forms
-  enableAutoSave("observationForm");
-  enableAutoSave("anecdotalForm");
-  enableAutoSave("summativeForm");
-</script>
-
+  <div id="logout-modal" class="modal">
+    <div class="modal-content">
+      <h3>Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
+  </div>
+  <script defer src="../js/summative-assessment.js"></script>
 </body>
 </html>
