@@ -553,3 +553,29 @@ body.dark-mode .recent-reports-card .reports-list li {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
 }
+/* Modal visibility controlled by the 'open' class, as used by logout.js */
+.modal { display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.4);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  align-items: center; justify-content: center;
+}
+.modal.open { display: flex; }
+
+/* Theme switch visuals (same as other pages) */
+.theme-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+.theme-switch input { opacity: 0; width: 0; height: 0; }
+.theme-switch .slider {
+  position: absolute; inset: 0; cursor: pointer; border-radius: 28px;
+  background: var(--toggle-track, #b0b0b0); transition: .4s;
+}
+.theme-switch .slider:before {
+  content: ""; position: absolute; height: 20px; width: 20px; left: 4px; bottom: 4px;
+  background: var(--glass-solid, #fff); border-radius: 50%; transition: .4s;
+}
+#theme-toggle:checked + .slider:before { transform: translateX(22px); }
+
+/* Optional: icon emphasis */
+.theme-icon { color: var(--toggle-icon, #333); opacity: .5; transition: opacity .3s; }
+body.light-mode .sun-icon, body.dark-mode .moon-icon { opacity: 1; }
+

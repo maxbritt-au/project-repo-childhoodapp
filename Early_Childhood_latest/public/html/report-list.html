@@ -4,69 +4,68 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Reports</title>
+
+  <!-- Match the site look -->
   <link rel="stylesheet" href="../css/report-list.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site-wide scripts -->
+  <script defer src="../js/theme-toggle.js"></script>
   <script defer src="../js/logout.js"></script>
   <script defer src="../js/navbar.js"></script>
-  <style>
-    .card-table{background:#fff;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:16px;overflow:hidden}
-    .table-toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:6px 4px 12px 4px;flex-wrap:wrap}
-    .table-toolbar .search{flex:1 1 260px;display:flex;gap:8px;align-items:center}
-    .table-toolbar input[type="text"]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #e4e4e4;background:#fff;font-size:.95rem}
-    .reports-table{width:100%;border-collapse:collapse}
-    .reports-table th,.reports-table td{padding:12px 10px;border-bottom:1px solid #eee;text-align:left;font-size:.95rem}
-    .reports-table th{font-weight:700;color:#333;background:#fafafa}
-    .reports-table tr:hover{background:#fafcff}
-    .pill-link{display:inline-block;background:#eef3ff;color:#0b5fff;padding:6px 10px;border-radius:999px;text-decoration:none;font-weight:600;font-size:.9rem;white-space:nowrap}
-    .btn{border:1px solid #e0e0e0;background:#fff;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:.9rem}
-    .btn:hover{background:#fafafa}
-    .btn.danger{border-color:#ffd4d4;background:#ffecec;color:#b00020}
-    .btn.danger:hover{background:#ffdede}
-    .muted{color:#777}
-    .actions{display:flex;gap:8px;align-items:center;justify-content:flex-end}
-    .pagination{display:flex;gap:8px;align-items:center;justify-content:flex-end;padding-top:12px}
-    .pagination button{border:1px solid #e0e0e0;background:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
-    .pagination button:disabled{opacity:.5;cursor:not-allowed}
-    @media (max-width: 840px){
-      .reports-table th:nth-child(4),
-      .reports-table td:nth-child(4){display:none} /* hide Date on small screens */
-    }
-  </style>
 </head>
+
 <body class="light-mode">
   <div class="dashboard-container">
+    <!-- NAVBAR (same structure/classes as student-dashboard) -->
     <nav class="navbar">
       <div class="navbar-left">
         <a href="/teacher-dashboard" class="logo-link">
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
+
       <div class="navbar-center">
         <ul class="nav-links">
           <li><a href="/student-dashboard" id="dashboardLink">Dashboard</a></li>
           <li><a href="/student-report" class="active">Reports</a></li>
-          <li><a href="/children-dashboard" >Child Dashboard</a></li>
+          <li><a href="/children-dashboard">Child Dashboard</a></li>
         </ul>
       </div>
+
       <div class="navbar-right">
-        <i class="fas fa-bell notification-icon"></i>
-        <button id="open-logout-modal" class="logout-link">Logout</button>
+        <i class="fas fa-sun theme-icon sun-icon" aria-hidden="true"></i>
+        <label class="theme-switch" for="theme-toggle" aria-label="Toggle dark mode">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon" aria-hidden="true"></i>
+
+        <button id="open-logout-modal" class="logout-link" type="button">Logout</button>
       </div>
     </nav>
 
-    <main class="main-content wrap">
-      <h1 class="page-title">Reports</h1>
+    <main class="main-content">
+      <!-- Page header -->
+      <section class="card page-header">
+        <h1 class="page-title">
+          <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+          Reports
+        </h1>
+        <p class="intro">Browse, search and manage student reports.</p>
+      </section>
 
-      <div class="card card-table" id="reportsCard">
+      <!-- Table card -->
+      <section class="card table-card" id="reportsCard">
         <div class="table-toolbar">
           <div class="search">
-            <i class="fa-solid fa-magnifying-glass muted"></i>
+            <i class="fa-solid fa-magnifying-glass muted" aria-hidden="true"></i>
             <input id="searchInput" type="text" placeholder="Search by report type, student, or child..." />
           </div>
           <div class="muted" id="countLabel">Loading...</div>
         </div>
 
-        <div id="reportsList">
+        <div id="reportsList" class="table-shell">
           <p class="muted" style="padding: 8px 4px;">Loading reports...</p>
         </div>
 
@@ -75,10 +74,22 @@
           <span id="pageInfo" class="muted">Page 1</span>
           <button id="nextBtn" disabled>Next &raquo;</button>
         </div>
-      </div>
+      </section>
     </main>
   </div>
 
+  <!-- Logout modal (same IDs as other pages) -->
+  <div id="logout-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h3>Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page script (unchanged logic, just visuals handled by CSS) -->
   <script>
     (function() {
       const listEl = document.getElementById('reportsList');
@@ -88,22 +99,20 @@
       const nextBtn = document.getElementById('nextBtn');
       const pageInfo = document.getElementById('pageInfo');
 
-      // Client state
       let all = [];
       let filtered = [];
       let page = 1;
       const pageSize = 50;
 
-      // Server paging
       let serverOffset = 0;
       let serverHasMore = false;
 
       async function loadPage(offset = 0) {
         listEl.innerHTML = '<p class="muted" style="padding:8px 4px;">Loading reports...</p>';
         try {
-          // Prefer /all; fallback to /recent
           const urlAll = `/api/reports/all?limit=${pageSize}&offset=${offset}`;
           let res = await fetch(urlAll, { credentials: 'include' });
+
           if (!res.ok) {
             const urlRecent = `/api/reports/recent?limit=500`;
             res = await fetch(urlRecent, { credentials: 'include' });
@@ -182,23 +191,24 @@
         }).join('');
 
         listEl.innerHTML = `
-          <table class="reports-table" role="table" aria-label="Reports">
-            <thead>
-              <tr>
-                <th>Report Type</th>
-                <th>Author</th>
-                <th>Child</th>
-                <th>Date</th>
-                <th style="width:110px;">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows}
-            </tbody>
-          </table>
+          <div class="table-scroll">
+            <table class="reports-table" role="table" aria-label="Reports">
+              <thead>
+                <tr>
+                  <th>Report Type</th>
+                  <th>Author</th>
+                  <th>Child</th>
+                  <th>Date</th>
+                  <th style="width:110px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows}
+              </tbody>
+            </table>
+          </div>
         `;
 
-        // Wire delete buttons
         listEl.querySelectorAll('button[data-id]').forEach(btn => {
           btn.addEventListener('click', async () => {
             const id = btn.getAttribute('data-id');
@@ -209,11 +219,9 @@
             btn.textContent = 'Deleting…';
             try {
               await apiDelete(id);
-              // Remove from local arrays and re-render
               all = all.filter(r => String(r.id) !== String(id));
               filtered = filtered.filter(r => String(r.id) !== String(id));
               render();
-              // If we emptied this server page and there are more, reload next
               if (!all.length && serverHasMore) {
                 await loadPage(serverOffset + pageSize);
               }

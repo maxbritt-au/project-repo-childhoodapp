@@ -1,27 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const logoutModal = document.getElementById('logout-modal');
-    const openLogoutBtn = document.getElementById('open-logout-modal');
-    const cancelLogoutBtn = document.getElementById('cancel-logout-btn');
-    const confirmLogoutBtn = document.getElementById('confirm-logout-btn');
+  const modal = document.getElementById('logout-modal');
+  const openBtn = document.getElementById('open-logout-modal');
+  const cancelBtn = document.getElementById('cancel-logout-btn');
+  const confirmBtn = document.getElementById('confirm-logout-btn');
 
-    if (openLogoutBtn) {
-        openLogoutBtn.addEventListener('click', () => {
-            logoutModal.classList.add('open');
-        });
-    }
+  const showModal = () => {
+    if (!modal) return;
+    modal.classList.add('open');
+    modal.style.display = 'flex'; // override inline display:none if present
+  };
 
-    if (cancelLogoutBtn) {
-        cancelLogoutBtn.addEventListener('click', () => {
-            logoutModal.classList.remove('open');
-        });
-    }
+  const hideModal = () => {
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.style.display = 'none';
+  };
 
-    if (confirmLogoutBtn) {
-        confirmLogoutBtn.addEventListener('click', () => {
-            // Remove user session data from local storage
-            localStorage.removeItem('user');
-            // Redirect to the login page
-            window.location.href = '/';
-        });
-    }
+  if (openBtn) openBtn.addEventListener('click', (e) => { e.preventDefault(); showModal(); });
+  if (cancelBtn) cancelBtn.addEventListener('click', hideModal);
+
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', async () => {
+      try { await fetch('/api/logout', { method: 'POST', credentials: 'include' }); } catch {}
+      try { localStorage.removeItem('user'); } catch {}
+      window.location.href = '/';
+    });
+  }
+
+  // click outside & ESC to close (optional)
+  if (modal) {
+    window.addEventListener('click', (ev) => { if (ev.target === modal) hideModal(); });
+    window.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') hideModal(); });
+  }
 });

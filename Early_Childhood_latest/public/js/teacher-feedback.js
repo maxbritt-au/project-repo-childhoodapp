@@ -23,16 +23,12 @@ if (confirmLogoutBtn) {
   });
 }
 window.addEventListener('click', (event) => {
-  if (event.target === logoutModal) {
-    logoutModal.style.display = 'none';
-  }
+  if (event.target === logoutModal) logoutModal.style.display = 'none';
 });
 
 /* ================================
-   Helpers (DOM getters)
+   Small helpers used by exporter
 ================================ */
-
-/** Safely get trimmed innerText from the first matching selector (or '') */
 function getFirstText(selectors) {
   for (const sel of selectors) {
     const el = document.querySelector(sel);
@@ -44,29 +40,18 @@ function getFirstText(selectors) {
   return '';
 }
 
-/** URL query param getter (if you need it later) */
-function getParam(name) {
-  const u = new URL(window.location.href);
-  return u.searchParams.get(name);
-}
-
-/** Collect all existing/previous feedback items rendered on the page */
 function getFeedbackItemsFromDOM() {
-  // Add/adjust selectors to match your markup
   const containers = document.querySelectorAll(
     '#feedbackList .feedback-item, #feedbackList .feedback-card, .feedback-list .feedback-item, .feedback-entry, .feedback-card'
   );
-
   const items = [];
   containers.forEach(card => {
     const title =
       (card.querySelector('.feedback-title, h4, strong')?.innerText ||
-        card.querySelector('.card-title')?.innerText ||
-        '').trim();
+        card.querySelector('.card-title')?.innerText || '').trim();
     const body =
       (card.querySelector('.feedback-body, .body, p')?.innerText ||
-        card.querySelector('.card-text')?.innerText ||
-        '').trim();
+        card.querySelector('.card-text')?.innerText || '').trim();
     const ts =
       (card.querySelector('time, .feedback-date, .muted, .timestamp')?.innerText || '').trim();
     if (title || body || ts) items.push({ title, body, created_at: ts });
@@ -75,72 +60,7 @@ function getFeedbackItemsFromDOM() {
 }
 
 /* ================================
-   UNIVERSAL Report extractor (deduped)
-   Works across multiple report types by scanning headings
-   AND avoids duplicate sections
-================================ */
-function getReportFromDOM() {
-  const report = {
-    title: getFirstText(['#report-title', '.report-title', '.card-header h3', '.card-header h2', 'h2', 'h3']),
-    childName: getFirstText(['#childName', '.child-name', '.student-name']),
-    authorName: getFirstText(['#authorName', '.author-name', '.submitted-by']),
-    dateRange: getFirstText(['#reportDate', '.report-date', '.date-range']),
-    sections: []
-  };
-
-  // Lock onto the left-side report area if you have a consistent class
-  const container =
-    document.querySelector('.left-panel') ||           // <-- use your real left-panel class if you have one
-    document.querySelector('.report-card') ||
-    document.querySelector('.report-section') ||
-    document.querySelector('.card') ||
-    document.body;
-
-  // Scan in order; treat heading-like nodes as section titles and
-  // capture the immediate next text node as the content.
-  const els = [...container.querySelectorAll('h2, h3, h4, strong, b, p, div, span')];
-  const seen = new Set(); // prevent duplicate section titles
-
-  for (let i = 0; i < els.length; i++) {
-    const headingNode = els[i];
-    const nextNode = els[i + 1];
-
-    const headingText = (headingNode.innerText || '').trim();
-    const nextText = (nextNode?.innerText || '').trim();
-
-    // Filters: must have heading + body, heading not overlong, not repeated,
-    // looks like a label, and not equal to the overall card title.
-    if (!headingText || !nextText) continue;
-    if (headingText.length > 60) continue;
-    if (report.title && headingText === report.title) continue;
-
-    const isLabel = /^(observation|activity|context|learning|outcomes|progress|skills|development|area)/i
-      .test(headingText);
-
-    if (isLabel) {
-      const key = headingText.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      report.sections.push({
-        title: headingText,
-        content: nextText
-      });
-    }
-  }
-
-  // Fallback: if nothing detected, try a single big content block
-  if (!report.sections.length) {
-    const bigBlock = getFirstText(['#report-content', '.report-content', '.card-body']);
-    if (bigBlock) {
-      report.sections.push({ title: report.title || 'Report', content: bigBlock });
-    }
-  }
-
-  return report;
-}
-
-/* ================================
-   PDF helpers (wrapping, sections)
+   PDF helpers
 ================================ */
 function writeWrapped(doc, text, x, y, maxWidth, lineHeight) {
   const lines = doc.splitTextToSize(text || '', maxWidth);
@@ -153,88 +73,121 @@ function writeWrapped(doc, text, x, y, maxWidth, lineHeight) {
 }
 
 function writeSection(doc, heading, body, y) {
-  if (y > 280) { doc.addPage(); y = 20; }
+  if (y > 270) { doc.addPage(); y = 20; }
   doc.setFont('Helvetica', 'bold'); doc.setFontSize(14);
   doc.text(heading, 20, y); y += 8;
   doc.setFont('Helvetica', 'normal'); doc.setFontSize(12);
   y = writeWrapped(doc, body || '(none)', 20, y, 170, 6);
-  y += 6;
+  y += 8;
   return y;
 }
 
 /* ================================
-   Export PDF (report + all feedback)
+   Export PDF WITH cover page
+   (reads canonical metadata set by loadReport)
 ================================ */
 function exportPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  let y = 20;
+  let y = 30;
 
-  // 1) Report (dynamic, deduped)
-  const report = getReportFromDOM();
+  // Canonical metadata from page (set in teacher-feedback.html script)
+  const metaEl = document.getElementById('reportIdHidden');
+  const reportId = metaEl?.value || 'Unknown';
+  const childName = metaEl?.dataset?.childName || 'Unknown';
+  const childId = metaEl?.dataset?.childId || '';
+  const teacherName = metaEl?.dataset?.teacherName || 'Teacher';
 
-  // 2) Feedback
-  const existingFeedback = getFeedbackItemsFromDOM();
-  const feedbackTitle = (document.getElementById('feedback-title')?.value || '').trim();
-  const feedbackDescription = (document.getElementById('feedback-description')?.value || '').trim();
-  const allFeedback = [...existingFeedback];
+  const reportTitle = getFirstText(['.report-title', '#reportTitle']) || 'Report';
+  const studentInfo = getFirstText(['#studentInfo', '.student-info']);
+  let reportDate = '';
+  const m = /—\s*(.+)$/.exec(studentInfo);
+  if (m) reportDate = m[1];
+  const exportDate = new Date().toLocaleDateString();
 
-  if (feedbackTitle || feedbackDescription) {
-    allFeedback.unshift({
-      title: feedbackTitle || 'Untitled',
-      body: feedbackDescription || '',
-      created_at: new Date().toLocaleString()
+  // ===== COVER PAGE =====
+  doc.setFont('Helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.text(reportTitle, 20, y); y += 20;
+
+  doc.setFont('Helvetica', 'normal');
+  doc.setFontSize(14);
+  doc.text(`Child: ${childName}${childId ? ` (ID: ${childId})` : ''}${reportDate ? ` — ${reportDate}` : ''}`, 20, y); y += 10;
+  doc.text(`Report ID: ${reportId}`, 20, y); y += 10;
+  doc.text(`Teacher: ${teacherName}`, 20, y); y += 10;
+  doc.text(`Date Exported: ${exportDate}`, 20, y); y += 20;
+
+  doc.setFont('Helvetica', 'italic');
+  doc.setFontSize(12);
+  doc.text('Summarised report with developmental observations and feedback.', 20, y);
+
+  // New page after cover
+  doc.addPage();
+  y = 20;
+
+  // ===== REPORT SECTIONS =====
+  doc.setFont('Helvetica', 'bold'); doc.setFontSize(16);
+  doc.text('Report Details', 20, y); y += 12;
+
+  const sectionEls = document.querySelectorAll('#reportBody .report-chunk');
+  if (!sectionEls.length) {
+    y = writeSection(doc, 'Report', '(No content found)', y);
+  } else {
+    sectionEls.forEach((sec) => {
+      const title = (sec.querySelector('.report-sub-title')?.innerText || '').trim() || 'Section';
+      const text = (sec.querySelector('.report-text')?.innerText || '').trim() || '';
+      y = writeSection(doc, title, text, y);
     });
   }
 
-  // ========== HEADER ==========
-  doc.setFont('Helvetica', 'bold'); doc.setFontSize(18);
-  doc.text(`${report.title || 'Observation'} & Teacher Feedback`, 20, y); y += 12;
-
+  // ===== TEACHER FEEDBACK =====
+  if (y > 260) { doc.addPage(); y = 20; }
+  doc.setFont('Helvetica', 'bold'); doc.setFontSize(16);
+  doc.text('Teacher Feedback', 20, y); y += 10;
   doc.setFont('Helvetica', 'normal'); doc.setFontSize(12);
-  const child = getFirstText(['#childName', '.child-name', '.student-name']);
-  if (child) { doc.text(`Child: ${child}`, 20, y); y += 7; }
-  if (report.authorName) { doc.text(`Author: ${report.authorName}`, 20, y); y += 7; }
-  doc.text(`Date: ${report.dateRange || new Date().toLocaleString()}`, 20, y); y += 10;
 
-  // ========== REPORT SECTIONS ==========
-  if (report.sections && report.sections.length) {
-    for (const s of report.sections) {
-      y = writeSection(doc, s.title, s.content, y);
-    }
-  } else {
-    y = writeSection(doc, 'Report', '(No report content found)', y);
+  const feedbackCards = getFeedbackItemsFromDOM();
+  const newTitle = (document.getElementById('feedback-title')?.value || '').trim();
+  const newDesc = (document.getElementById('feedback-description')?.value || '').trim();
+  if (newTitle || newDesc) {
+    feedbackCards.unshift({
+      title: newTitle || 'Untitled Feedback',
+      body: newDesc || '',
+      created_at: new Date().toLocaleString(),
+    });
   }
 
-  // ========== FEEDBACK ==========
-  if (y > 280) { doc.addPage(); y = 20; }
-  doc.setFont('Helvetica', 'bold'); doc.setFontSize(14);
-  doc.text('Teacher Feedback', 20, y); y += 8;
-  doc.setFont('Helvetica', 'normal'); doc.setFontSize(12);
-
-  if (!allFeedback.length) {
-    y = writeWrapped(doc, '(No feedback)', 20, y, 170, 6);
+  if (!feedbackCards.length) {
+    y = writeWrapped(doc, '(No feedback provided)', 20, y, 170, 6);
   } else {
-    allFeedback.forEach((f, idx) => {
+    feedbackCards.forEach((f, i) => {
       if (y > 270) { doc.addPage(); y = 20; }
-      const heading = `${idx + 1}. ${f.title || 'Untitled'}`;
-      doc.setFont('Helvetica', 'bold'); doc.text(heading, 20, y); y += 6;
+      doc.setFont('Helvetica', 'bold');
+      doc.text(`${i + 1}. ${f.title}`, 20, y); y += 6;
       if (f.created_at) {
         doc.setFont('Helvetica', 'italic');
-        y = writeWrapped(doc, String(f.created_at), 20, y, 170, 6);
+        y = writeWrapped(doc, f.created_at, 20, y, 170, 6);
       }
       doc.setFont('Helvetica', 'normal');
-      y = writeWrapped(doc, f.body || '(no content)', 20, y, 170, 6);
-      y += 4;
+      y = writeWrapped(doc, f.body, 20, y, 170, 6);
+      y += 8;
     });
   }
 
-  // ========== SAVE ==========
-  doc.save('report_and_feedback.pdf');
+  // Footer
+  if (y > 260) { doc.addPage(); y = 20; }
+  doc.setDrawColor(200, 200, 200);
+  doc.line(20, y, 190, y); y += 10;
+  doc.setFontSize(10);
+  doc.text('Generated automatically from Early Childhood Teacher App', 20, y); y += 6;
+  doc.text(`© ${new Date().getFullYear()} Federation University Project`, 20, y);
+
+  const safeTitle = reportTitle.replace(/[^\w\s-]/g, '').slice(0, 40);
+  doc.save(`${safeTitle || 'report'}_with_feedback.pdf`);
 }
 
 /* ================================
-   Feedback form handler
+   Feedback form handler (optional toast)
 ================================ */
 const feedbackForm = document.getElementById('feedbackForm');
 if (feedbackForm) {
@@ -246,6 +199,5 @@ if (feedbackForm) {
 
 /* ================================
    Hook Export button
-   <button type="button" id="exportBtn">Export to PDF</button>
 ================================ */
 document.getElementById('exportBtn')?.addEventListener('click', exportPDF);

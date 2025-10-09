@@ -4,14 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Add Child</title>
+
+  <!-- Site-wide tokens / glass / modal styles -->
+  <link rel="stylesheet" href="../css/children-dashboard.css" />
+  <!-- Page-specific styles -->
   <link rel="stylesheet" href="../css/add-child.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Scripts (global first, then page) -->
   <script defer src="../js/router.js"></script>
   <script defer src="../js/theme-toggle.js"></script>
   <script defer src="../js/logout.js"></script>
   <script defer src="../js/navbar.js"></script>
   <script defer src="../js/add-child.js"></script>
 </head>
+
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
@@ -20,6 +27,7 @@
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
+
       <div class="navbar-center">
         <ul class="nav-links">
           <li><a href="/teacher-dashboard" id="dashboardLink">Dashboard</a></li>
@@ -27,28 +35,36 @@
           <li><a href="/children-dashboard" class="active">Child Dashboard</a></li>
         </ul>
       </div>
+
       <div class="navbar-right">
-        <i class="fas fa-bell notification-icon"></i>
-        <div class="theme-icons">
-          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
-          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
-        </div>
-        <button id="open-logout-modal" class="logout-link">Logout</button>
+        <!-- unified dark mode toggle -->
+        <i class="fas fa-sun theme-icon sun-icon" aria-hidden="true"></i>
+        <label class="theme-switch" for="theme-toggle" aria-label="Toggle dark mode">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon" aria-hidden="true"></i>
+
+        <!-- logout button handled by logout.js -->
+        <button id="open-logout-modal" class="logout-link" type="button">Logout</button>
       </div>
     </nav>
 
-    <div class="main-content">
+    <main class="main-content">
       <div class="add-child-form-container card">
         <h1 class="form-title">Add Child</h1>
+
         <form id="addChildForm">
           <div class="form-group">
             <label for="childName">Full name</label>
             <input id="childName" placeholder="First Last" required />
           </div>
+
           <div class="form-group">
             <label for="childDob">DOB</label>
             <input id="childDob" type="date" />
           </div>
+
           <div class="form-group">
             <label for="childGender">Gender</label>
             <select id="childGender">
@@ -58,17 +74,20 @@
               <option>Other</option>
             </select>
           </div>
+
           <div class="form-actions">
-            <a href="/html/children-dashboard.html" class="btn secondary">Cancel</a>
+            <a href="/children-dashboard" class="btn secondary">Cancel</a>
             <button class="btn primary" type="submit">Save</button>
           </div>
         </form>
       </div>
-    </div>
+    </main>
   </div>
-  <div id="logout-modal" class="modal">
-    <div class="modal-content">
-      <h3>Are you sure you want to log out?</h3>
+
+  <!-- Logout modal (IDs/classes expected by logout.js) -->
+  <div id="logout-modal" class="modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
+      <h3 id="logoutTitle">Are you sure you want to log out?</h3>
       <div class="modal-actions">
         <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
         <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>

@@ -49,7 +49,8 @@
           
           <div class="form-container">
             <form id="summativeForm">
-              <input type="hidden" name="template_id" value="3" />
+              <!-- Summative template id -->
+              <input type="hidden" id="templateId" value="3" />
               
               <fieldset class="form-fieldset child-details">
                 <legend>Child Details</legend>
@@ -57,7 +58,7 @@
                   <div class="form-group">
                     <label for="childSelect">Child</label>
                     <select id="childSelect" name="child_id" required>
-                      <option value="">— Select a child —</option>
+                      <option value="">Loading children…</option>
                     </select>
                   </div>
                   <div class="form-group">
@@ -117,6 +118,8 @@
       </div>
     </div>
   </div>
+
+  <!-- Page script -->
   <script defer src="../js/summative-assessment.js"></script>
 </body>
 </html>

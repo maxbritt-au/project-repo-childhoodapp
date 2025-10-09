@@ -4,19 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Teacher Dashboard</title>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="../css/teacher-dashboard.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script defer src="../js/router.js"></script>
-  <script defer src="../js/teacher-dashboard.js"></script>
+
+  <!-- Scripts (order consistent with other pages) -->
   <script defer src="../js/theme-toggle.js"></script>
   <script defer src="../js/logout.js"></script>
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/teacher-dashboard.js"></script>
 </head>
+
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
       <div class="navbar-left">
         <img src="../img/logo-2.png" alt="Logo" class="logo" />
       </div>
+
       <div class="navbar-center">
         <ul class="nav-links">
           <li><a href="/teacher-dashboard" class="active">Dashboard</a></li>
@@ -24,85 +30,74 @@
           <li><a href="/children-dashboard">Child Dashboard</a></li>
         </ul>
       </div>
+
       <div class="navbar-right">
-        <i class="fas fa-bell notification-icon"></i>
-        <div class="theme-icons">
-          <i class="fas fa-sun light-icon theme-toggle-btn"></i>
-          <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
-        </div>
-        <button id="open-logout-modal" class="logout-link">Logout</button>
+        <!-- Dark mode toggle (same pattern used across site) -->
+        <i class="fas fa-sun theme-icon sun-icon" aria-hidden="true"></i>
+        <label class="theme-switch" for="theme-toggle" aria-label="Toggle dark mode">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon" aria-hidden="true"></i>
+
+        <!-- Logout (handled by logout.js) -->
+        <button id="open-logout-modal" class="logout-link" type="button">Logout</button>
       </div>
     </nav>
 
     <div class="main-content">
-  <!-- Keep the 2-column grid: left = Quick Actions, right = Recent Reports -->
-  <div class="teacher-dashboard-grid">
-    
-    <!-- LEFT: Quick Actions -->
-    <div class="card quick-actions-card">
-      <h3>Quick Actions</h3>
-      <div class="action-grid">
-        <a href="/teacher-feedback" id="add-feedback-btn">
-          <i class="fas fa-comment-medical"></i>
-          <span>Add Feedback</span>
-        </a>
-        <a href="#">
-          <i class="fas fa-file-export"></i>
-          <span>Export Report</span>
-        </a>
-        <a href="/add-child">
-          <i class="fas fa-child"></i>
-          <span>Add New Child</span>
-        </a>
-      </div>
-    </div>
+      <!-- Keep the 2-column grid: left = Quick Actions, right = Recent Reports -->
+      <div class="teacher-dashboard-grid">
 
-    <!-- RIGHT: Recent Reports -->
-    <div class="card recent-reports-card">
-      <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <h3>Recent Reports</h3>
-        <a class="view-all-link" href="/report-list">View All</a>
-      </div>
+        <!-- LEFT: Quick Actions -->
+        <div class="card quick-actions-card">
+          <h3>Quick Actions</h3>
+          <div class="action-grid">
+            <!-- Rerouted -->
+            <a href="/report-list" id="add-feedback-btn">
+              <i class="fas fa-comment-medical"></i>
+              <span>Add Feedback</span>
+            </a>
+            <!-- Changed to Child Dashboard -->
+            <a href="/children-dashboard" id="export-report-btn">
+              <i class="fas fa-child"></i>
+              <span>Children Dashboard</span>
+            </a>
+            <a href="/add-child">
+              <i class="fas fa-child"></i>
+              <span>Add New Child</span>
+            </a>
+          </div>
+        </div>
 
-      <div id="recentReportsState" class="state-row" hidden>
-        <span id="recentReportsSpinner" hidden>Loading…</span>
-        <span id="recentReportsEmpty" hidden>No recent reports yet.</span>
-      </div>
+        <!-- RIGHT: Recent Reports -->
+        <div class="card recent-reports-card">
+          <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <h3>Recent Reports</h3>
+            <a class="view-all-link" href="/report-list">View All</a>
+          </div>
 
-      <ul id="recentReportsList" class="reports-list"></ul>
-    </div>
+          <div id="recentReportsState" class="state-row" hidden>
+            <span id="recentReportsSpinner" hidden>Loading…</span>
+            <span id="recentReportsEmpty" hidden>No recent reports yet.</span>
+          </div>
 
-  </div> <!-- /.teacher-dashboard-grid -->
-</div> <!-- /.main-content -->
+          <ul id="recentReportsList" class="reports-list"></ul>
+        </div>
 
+      </div> <!-- /.teacher-dashboard-grid -->
+    </div> <!-- /.main-content -->
+  </div> <!-- /.dashboard-container -->
 
-  <div id="logout-modal" class="modal">
-    <div class="modal-content">
-      <h3>Are you sure you want to log out?</h3>
+  <!-- Logout modal (IDs match logout.js expectations) -->
+  <div id="logout-modal" class="modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
+      <h3 id="logoutTitle">Are you sure you want to log out?</h3>
       <div class="modal-actions">
         <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
         <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
       </div>
     </div>
   </div>
-
-  <script>
-    const logoutModal = document.getElementById("logout-modal");
-    const openLogout = document.getElementById("open-logout-modal");
-    const cancelLogoutBtn = document.getElementById("cancel-logout-btn");
-    const confirmLogoutBtn = document.getElementById("confirm-logout-btn");
-
-    openLogout?.addEventListener("click", () => logoutModal.style.display = "block");
-    cancelLogoutBtn?.addEventListener("click", () => logoutModal.style.display = "none");
-    confirmLogoutBtn?.addEventListener("click", async () => {
-      localStorage.removeItem("role");
-      localStorage.removeItem("userId");
-      try { await fetch("/api/logout", { method: "POST", credentials: "include" }); } catch(e) {}
-      window.location.href = "/";
-    });
-    window.addEventListener("click", (e) => {
-      if (e.target === logoutModal) logoutModal.style.display = "none";
-    });
-  </script>
 </body>
 </html>

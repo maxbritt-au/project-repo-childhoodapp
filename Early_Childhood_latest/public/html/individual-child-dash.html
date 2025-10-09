@@ -4,10 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Individual Child Dashboard</title>
-  <script defer src="../js/logout.js"></script>
+
+  <!-- CSS -->
   <link rel="stylesheet" href="../css/individual-child-dash.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- JS (same order as other pages) -->
+  <script defer src="../js/theme-toggle.js"></script>
+  <script defer src="../js/logout.js"></script>
+  <script defer src="../js/navbar.js"></script>
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/individual-child-dash.js"></script>
 </head>
+
 <body class="light-mode">
   <div class="dashboard-container">
     <nav class="navbar">
@@ -16,6 +25,7 @@
           <img src="../img/logo-2.png" alt="Logo" class="logo" />
         </a>
       </div>
+
       <div class="navbar-center">
         <ul class="nav-links">
           <li><a href="/html/teacher-dashboard.html" id="dashboardLink">Dashboard</a></li>
@@ -23,22 +33,28 @@
           <li><a href="/children-dashboard" class="active">Child Dashboard</a></li>
         </ul>
       </div>
+
       <div class="navbar-right">
-        <i class="fas fa-bell notification-icon"></i>
-        <div class="theme-icons">
-          <i class="fas fa-sun light-icon theme-toggle-btn" aria-label="Light Mode"></i>
-          <i class="fas fa-moon dark-icon theme-toggle-btn" aria-label="Dark Mode"></i>
-        </div>
-        <button id="open-logout-modal" class="logout-link">Logout</button>
+        <!-- Match the working theme toggle used on other pages -->
+        <i class="fas fa-sun theme-icon sun-icon" aria-hidden="true"></i>
+        <label class="theme-switch" for="theme-toggle" aria-label="Toggle dark mode">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon" aria-hidden="true"></i>
+
+        <!-- Logout button (IDs expected by logout.js) -->
+        <button id="open-logout-modal" class="logout-link" type="button">Logout</button>
       </div>
     </nav>
 
+    <!-- Hero -->
     <section class="profile-hero-card glassy-card">
       <img src="../img/student-main.png" alt="Profile" class="hero-profile-pic"/>
       <div class="hero-profile-info">
         <h2 id="childName">Loading…</h2>
         <div class="hero-actions">
-          </a>
+          <!-- removed stray closing </a> -->
           <button id="deleteChildBtn" class="action-btn danger-btn">
             <i class="fa-solid fa-trash"></i> Delete Child
           </button>
@@ -46,6 +62,7 @@
       </div>
     </section>
 
+    <!-- Main -->
     <div class="main-content">
       <section class="content-grid">
         <article class="card">
@@ -74,6 +91,7 @@
     </div>
   </div>
 
+  <!-- Logout modal (no inline style; logout.js toggles .open) -->
   <div id="logout-modal" class="modal" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
       <h3 id="logoutTitle">Are you sure you want to log out?</h3>
@@ -83,9 +101,5 @@
       </div>
     </div>
   </div>
-  <script defer src="../js/router.js"></script>
-  <script defer src="../js/individual-child-dash.js"></script>
-  <script defer src="../js/theme-toggle.js"></script>
-  <script defer src="../js/navbar.js"></script>
 </body>
 </html>

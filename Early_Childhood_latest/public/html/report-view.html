@@ -5,130 +5,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Report Detail</title>
 
-  <!-- Keep your site-wide styles -->
+  <!-- Reuse your site styles / tokens -->
   <link rel="stylesheet" href="../css/children-dashboard.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site scripts (same order you use elsewhere) -->
+  <script defer src="../js/theme-toggle.js"></script>
   <script defer src="../js/logout.js"></script>
   <script defer src="../js/navbar.js"></script>
 
   <style>
-    /* ===== Report View Page ===== */
-    .report-wrapper {
-      display: flex;
-      justify-content: center;
-      padding: 40px 16px;
+    /* Modal show/hide the same way logout.js expects */
+    .modal { display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,.4);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      align-items: center; justify-content: center;
     }
+    .modal.open { display: flex; }
+
+    /* Report page styles using your theme tokens for light/dark */
+    .report-wrapper { display: flex; justify-content: center; padding: 40px 16px; }
     .report-card {
-      width: 100%;
-      max-width: 820px;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 8px 26px rgba(0,0,0,0.15);
-      padding: 28px 32px;
+      width: 100%; max-width: 820px;
+      background: var(--glass-solid);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px; border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-subtle); padding: 28px 32px;
+      color: var(--text-primary);
     }
+    .report-card:hover { box-shadow: var(--shadow-hover); }
 
-    .report-header {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-    .report-header h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .report-header .muted {
-      font-size: 0.95rem;
-      color: #555;
-      font-style: italic;
-      margin: 0 0 10px 0;
-    }
+    .report-header { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+    .report-header h1 { font-size:1.6rem; font-weight:700; margin:0; display:flex; align-items:center; gap:10px; }
+    .report-header .muted { font-size:0.95rem; color: var(--muted); font-style:italic; margin:0 0 10px 0; }
 
-    .report-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
+    .report-actions { display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
     .btn {
-      border: 1px solid #e0e0e0;
-      background: #fff;
-      padding: 8px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 0.92rem;
+      border:1px solid var(--glass-border); background: var(--glass-solid);
+      color: var(--text-secondary); padding:8px 12px; border-radius:10px; cursor:pointer; font-size:0.92rem;
+      transition: background .2s ease;
     }
-    .btn:hover { background: #fafafa; }
-    .btn.link { text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-    .btn.primary { background: #eef3ff; color: #0b5fff; border-color: #dfe6ff; }
-    .btn.icon { padding: 8px 10px; }
+    .btn:hover { background: var(--glass-bg); }
+    .btn.link { text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
+    .btn.primary { background: var(--glass-solid); color: var(--accent); border-color: var(--glass-border); }
+    .btn.icon { padding:8px 10px; }
 
     .report-card fieldset {
-      border: none;
-      border-radius: 14px;
-      padding: 20px 18px 14px 18px;
-      margin-bottom: 20px;
-      background: #fff;
+      border:none; border-radius:14px; padding:20px 18px 14px 18px;
+      margin-bottom:20px; background: var(--glass-solid);
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      border-left: 4px solid transparent;
     }
-    .report-card legend {
-      font-weight: 600;
-      font-size: 1.05rem;
-      padding: 0 6px;
-      margin-bottom: 10px;
-      color: #333;
+    .report-card legend { font-weight:600; font-size:1.05rem; padding:0 6px; margin-bottom:10px; color: var(--text-primary); }
+    .report-card label { font-weight:600; margin-bottom:6px; display:block; color: var(--text-primary); font-size:0.95rem; }
+    .report-card input, .report-card textarea {
+      width:100%; border-radius:10px; border:1.5px solid var(--glass-border);
+      padding:10px 12px; font-size:0.95rem; background: var(--glass-bg); color: var(--text-primary);
+      margin-bottom:12px; resize:vertical;
     }
+    .report-card input[readonly], .report-card textarea[readonly] {
+      background: var(--glass-bg); border-color: var(--glass-border); color: var(--text-secondary);
+    }
+    .report-card textarea { min-height:110px; font-family:inherit; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media (max-width:700px){ .two-col{ grid-template-columns:1fr; } }
 
-    .report-card label {
-      font-weight: 600;
-      margin-bottom: 6px;
-      display: block;
-      color: #222;
-      font-size: 0.95rem;
-    }
-    .report-card input,
-    .report-card textarea {
-      width: 100%;
-      border-radius: 10px;
-      border: 1.5px solid #ddd;
-      padding: 10px 12px;
-      font-size: 0.95rem;
-      background: #f9f9f9;
-      color: #333;
-      margin-bottom: 12px;
-      resize: vertical;
-    }
-    .report-card input[readonly],
-    .report-card textarea[readonly] {
-      background: #f3f3f3;
-      border-color: #e0e0e0;
-      color: #555;
-    }
-    .report-card textarea { min-height: 110px; font-family: inherit; }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
-
-    /* Template tints */
-    .template-1 fieldset { border-left: 4px solid #4a90e2; }
-    .template-2 fieldset { border-left: 4px solid #ffb347; }
-    .template-3 fieldset { border-left: 4px solid #81c784; }
-
-    .title-icon.eye   { color: #4a90e2; }
-    .title-icon.book  { color: #ffb347; }
-    .title-icon.chart { color: #81c784; }
+    /* Template color tints */
+    .template-1 fieldset{ border-left-color:#4a90e2; }
+    .template-2 fieldset{ border-left-color:#ffb347; }
+    .template-3 fieldset{ border-left-color:#81c784; }
+    .title-icon.eye{color:#4a90e2;} .title-icon.book{color:#ffb347;} .title-icon.chart{color:#81c784;}
   </style>
 </head>
 
@@ -143,12 +90,20 @@
       <div class="navbar-center">
         <ul class="nav-links">
           <li><a href="/student-dashboard" id="dashboardLink">Dashboard</a></li>
-          <li><a href="/student-report" id="dashboardLink" class="active">Reports</a></li>
+          <li><a href="/student-report" class="active">Reports</a></li>
           <li><a href="/children-dashboard">Child Dashboard</a></li>
         </ul>
       </div>
       <div class="navbar-right">
-        <i class="fas fa-bell notification-icon" aria-hidden="true"></i>
+        <!-- Dark mode toggle consistent with the rest of the site -->
+        <i class="fas fa-sun theme-icon sun-icon" aria-hidden="true"></i>
+        <label class="theme-switch" for="theme-toggle" aria-label="Toggle dark mode">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon" aria-hidden="true"></i>
+
+        <!-- Logout button (handled by logout.js) -->
         <button id="open-logout-modal" class="logout-link" type="button">Logout</button>
       </div>
     </nav>
@@ -159,7 +114,6 @@
           <header class="report-header">
             <h1 id="reportTitle">Loading…</h1>
             <p id="reportMeta" class="muted"></p>
-
             <div class="report-actions">
               <a id="backLink" href="/report-list" class="btn link">
                 <i class="fa-solid fa-arrow-left"></i> Back to Reports
@@ -167,7 +121,6 @@
               <button id="printBtn" class="btn icon" type="button" title="Print">
                 <i class="fa-solid fa-print"></i>
               </button>
-              <!-- Feedback button will be injected here by JS -->
             </div>
           </header>
 
@@ -179,210 +132,186 @@
     </main>
   </div>
 
+  <!-- Logout modal (no inline display; logout.js toggles .open) -->
+  <div id="logout-modal" class="modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
+      <h3 id="logoutTitle">Are you sure you want to log out?</h3>
+      <div class="modal-actions">
+        <button id="cancel-logout-btn" class="modal-btn secondary">Cancel</button>
+        <button id="confirm-logout-btn" class="modal-btn primary">Log Out</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     // Print
-    document.getElementById('printBtn')?.addEventListener('click', () => window.print());
+    document.getElementById('printBtn')?.addEventListener('click',()=>window.print());
 
-    // Load and render the report into the fieldset layout you already use
-    async function loadReport() {
-      const params = new URLSearchParams(window.location.search);
-      const reportId = params.get('reportId') || params.get('id');
-      const form = document.getElementById('reportViewForm');
+    async function loadReport(){
+      const params=new URLSearchParams(window.location.search);
+      const reportId=params.get('reportId')||params.get('id');
+      const form=document.getElementById('reportViewForm');
+      const back=document.getElementById('backLink');
+      const childId=params.get('childId');
+      if(back) back.href=childId?`/report-list?childId=${encodeURIComponent(childId)}`:'/report-list';
+      if(!reportId){ form.innerHTML='<p style="color:#b00020;">No report ID provided.</p>'; return; }
 
-      // keep childId in the back link if present
-      const childId = params.get('childId');
-      const back = document.getElementById('backLink');
-      if (back) back.href = childId ? `/report-list?childId=${encodeURIComponent(childId)}` : '/report-list';
+      try{
+        const res=await fetch(`/api/reports/${encodeURIComponent(reportId)}`,{credentials:'include'});
+        if(!res.ok) throw new Error('Report not found');
+        const report=await res.json();
+        if(!report||!report.template_id){ form.innerHTML='<p style="color:#b00020;">Invalid report data.</p>'; return; }
 
-      if (!reportId) {
-        form.innerHTML = '<p style="color:#b00020;">No report ID provided.</p>';
-        return;
-      }
+        // Parse JSON content safely
+        if(typeof report.content==='string'){ try{ report.content=JSON.parse(report.content);}catch{report.content={};}}
+        report.content=report.content||{};
 
-      try {
-        const res = await fetch(`/api/reports/${encodeURIComponent(reportId)}`, { credentials: 'include' });
-        if (!res.ok) throw new Error('Report not found');
-        const report = await res.json();
-
-        if (!report || !report.template_id) {
-          form.innerHTML = '<p style="color:#b00020;">Report not found or invalid data.</p>';
-          return;
-        }
-        if (typeof report.content === 'string') {
-          try { report.content = JSON.parse(report.content); } catch { report.content = {}; }
-        }
-        report.content = report.content || {};
-
-        if (!report.content.age && report.child_dob) {
-          const dob = new Date(report.child_dob);
-          const diff = Date.now() - dob.getTime();
-          report.content.age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+        // Compute age if dob present
+        if(!report.content.age && report.dob){
+          const dob=new Date(report.dob); const diff=Date.now()-dob.getTime();
+          report.content.age=Math.floor(diff/(1000*60*60*24*365.25));
         }
 
-        const titleEl = document.getElementById('reportTitle');
-        const cardEl  = document.getElementById('reportCard');
-        let iconHtml = '';
-        let titleTxt = 'Report';
-
-        if (String(report.template_id) === '1') {
-          iconHtml = '<i class="fa-solid fa-eye title-icon eye" aria-hidden="true"></i>';
-          titleTxt = 'Observation Report';
-        } else if (String(report.template_id) === '2') {
-          iconHtml = '<i class="fa-solid fa-book-open title-icon book" aria-hidden="true"></i>';
-          titleTxt = 'Anecdotal Record';
-        } else if (String(report.template_id) === '3') {
-          iconHtml = '<i class="fa-solid fa-chart-line title-icon chart" aria-hidden="true"></i>';
-          titleTxt = 'Summative Assessment';
-        }
-        titleEl.innerHTML = iconHtml + ' ' + titleTxt;
-
-      
+        const titleEl=document.getElementById('reportTitle');
+        const cardEl=document.getElementById('reportCard');
+        let iconHtml='', titleTxt='Report';
+        if(String(report.template_id)==='1'){ iconHtml='<i class="fa-solid fa-eye title-icon eye"></i>'; titleTxt='Observation Report'; }
+        else if(String(report.template_id)==='2'){ iconHtml='<i class="fa-solid fa-book-open title-icon book"></i>'; titleTxt='Anecdotal Record'; }
+        else if(String(report.template_id)==='3'){ iconHtml='<i class="fa-solid fa-chart-line title-icon chart"></i>'; titleTxt='Summative Assessment'; }
+        titleEl.innerHTML=iconHtml+' '+titleTxt;
         cardEl.classList.remove('template-1','template-2','template-3');
-        cardEl.classList.add('template-' + String(report.template_id));
+        cardEl.classList.add('template-'+String(report.template_id));
 
-    
-        const childName = report.child_name || report.content.child_name || 'Unknown';
-        const childAge  = report.content.age ?? '';
-        const dateStr   = report.content.date || (report.submitted_at ? new Date(report.submitted_at).toLocaleDateString() : '');
-        document.getElementById('reportMeta').textContent =
-          `Child: ${childName}${childAge ? ' | Age: ' + childAge : ''}${dateStr ? ' | Date: ' + dateStr : ''}`;
+        const childName=
+          report.child_name ||
+          [report.first_name, report.last_name].filter(Boolean).join(' ').trim() ||
+          report.content.child_name || 'Unknown';
 
-        const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+        const dateStr=report.content.date ||
+                      (report.submitted_at?new Date(report.submitted_at).toLocaleDateString():'');
+        document.getElementById('reportMeta').textContent=
+          `Child: ${childName}${report.content.age?` | Age: ${report.content.age}`:''}${dateStr?` | Date: ${dateStr}`:''}`;
 
-        if (String(report.template_id) === '2') {
-      
-          form.innerHTML = `
+        const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+        // === Template-specific renderers ===
+        if(String(report.template_id)==='2'){ // Anecdotal
+          form.innerHTML=`
             <fieldset>
               <legend>Child Details</legend>
               <div class="two-col">
                 <div><label>Child</label><input type="text" value="${esc(childName)}" readonly></div>
-                <div><label>Age</label><input type="text" value="${esc(report.content.age || '')}" readonly></div>
+                <div><label>Age</label><input type="text" value="${esc(report.content.age||'')}" readonly></div>
               </div>
               <div class="two-col">
-                <div><label>Date</label><input type="text" value="${esc(report.content.date || '')}" readonly></div>
-                <div><label>Setting / Context</label><input type="text" value="${esc(report.content.setting || '')}" readonly></div>
+                <div><label>Date</label><input type="text" value="${esc(report.content.date||
+                  (report.submitted_at?new Date(report.submitted_at).toLocaleDateString():'')
+                )}" readonly></div>
+                <div><label>Setting / Context</label><input type="text" value="${esc(report.content.setting||report.content.context||'')}" readonly></div>
               </div>
             </fieldset>
 
             <fieldset>
               <legend>Observation</legend>
               <label>Narrative observation</label>
-              <textarea readonly>${esc(report.content.observation || '')}</textarea>
+              <textarea readonly>${esc(report.content.observation||report.content.narrative||'')}</textarea>
             </fieldset>
 
             <fieldset>
               <legend>Analysis</legend>
+              <label>Significance / Interpretation</label>
+              <textarea readonly>${esc(report.content.significance||'')}</textarea>
               <label>Developmental domain(s)</label>
-              <textarea readonly>${esc(report.content.domains || '')}</textarea>
+              <textarea readonly>${esc(report.content.domains||'')}</textarea>
               <label>EYLF links</label>
-              <textarea readonly>${esc(report.content.eylf || '')}</textarea>
+              <textarea readonly>${esc(report.content.eylf||'')}</textarea>
               <label>Theory</label>
-              <textarea readonly>${esc(report.content.theory || '')}</textarea>
+              <textarea readonly>${esc(report.content.theory||'')}</textarea>
             </fieldset>
 
             <fieldset>
               <legend>Future Planning</legend>
               <label>Future planning ideas</label>
-              <textarea readonly>${esc(report.content.planning_ideas || '')}</textarea>
-            </fieldset>
-          `;
-        } else if (String(report.template_id) === '1') {
-         
-          form.innerHTML = `
+              <textarea readonly>${esc(report.content.planning_ideas||'')}</textarea>
+            </fieldset>`;
+        }
+        else if(String(report.template_id)==='1'){ // Observation
+          form.innerHTML=`
             <fieldset>
               <legend>Child Details</legend>
               <div class="two-col">
                 <div><label>Child</label><input type="text" value="${esc(childName)}" readonly></div>
-                <div><label>Age</label><input type="text" value="${esc(report.content.age || '')}" readonly></div>
+                <div><label>Age</label><input type="text" value="${esc(report.content.age||'')}" readonly></div>
               </div>
               <div class="two-col">
-                <div><label>Date</label><input type="text" value="${esc(report.content.date || '')}" readonly></div>
-                <div><label>Activity / Context</label><input type="text" value="${esc(report.content.activity || '')}" readonly></div>
+                <div><label>Date</label><input type="text" value="${esc(report.content.date||'')}" readonly></div>
+                <div><label>Activity / Context</label><input type="text" value="${esc(report.content.activity||'')}" readonly></div>
               </div>
             </fieldset>
 
             <fieldset>
               <legend>Observation</legend>
               <label>Observation Notes</label>
-              <textarea readonly>${esc(report.content.observation || '')}</textarea>
+              <textarea readonly>${esc(report.content.observation||'')}</textarea>
             </fieldset>
 
             <fieldset>
               <legend>Learning Outcomes</legend>
               <label>Learning Outcomes</label>
-              <textarea readonly>${esc(report.content.outcomes || '')}</textarea>
-            </fieldset>
-          `;
-        } else {
-      
-          form.innerHTML = `
+              <textarea readonly>${esc(report.content.outcomes||'')}</textarea>
+            </fieldset>`;
+        }
+        else{ // Summative
+          form.innerHTML=`
             <fieldset>
               <legend>Child Details</legend>
               <div class="two-col">
                 <div><label>Child</label><input type="text" value="${esc(childName)}" readonly></div>
-                <div><label>Age</label><input type="text" value="${esc(report.content.age || '')}" readonly></div>
+                <div><label>Age</label><input type="text" value="${esc(report.content.age||'')}" readonly></div>
               </div>
               <div class="two-col">
-                <div><label>Date</label><input type="text" value="${esc(report.content.date || '')}" readonly></div>
-                <div><label>Assessment Period</label><input type="text" value="${esc(report.content.period || '')}" readonly></div>
+                <div><label>Date</label><input type="text" value="${esc(report.content.date||'')}" readonly></div>
+                <div><label>Assessment Period</label><input type="text" value="${esc(report.content.period||'')}" readonly></div>
               </div>
             </fieldset>
 
             <fieldset>
               <legend>Summary</legend>
               <label>Summary of Achievement</label>
-              <textarea readonly>${esc(report.content.summary || '')}</textarea>
+              <textarea readonly>${esc(report.content.summary||'')}</textarea>
             </fieldset>
 
             <fieldset>
               <legend>Developmental Domains & Outcomes</legend>
               <label>Developmental Domains</label>
-              <textarea readonly>${esc(report.content.domains || '')}</textarea>
+              <textarea readonly>${esc(report.content.domains||'')}</textarea>
               <label>Learning Outcomes</label>
-              <textarea readonly>${esc(report.content.outcomes || '')}</textarea>
-            </fieldset>
-          `;
+              <textarea readonly>${esc(report.content.outcomes||'')}</textarea>
+            </fieldset>`;
         }
 
-        // After successful render, inject the role-based Feedback button
         injectFeedbackButton(reportId);
-
-      } catch (err) {
-        form.innerHTML = `<p style="color:#b00020;">Error loading report: ${esc(err.message || 'Unknown error')}</p>`;
+      }catch(err){
+        form.innerHTML=`<p style="color:#b00020;">Error loading report: ${err.message}</p>`;
       }
-
-      function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
     }
 
-    // Role-based button injection (right-aligned)
-    function injectFeedbackButton(reportId) {
-      const actionsRow = document.querySelector('.report-actions');
-      if (!actionsRow || !reportId) return;
-
-      let user = null;
-      try { user = JSON.parse(localStorage.getItem('user') || '{}'); } catch { user = {}; }
-
-      const role = (user.role || '').toLowerCase();
-      if (!role) return;
-
-      const btn = document.createElement('button');
-      btn.id = 'feedbackBtn';
-      btn.type = 'button';
-      btn.className = 'btn primary';
-      btn.style.marginLeft = 'auto'; // push to right
-
-      if (role === 'teacher') {
-        btn.textContent = 'Add Feedback';
-        btn.onclick = () => window.location.href = `/teacher-feedback?reportId=${encodeURIComponent(reportId)}`;
-      } else if (role === 'student') {
-        btn.textContent = 'View Feedback';
-        btn.onclick = () => window.location.href = `/feedback-view?reportId=${encodeURIComponent(reportId)}`;
-      } else {
-        return; // other roles: no button
-      }
-
-      actionsRow.appendChild(btn);
+    function injectFeedbackButton(reportId){
+      const actions=document.querySelector('.report-actions');
+      if(!actions||!reportId)return;
+      let user=null; try{user=JSON.parse(localStorage.getItem('user')||'{}');}catch{user={};}
+      const role=(user.role||'').toLowerCase();
+      if(!role)return;
+      const btn=document.createElement('button');
+      btn.id='feedbackBtn'; btn.type='button'; btn.className='btn primary'; btn.style.marginLeft='auto';
+      if(role==='teacher'){
+        btn.textContent='Add Feedback';
+        btn.onclick=()=>window.location.href=`/teacher-feedback?reportId=${encodeURIComponent(reportId)}`;
+      }else if(role==='student'){
+        btn.textContent='View Feedback';
+        btn.onclick=()=>window.location.href=`/feedback-view?reportId=${encodeURIComponent(reportId)}`;
+      }else return;
+      actions.appendChild(btn);
     }
 
     loadReport();

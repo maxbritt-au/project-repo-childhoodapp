@@ -1,15 +1,13 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Teacher Feedback</title>
 
-  <!-- Styles -->
   <link rel="stylesheet" href="../css/teacher-feedback.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* light styling for the list; keep or move to CSS file */
     .feedback-list.card { margin-top: 16px; padding: 16px; border-radius: 16px; background: rgba(255,255,255,.85); box-shadow: 0 4px 18px rgba(0,0,0,.1); }
     .feedback-item { padding: 12px 0; border-top: 1px solid #eee; }
     .feedback-item:first-child { border-top: 0; }
@@ -19,6 +17,12 @@
     .feedback-body { margin-top:6px; white-space:pre-wrap; }
     .empty-hint { color:#666; font-style:italic; }
   </style>
+
+  <script defer src="../js/router.js"></script>
+  <script defer src="../js/theme-toggle.js"></script>
+  <script defer src="../js/navbar.js"></script>
+  <script defer src="../js/teacher-feedback.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="light-mode">
   <div class="dashboard-container">
@@ -36,11 +40,15 @@
         </ul>
       </div>
       <div class="navbar-right">
-        <i class="fas fa-bell notification-icon"></i>
         <div class="theme-icons">
           <i class="fas fa-sun light-icon theme-toggle-btn"></i>
           <i class="fas fa-moon dark-icon theme-toggle-btn"></i>
         </div>
+        <label class="theme-switch" for="theme-toggle">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon theme-icon moon-icon"></i>
         <button id="open-logout-modal" class="logout-link">Logout</button>
       </div>
     </nav>
@@ -73,7 +81,7 @@
             </div>
             <div class="form-actions">
               <button type="submit" class="submit-btn">Submit</button>
-              <button type="button" class="export-btn" onclick="exportPDF()">Export to PDF</button>
+              <button type="button" class="export-btn" id="exportBtn">Export to PDF</button>
             </div>
             <p id="feedbackMsg" class="muted" style="margin-top:10px;"></p>
           </form>
@@ -98,30 +106,46 @@
     </div>
   </div>
 
-  <!-- Scripts (defer so DOM is ready) -->
-  <script defer src="../js/router.js"></script>
-  <script defer src="../js/theme-toggle.js"></script>
-  <script defer src="../js/teacher-feedback.js"></script>
-  <!-- 🔑 Include navbar.js so it can set Dashboard link based on /api/me -->
-  <script defer src="../js/navbar.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
   <script>
     const FEEDBACK_ENDPOINT = '/api/feedbacks';
-
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     const toDate = (x) => x ? new Date(x).toLocaleString() : '';
+
+    async function getTeacherInfo() {
+      try {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        const id = u?.userId ?? u?.id ?? u?.teacher_id ?? null;
+        const name = u?.name ?? u?.fullName ?? u?.displayName ?? u?.username ?? null;
+        if (id || name) return { id: id ? Number(id) : null, name: name || 'Teacher' };
+      } catch {}
+
+      try {
+        const res = await fetch('/api/me', { credentials: 'include' });
+        if (res.ok) {
+          const me = await res.json();
+          const id = me?.userId ?? me?.id ?? me?.teacher_id ?? null;
+          const name = me?.name ?? me?.fullName ?? me?.displayName ?? me?.username ?? 'Teacher';
+          try { localStorage.setItem('user', JSON.stringify(me)); } catch {}
+          return { id: id ? Number(id) : null, name };
+        }
+      } catch {}
+
+      return { id: null, name: 'Teacher' };
+    }
 
     async function loadReport() {
       const params = new URLSearchParams(window.location.search);
       const reportId = params.get('reportId') || params.get('id');
-      document.getElementById('reportIdHidden').value = reportId || '';
+      const metaEl = document.getElementById('reportIdHidden');
+      metaEl.value = reportId || '';
 
       if (!reportId) {
         document.getElementById("reportBody").innerHTML = "<p>No report ID provided.</p>";
         document.getElementById("feedbackList").textContent = 'No report ID provided.';
         return;
       }
+
+      const teacherInfo = await getTeacherInfo();
 
       try {
         const res = await fetch(`/api/reports/${encodeURIComponent(reportId)}`, { credentials: 'include' });
@@ -131,15 +155,28 @@
         document.getElementById('reportTitle').textContent =
           report.template_title || (String(report.template_id) === '1' ? 'Observation Report'
                                   : String(report.template_id) === '2' ? 'Anecdotal Record'
-                                  : 'Student Report');
+                                  : 'Summative');
 
-        const studentName = report.student_name || report.child_name || 'Unknown';
-        const sid = report.student_id || report.child_id || 'N/A';
-        const dateStr = report.submitted_at ? new Date(report.submitted_at).toLocaleDateString()
-                                            : (report.content?.date || '');
+        let childFullName =
+          [report.first_name, report.last_name].filter(Boolean).join(' ').trim()
+          || report.child_name
+          || (report.content?.child_name || '');
+        if (!childFullName) childFullName = 'Unknown';
+
+        const childId = report.child_id ?? '';
+        const dateStr = report.submitted_at
+          ? new Date(report.submitted_at).toLocaleDateString()
+          : (report.content?.date || '');
+
         document.getElementById('studentInfo').textContent =
-          `${studentName} (ID: ${sid})${dateStr ? ' — ' + dateStr : ''}`;
+          `${childFullName}${childId ? ` (ID: ${childId})` : ''}${dateStr ? ' — ' + dateStr : ''}`;
 
+        // Store canonical metadata for exporter
+        metaEl.dataset.childName = childFullName;
+        metaEl.dataset.childId = String(childId || '');
+        metaEl.dataset.teacherName = teacherInfo.name || 'Teacher';
+
+        // Parse content + render chunks
         let content = {};
         try { content = typeof report.content === 'string' ? JSON.parse(report.content) : (report.content || {}); }
         catch { content = report.content || {}; }
@@ -153,15 +190,17 @@
           if (content.activity)    blocks.push(['Activity / Context', content.activity]);
           if (content.outcomes)    blocks.push(['Learning Outcomes', content.outcomes]);
         } else if (String(report.template_id) === '2') {
-          if (content.observation) blocks.push(['Narrative Observation', content.observation]);
-          if (content.domains)     blocks.push(['Domains', content.domains]);
-          if (content.eylf)        blocks.push(['EYLF Links', content.eylf]);
-          if (content.theory)      blocks.push(['Theory', content.theory]);
-          if (content.planning_ideas) blocks.push(['Future Planning', content.planning_ideas]);
+          if (content.setting)         blocks.push(['Setting / Context', content.setting]);
+          if (content.observation)     blocks.push(['Narrative Observation', content.observation]);
+          if (content.significance)    blocks.push(['Significance / Interpretation', content.significance]);
+          if (content.domains)         blocks.push(['Developmental Domain(s)', content.domains]);
+          if (content.eylf)            blocks.push(['EYLF Links', content.eylf]);
+          if (content.theory)          blocks.push(['Theory', content.theory]);
+          if (content.planning_ideas)  blocks.push(['Future Planning', content.planning_ideas]);
         } else {
           if (content.summary)  blocks.push(['Summary', content.summary]);
-          if (content.domains)  blocks.push(['Domains', content.domains]);
-          if (content.outcomes) blocks.push(['Outcomes', content.outcomes]);
+          if (content.domains)  blocks.push(['Developmental Domains', content.domains]);
+          if (content.outcomes) blocks.push(['Learning Outcomes', content.outcomes]);
           if (content.period)   blocks.push(['Assessment Period', content.period]);
         }
 
@@ -174,7 +213,6 @@
             ).join('')
           : '<p class="report-text">No detailed content available.</p>';
 
-        // load feedback list for this report
         await loadFeedbackList(reportId);
 
       } catch (err) {
@@ -212,86 +250,80 @@
       }
     }
 
-    // Try to get the teacher id from localStorage; if missing, fetch /api/me
-async function getTeacherId() {
-  // 1) local cache
-  try {
-    const u = JSON.parse(localStorage.getItem('user') || '{}');
-    const id = u?.userId ?? u?.id ?? u?.teacher_id;
-    if (id) return Number(id);
-  } catch {}
+    async function getTeacherId() {
+      try {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        const id = u?.userId ?? u?.id ?? u?.teacher_id;
+        if (id) return Number(id);
+      } catch {}
+      try {
+        const res = await fetch('/api/me', { credentials: 'include' });
+        if (res.ok) {
+          const me = await res.json();
+          const id = me?.userId ?? me?.id ?? me?.teacher_id;
+          if (id) {
+            try { localStorage.setItem('user', JSON.stringify(me)); } catch {}
+            return Number(id);
+          }
+        }
+      } catch {}
+      return null;
+    }
 
-  // 2) session-backed API
-  try {
-    const res = await fetch('/api/me', { credentials: 'include' });
-    if (res.ok) {
-      const me = await res.json();
-      const id = me?.userId ?? me?.id ?? me?.teacher_id;
-      if (id) {
-        try { localStorage.setItem('user', JSON.stringify(me)); } catch {}
-        return Number(id);
+    async function handleFeedbackSubmit(e) {
+      e.preventDefault();
+      const msg = document.getElementById('feedbackMsg');
+      msg.textContent = '';
+
+      const reportId = document.getElementById('reportIdHidden').value;
+      const title = document.getElementById('feedback-title').value.trim();
+      const description = document.getElementById('feedback-description').value.trim();
+
+      if (!reportId) { msg.textContent = 'Missing reportId.'; msg.style.color = '#b00020'; return; }
+      if (!title || !description) { msg.textContent = 'Please complete title and details.'; msg.style.color = '#b00020'; return; }
+
+      const teacherId = await getTeacherId();
+      if (!teacherId) {
+        msg.textContent = 'Could not determine your teacher account. Please log in again.';
+        msg.style.color = '#b00020';
+        return;
+      }
+
+      // ensure teacher name metadata stays current for exporter
+      try {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        if (u?.name) document.getElementById('reportIdHidden').dataset.teacherName = u.name;
+      } catch {}
+
+      try {
+        const res = await fetch('/api/feedbacks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            report_id: Number(reportId),
+            title,
+            description,          // backend maps description -> comment
+            teacher_id: teacherId
+          })
+        });
+
+        if (!res.ok) throw new Error(await res.text().catch(() => 'Failed to submit feedback'));
+        msg.textContent = 'Feedback submitted successfully.';
+        msg.style.color = '#2e7d32';
+        document.getElementById('feedbackForm').reset();
+        loadFeedbackList(reportId);
+      } catch (err) {
+        console.error(err);
+        msg.textContent = err.message || 'Submission failed.';
+        msg.style.color = '#b00020';
       }
     }
-  } catch {}
-
-  return null;
-}
-
-// Submit feedback tied to reportId and refresh list
-async function handleFeedbackSubmit(e) {
-  e.preventDefault();
-  const msg = document.getElementById('feedbackMsg');
-  msg.textContent = '';
-
-  const reportId = document.getElementById('reportIdHidden').value;
-  const title = document.getElementById('feedback-title').value.trim();
-  const description = document.getElementById('feedback-description').value.trim();
-
-  if (!reportId) { msg.textContent = 'Missing reportId.'; msg.style.color = '#b00020'; return; }
-  if (!title || !description) { msg.textContent = 'Please complete title and details.'; msg.style.color = '#b00020'; return; }
-
-  // 🔑 Make sure we have a teacher id (from session or cache)
-  const teacherId = await getTeacherId();
-  if (!teacherId) {
-    msg.textContent = 'Could not determine your teacher account. Please log in again.';
-    msg.style.color = '#b00020';
-    return;
-  }
-
-  try {
-    const res = await fetch(FEEDBACK_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        report_id: Number(reportId),
-        title,
-        description,          // server maps description -> comment
-        teacher_id: teacherId // ensured non-null
-      })
-    });
-
-    if (!res.ok) throw new Error(await res.text().catch(() => 'Failed to submit feedback'));
-    msg.textContent = 'Feedback submitted successfully.';
-    msg.style.color = '#2e7d32';
-    document.getElementById('feedbackForm').reset();
-
-    // refresh list
-    loadFeedbackList(reportId);
-  } catch (err) {
-    console.error(err);
-    msg.textContent = err.message || 'Submission failed.';
-    msg.style.color = '#b00020';
-  }
-}
 
     document.addEventListener('DOMContentLoaded', () => {
       loadReport();
       document.getElementById('feedbackForm')?.addEventListener('submit', handleFeedbackSubmit);
     });
-
-    // Placeholder for PDF export
-    function exportPDF() { alert('Export to PDF coming soon.'); }
   </script>
 </body>
 </html>
