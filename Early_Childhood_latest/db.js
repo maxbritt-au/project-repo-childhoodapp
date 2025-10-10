@@ -1,16 +1,18 @@
-// db.js
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST || 'crossover.proxy.rlwy.net',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'PRWymnaPBQMlSLWVgklfrdamiGWQqJHK',
-  database: process.env.DB_NAME || 'railway',
-  port: process.env.DB_PORT || 40052
+  host: process.env.DB_HOST,       // must exist
+  user: process.env.DB_USER,       // must exist
+  password: process.env.DB_PASSWORD, // must exist
+  database: process.env.DB_NAME,   // must exist
+  port: process.env.DB_PORT || 3306
 });
 
 connection.connect(err => {
-  if (err) throw err;
+  if (err) {
+    console.error("Error connecting to MySQL: ", err);
+    process.exit(1); // stop server if DB connection fails
+  }
   console.log("Connected to MySQL!");
 });
 
