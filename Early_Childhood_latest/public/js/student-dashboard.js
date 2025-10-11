@@ -1,4 +1,5 @@
 // public/js/student-dashboard.js
+const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
 document.addEventListener('DOMContentLoaded', () => {
   // --- Auth gate via localStorage
   const stored = localStorage.getItem('user');

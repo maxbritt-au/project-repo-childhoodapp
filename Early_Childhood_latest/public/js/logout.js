@@ -1,3 +1,4 @@
+const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('logout-modal');
   const openBtn = document.getElementById('open-logout-modal');
@@ -33,3 +34,5 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') hideModal(); });
   }
 });
+
+

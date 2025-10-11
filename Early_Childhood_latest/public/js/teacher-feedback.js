@@ -1,6 +1,7 @@
 /* ================================
    Logout modal controls
 ================================ */
+const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
 const logoutModal = document.getElementById('logout-modal');
 const openLogoutBtn = document.getElementById('open-logout-modal');
 const cancelLogoutBtn = document.getElementById('cancel-logout-btn');

@@ -1,4 +1,5 @@
 // public/js/summative-assessment.js
+const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
 document.addEventListener('DOMContentLoaded', () => {
   const stored = localStorage.getItem('user');
   const user = stored ? JSON.parse(stored) : null;

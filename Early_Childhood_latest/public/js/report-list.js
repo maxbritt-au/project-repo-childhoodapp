@@ -1,3 +1,4 @@
+const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
 async function fetchReports(childId) {
   const res = await fetch(`/api/reports?childId=${encodeURIComponent(childId)}&limit=50`, {
     credentials: 'include'

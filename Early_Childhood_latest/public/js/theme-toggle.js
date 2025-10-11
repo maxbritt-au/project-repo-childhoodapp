@@ -1,3 +1,4 @@
+const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
 document.addEventListener('DOMContentLoaded', () => {
   const themeToggle = document.getElementById('theme-toggle');
   const body = document.body;
