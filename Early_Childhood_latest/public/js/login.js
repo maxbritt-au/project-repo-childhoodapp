@@ -1,82 +1,75 @@
 // public/js/login.js
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('[login.js] Script loaded, DOM ready.');
-  window.__login_attached = false; // will set true when we wire up the handler
+(() => {
+  // Same-origin: empty base uses the current domain (Render service URL)
+  const API_BASE = ''; // '' means requests go to https://project-repo-childhoodapp.onrender.com
 
-  const form = document.getElementById('loginForm');
-  const emailInput = document.getElementById('email');
-  const passwordInput = document.getElementById('password');
-  const msg = document.getElementById('loginMsg');
-
-  if (!form) {
-    console.error('[login.js] #loginForm not found.');
-    return;
+  // helper: simple fetch with a timeout (prevents “pending” forever)
+  async function fetchWithTimeout(url, options = {}, ms = 15000) {
+    const ctrl = new AbortController();
+    const id = setTimeout(() => ctrl.abort(), ms);
+    try {
+      return await fetch(url, { ...options, signal: ctrl.signal });
+    } finally {
+      clearTimeout(id);
+    }
   }
 
-  // Show minimal inline messages
-  const showMsg = (text, ok = false) => {
-    if (!msg) return;
-    msg.textContent = text || '';
-    msg.style.color = ok ? '#2e7d32' : '#b00020';
-  };
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('[login.js] DOM ready');
 
-  // Attach submit handler
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    console.log('[login.js] Form submitted.');
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
 
-    const email = (emailInput?.value || '').trim().toLowerCase();
-    const password = (passwordInput?.value || '').trim();
+    if (!form) return console.error('loginForm not found');
 
-    if (!email || !password) {
-      showMsg('Please enter your email and password.');
-      return;
-    }
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (emailInput?.value || '').trim().toLowerCase();
+      const password = (passwordInput?.value || '').trim();
+      if (!email || !password) { alert('Please enter your email and password.'); return; }
 
-    try {
-      showMsg('Signing in...', true);
-      console.log('[login.js] POST /api/login');
+      const btn = form.querySelector('button[type="submit"]');
+      const prev = btn?.textContent;
+      if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
 
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // keep session cookie on same origin
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await res.json().catch(() => ({}));
-      console.log('[login.js] Response:', data);
-
-      if (!res.ok) {
-        showMsg(data.message || 'Login failed. Please check your credentials.');
-        return;
-      }
-
-      // Save a safe subset to localStorage
-      const safeUser = {
-        name: data.name,
-        role: data.role,
-        userId: data.userId,
-        email
-      };
       try {
+        const res = await fetchWithTimeout(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // keeps the session cookie
+          body: JSON.stringify({ email, password })
+        });
+
+        let data = {};
+        try { data = await res.json(); } catch {}
+
+        if (!res.ok) {
+          console.error('[login.js] /api/login failed:', data);
+          alert(data.message || 'Login failed. Please check your credentials.');
+          return;
+        }
+
+        // Expecting response like: { userId, name, role }
+        const safeUser = { userId: data.userId, name: data.name, role: data.role, email };
         localStorage.setItem('user', JSON.stringify(safeUser));
-      } catch {}
 
-      // Route by role (these are your Express page routes)
-      if (data.role === 'teacher') {
-        window.location.href = '/teacher-dashboard';
-      } else if (data.role === 'student') {
-        window.location.href = '/student-dashboard';
-      } else {
-        window.location.href = '/';
+        // Redirect by role (server.js has page routes for these paths)
+        if (data.role === 'teacher') {
+          window.location.href = '/teacher-dashboard';
+        } else if (data.role === 'student') {
+          window.location.href = '/student-dashboard';
+        } else {
+          window.location.href = '/';
+        }
+      } catch (err) {
+        console.error('[login.js] Network/JS error:', err);
+        alert(err.name === 'AbortError'
+          ? 'Login timed out. Please try again.'
+          : 'Unable to reach the server. Please try again.');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = prev || 'Login'; }
       }
-    } catch (err) {
-      console.error('[login.js] Error:', err);
-      showMsg('Server not reachable.');
-    }
+    });
   });
-
-  window.__login_attached = true;
-  console.log('[login.js] Submit handler attached.');
-});
+})();
