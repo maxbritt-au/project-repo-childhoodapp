@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Early Childhood Teacher App - Login</title>
 
-  <!-- Use absolute paths so they work at / on Render -->
-  <link rel="stylesheet" href="/css/login.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Use absolute paths from the site root -->
+  <link rel="stylesheet" href="/css/login.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
   <div class="form-container">
     <div class="header-section">
       <div class="logo-container">
-        <img src="/img/logo-2.png" alt="App Logo" class="logo">
+        <!-- absolute path -->
+        <img src="/img/logo-2.png" alt="App Logo" class="logo" />
       </div>
       <div class="header-text">
         <h1 class="app-title">Early Childhood Teacher App</h1>
@@ -22,12 +23,12 @@
       </div>
     </div>
 
-    <form id="loginForm" novalidate>
+    <form id="loginForm">
       <div class="field">
         <label for="email">Email</label>
         <div class="input-with-icon">
           <i class="fas fa-envelope icon"></i>
-          <input type="email" id="email" placeholder="abc@gmail.com" required>
+          <input type="email" id="email" placeholder="abc@gmail.com" required />
         </div>
       </div>
 
@@ -35,12 +36,11 @@
         <label for="password">Password</label>
         <div class="input-with-icon">
           <i class="fas fa-lock icon"></i>
-          <input type="password" id="password" placeholder="********" required>
+          <input type="password" id="password" placeholder="********" required />
         </div>
       </div>
 
       <button type="submit" class="login-btn">Login</button>
-      <p id="loginMsg" class="muted" style="margin-top:10px;"></p>
     </form>
 
     <div class="create-account">
@@ -48,21 +48,7 @@
     </div>
   </div>
 
-  <!-- Diagnostic breadcrumb so we can detect if login.js runs -->
-  <script>window.__login_boot = 'html-loaded';</script>
-
-  <!-- Absolute path; defer so it runs after parse -->
+  <!-- absolute path; defer so DOM is ready -->
   <script src="/js/login.js" defer></script>
-
-  <!-- Fallback check: if login.js didn’t set the flag, warn in console -->
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        if (window.__login_attached !== true) {
-          console.error('[login.html] login.js did not attach its handlers. Check script path and Network tab.');
-        }
-      }, 0);
-    });
-  </script>
 </body>
 </html>
