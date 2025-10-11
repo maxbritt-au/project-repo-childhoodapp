@@ -1,18 +1,25 @@
+// config/db.js
 const mysql = require('mysql2');
 
-const db = mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'Andrew21062005@',
-    database: 'early_childhood_education_app'
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-db.connect((err)=>{
-    if(err){
-        console.error("Error connecting to MySQL: ", err.stack);
-        return;
-    }
-    console.log("Connected to MySQL as ID", db.threadId);
+pool.getConnection((err, connection) => {
+  if (err) {
+    console.error("❌ Error connecting to MySQL:", err);
+    process.exit(1);
+  } else {
+    console.log("✅ Connected to MySQL!");
+    connection.release();
+  }
 });
 
-module.exports = db;
+module.exports = pool.promise();
