@@ -1,96 +1,82 @@
 // public/js/login.js
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('[login.js] Script loaded, DOM ready.');
+  window.__login_attached = false; // will set true when we wire up the handler
+
   const form = document.getElementById('loginForm');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
-  const rememberMeInput = document.getElementById('rememberMe');
-
-  // Prefill remembered email on load
-  try {
-    const rememberedEmail = localStorage.getItem('rememberedEmail');
-    if (rememberedEmail && emailInput) {
-      emailInput.value = rememberedEmail;
-      if (rememberMeInput) rememberMeInput.checked = true;
-    }
-  } catch {}
+  const msg = document.getElementById('loginMsg');
 
   if (!form) {
-    console.error('loginForm not found on the page.');
+    console.error('[login.js] #loginForm not found.');
     return;
   }
 
-  let submitting = false;
+  // Show minimal inline messages
+  const showMsg = (text, ok = false) => {
+    if (!msg) return;
+    msg.textContent = text || '';
+    msg.style.color = ok ? '#2e7d32' : '#b00020';
+  };
 
+  // Attach submit handler
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (submitting) return;
-    submitting = true;
+    console.log('[login.js] Form submitted.');
 
     const email = (emailInput?.value || '').trim().toLowerCase();
     const password = (passwordInput?.value || '').trim();
-    const rememberMe = rememberMeInput?.checked === true;
 
     if (!email || !password) {
-      alert('Please enter your email and password.');
-      submitting = false;
+      showMsg('Please enter your email and password.');
       return;
     }
 
     try {
+      showMsg('Signing in...', true);
+      console.log('[login.js] POST /api/login');
+
       const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // IMPORTANT: include cookies for session auth
-        credentials: 'include',
+        credentials: 'include', // keep session cookie on same origin
         body: JSON.stringify({ email, password })
       });
 
-      // If response isn't JSON (e.g. 500 with HTML), avoid crashing
-      let data = {};
-      try { data = await res.json(); } catch {}
+      const data = await res.json().catch(() => ({}));
+      console.log('[login.js] Response:', data);
 
       if (!res.ok) {
-        const msg =
-          data?.message ||
-          data?.error ||
-          (res.status === 401 ? 'Invalid email or password.' : 'Login failed.');
-        alert(msg);
-        submitting = false;
+        showMsg(data.message || 'Login failed. Please check your credentials.');
         return;
       }
 
-      // Store only non-sensitive info
+      // Save a safe subset to localStorage
       const safeUser = {
         name: data.name,
         role: data.role,
         userId: data.userId,
         email
       };
-      try { localStorage.setItem('user', JSON.stringify(safeUser)); } catch {}
-
-      // Remember email only (not password)
       try {
-        if (rememberMe) localStorage.setItem('rememberedEmail', email);
-        else localStorage.removeItem('rememberedEmail');
+        localStorage.setItem('user', JSON.stringify(safeUser));
       } catch {}
 
-      // Redirect by role using your Express page routes
-      const role = (data.role || '').toLowerCase();
-      if (role === 'teacher') {
+      // Route by role (these are your Express page routes)
+      if (data.role === 'teacher') {
         window.location.href = '/teacher-dashboard';
-      } else if (role === 'student') {
+      } else if (data.role === 'student') {
         window.location.href = '/student-dashboard';
-      } else if (role === 'parent') {
-        // only if you have this route set up on the server
-        window.location.href = '/parent-dashboard';
       } else {
         window.location.href = '/';
       }
     } catch (err) {
-      console.error('Login error:', err);
-      alert('An unexpected error occurred while logging in.');
-    } finally {
-      submitting = false;
+      console.error('[login.js] Error:', err);
+      showMsg('Server not reachable.');
     }
   });
+
+  window.__login_attached = true;
+  console.log('[login.js] Submit handler attached.');
 });
