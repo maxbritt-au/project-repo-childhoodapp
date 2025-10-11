@@ -87,12 +87,16 @@ exports.createUser = (req, res) => {
     (err, results) => {
       if (err) {
         console.error('Create user error:', err);
-        return res.json({ success: false, message: 'Error creating user' });
+        if (err.code === 'ER_DUP_ENTRY') {
+          return res.status(409).json({ success: false, message: 'Email already exists' });
+        }
+        return res.status(500).json({ success: false, message: 'Database error' });
       }
       res.status(201).json({ success: true, user_id: results.insertId });
     }
   );
 };
+
 
 // (Optional) POST /api/logout
 exports.logoutUser = (req, res) => {
