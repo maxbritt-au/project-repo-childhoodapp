@@ -19,7 +19,7 @@ if (cancelLogoutBtn) {
 }
 if (confirmLogoutBtn) {
   confirmLogoutBtn.addEventListener('click', () => {
-    window.location.href = 'login.html';
+    window.location.href = '/';
   });
 }
 window.addEventListener('click', (event) => {
