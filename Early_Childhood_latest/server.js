@@ -5,6 +5,11 @@ const session = require('express-session');
 const db = require('./config/db')
 const app = express();
 const PORT = process.env.PORT || 3000;
+const cors = require('cors');
+app.use(cors({
+  origin: 'https://project-repo-childhoodapp.onrender.com', // allow your frontend
+  credentials: true
+}));
 
 // --- Core middleware
 app.use(express.json());
