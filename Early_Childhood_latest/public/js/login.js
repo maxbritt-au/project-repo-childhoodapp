@@ -1,5 +1,5 @@
 // public/js/login.js
-
+const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('loginForm');
   const emailInput = document.getElementById('email');
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const res = await fetch('/api/login', {
+      const res = await fetch(`${API_BASE_URL}/api/login`,{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

@@ -1,4 +1,5 @@
 // public/js/signup.js
+const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('signupForm');
@@ -20,13 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
 
     const roleRaw = roleInput?.value || '';
-    const role = VALID_ROLES.has(roleRaw) ? roleRaw : 'student'; // fallback to valid enum
+    const role = VALID_ROLES.has(roleRaw) ? roleRaw : 'student';
     const name = (nameInput?.value || '').trim();
     const email = (emailInput?.value || '').trim().toLowerCase();
     const password = (passwordInput?.value || '').trim();
     const confirmPassword = (confirmInput?.value || '').trim();
 
-    // Basic client-side validation
     if (!name || !email || !password || !confirmPassword) {
       alert('Please fill in all required fields.');
       return;
@@ -35,8 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Passwords do not match.');
       return;
     }
-
-    // Optional light email check
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       alert('Please enter a valid email address.');
       return;
@@ -48,10 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = 'Creating...';
       }
 
-      const res = await fetch('/api/users', {
+      const res = await fetch(`${API_BASE_URL}/api/users`, {   // <-- changed here
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Do NOT send confirmPassword to backend
         body: JSON.stringify({ role, name, email, password })
       });
 
@@ -69,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       alert('Account created! Please log in.');
-      window.location.href = '/'; // back to login
+      window.location.href = '/';
     } catch (err) {
       console.error('Signup error:', err);
       alert('An unexpected error occurred during signup.');
