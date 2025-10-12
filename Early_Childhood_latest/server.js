@@ -1,4 +1,6 @@
 // server.js
+require('dotenv').config();
+
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
@@ -14,26 +16,41 @@ app.use((req, _res, next) => {
   next();
 });
 
+// --- CORS (allow cookies)
+const ALLOWED_ORIGINS = [
+  'https://project-repo-childhoodapp.onrender.com',
+  'http://localhost:3000', // optional for local dev
+];
+
 app.use(cors({
-  origin: 'https://project-repo-childhoodapp.onrender.com',
-  credentials: true
+  origin: (origin, cb) => {
+    // allow same-origin (no origin header) and listed origins
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    return cb(new Error('CORS not allowed'), false);
+  },
+  credentials: true,
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// --- IMPORTANT for secure cookies behind a proxy (Render)
+app.set('trust proxy', 1);
+
+// --- Session
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret',
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: true // Render is HTTPS; keep this true in prod
-  }
+    secure: true,       // Render is HTTPS
+    sameSite: 'none',   // must be 'none' when secure:true & cross-origin
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+  },
 }));
 
-// Static site
+// --- Static site
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Health check (tests DB too)
@@ -47,7 +64,7 @@ app.get('/api/healthz', async (_req, res) => {
   }
 });
 
-// Routes
+// --- Routes
 const userRoutes = require('./routes/userRoutes');
 const childrenRoutes = require('./routes/childrenRoutes');
 const reportRoutes = require('./routes/reportRoutes');
@@ -58,7 +75,7 @@ app.use('/api/children', childrenRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/feedbacks', feedbackRoutes);
 
-// Page routes (keep your original mappings)
+// --- Page routes
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'login.html')));
 app.get('/signup', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'signup.html')));
 app.get('/student-report', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'student-report.html')));
@@ -75,7 +92,7 @@ app.get('/report-list', (_req, res) => res.sendFile(path.join(__dirname, 'public
 app.get('/report-view', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'report-view.html')));
 app.get('/feedback-view', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'feedback-view.html')));
 
-// Global safety nets (avoid 502 from crashes)
+// --- Safety nets (avoid hard crashes -> 502)
 process.on('unhandledRejection', (err) => console.error('UnhandledRejection:', err));
 process.on('uncaughtException', (err) => console.error('UncaughtException:', err));
 
