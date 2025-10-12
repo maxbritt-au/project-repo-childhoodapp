@@ -69,7 +69,8 @@ router.post('/', requireLogin, (req, res) => {
 /* ===============================
    GET /api/reports
    Query: ?childId=3&limit=20&offset=0
-   Returns reports about a specific child
+   Teachers: all reports for child
+   Students: only their own reports for child
 ================================ */
 router.get('/', requireLogin, (req, res) => {
   const childId = Number(req.query.childId);
@@ -80,20 +81,41 @@ router.get('/', requireLogin, (req, res) => {
   const limit = Math.min(toInt(req.query.limit, 20), 50);
   const offset = Math.max(toInt(req.query.offset, 0), 0);
 
-  const sql = `
-    SELECT r.id, r.student_id, u.name AS student_name,
-           r.child_id, c.first_name, c.last_name,
-           r.template_id, t.title AS template_title,
-           r.content, r.submitted_at
-    FROM reports r
-    JOIN users u ON u.id = r.student_id
-    JOIN children c ON c.child_id = r.child_id
-    LEFT JOIN templates t ON r.template_id = t.id
-    WHERE r.child_id = ?
-    ORDER BY r.submitted_at DESC
-    LIMIT ? OFFSET ?
-  `;
-  db.query(sql, [childId, limit, offset], (err, rows) => {
+  const { role, id: userId } = req.session.user || {};
+
+  const sql =
+    role === 'teacher'
+      ? `
+        SELECT r.id, r.student_id, u.name AS student_name,
+               r.child_id, c.first_name, c.last_name,
+               r.template_id, t.title AS template_title,
+               r.content, r.submitted_at
+        FROM reports r
+        JOIN users u ON u.id = r.student_id
+        JOIN children c ON c.child_id = r.child_id
+        LEFT JOIN templates t ON r.template_id = t.id
+        WHERE r.child_id = ?
+        ORDER BY r.submitted_at DESC
+        LIMIT ? OFFSET ?
+      `
+      : `
+        SELECT r.id, r.student_id, u.name AS student_name,
+               r.child_id, c.first_name, c.last_name,
+               r.template_id, t.title AS template_title,
+               r.content, r.submitted_at
+        FROM reports r
+        JOIN users u ON u.id = r.student_id
+        JOIN children c ON c.child_id = r.child_id
+        LEFT JOIN templates t ON r.template_id = t.id
+        WHERE r.child_id = ? AND r.student_id = ?
+        ORDER BY r.submitted_at DESC
+        LIMIT ? OFFSET ?
+      `;
+
+  const params =
+    role === 'teacher' ? [childId, limit, offset] : [childId, userId, limit, offset];
+
+  db.query(sql, params, (err, rows) => {
     if (err) {
       console.error('[REPORT_LIST_CHILD] error:', err);
       return res.status(500).json({ error: 'Database error while fetching reports' });
@@ -104,27 +126,49 @@ router.get('/', requireLogin, (req, res) => {
 
 /* ===============================
    GET /api/reports/recent
-   For dashboard sidebar (shape used by student-report page)
-   Query: ?limit=8
+   Teachers: recent reports by anyone
+   Students: only their own recent reports
+   (You still have /recent/my below for student-only widget.)
 ================================ */
 router.get('/recent', requireLogin, (req, res) => {
   const limit = Math.min(toInt(req.query.limit, 8), 50);
+  const { role, id: userId } = req.session.user || {};
 
-  const sql = `
-    SELECT
-      r.id,
-      COALESCE(t.title, 'Report')             AS report_type,
-      u.name                                  AS student_name,
-      CONCAT(c.first_name, ' ', c.last_name)  AS child_name,
-      r.submitted_at                          AS created_at
-    FROM reports r
-    JOIN users u     ON u.id = r.student_id
-    JOIN children c  ON c.child_id = r.child_id
-    LEFT JOIN templates t ON t.id = r.template_id
-    ORDER BY r.submitted_at DESC
-    LIMIT ?
-  `;
-  db.query(sql, [limit], (err, rows) => {
+  const sql =
+    role === 'teacher'
+      ? `
+        SELECT
+          r.id,
+          COALESCE(t.title, 'Report')             AS report_type,
+          u.name                                  AS student_name,
+          CONCAT(c.first_name, ' ', c.last_name)  AS child_name,
+          r.submitted_at                          AS created_at
+        FROM reports r
+        JOIN users u     ON u.id = r.student_id
+        JOIN children c  ON c.child_id = r.child_id
+        LEFT JOIN templates t ON t.id = r.template_id
+        ORDER BY r.submitted_at DESC
+        LIMIT ?
+      `
+      : `
+        SELECT
+          r.id,
+          COALESCE(t.title, 'Report')             AS report_type,
+          u.name                                  AS student_name,
+          CONCAT(c.first_name, ' ', c.last_name)  AS child_name,
+          r.submitted_at                          AS created_at
+        FROM reports r
+        JOIN users u     ON u.id = r.student_id
+        JOIN children c  ON c.child_id = r.child_id
+        LEFT JOIN templates t ON t.id = r.template_id
+        WHERE r.student_id = ?
+        ORDER BY r.submitted_at DESC
+        LIMIT ?
+      `;
+
+  const params = role === 'teacher' ? [limit] : [userId, limit];
+
+  db.query(sql, params, (err, rows) => {
     if (err) {
       console.error('[REPORT_RECENT] error:', err);
       return res.status(500).json({ error: 'Database error fetching recent reports' });
@@ -169,27 +213,50 @@ router.get('/recent/my', requireLogin, (req, res) => {
 
 /* ===============================
    GET /api/reports/all?limit=50&offset=0
-   Paginated full listing (used by Reports table)
+   Teachers: all reports
+   Students: only their own
 ================================ */
 router.get('/all', requireLogin, (req, res) => {
   const limit = Math.min(toInt(req.query.limit, 50), 100);
   const offset = Math.max(toInt(req.query.offset, 0), 0);
+  const { role, id: userId } = req.session.user || {};
 
-  const sql = `
-    SELECT 
-      r.id,
-      COALESCE(t.title, 'Report')             AS report_type,
-      u.name                                  AS student_name,
-      CONCAT(c.first_name, ' ', c.last_name)  AS child_name,
-      r.submitted_at                          AS created_at
-    FROM reports r
-    JOIN users u     ON u.id = r.student_id
-    JOIN children c  ON c.child_id = r.child_id
-    LEFT JOIN templates t ON t.id = r.template_id
-    ORDER BY r.submitted_at DESC
-    LIMIT ? OFFSET ?
-  `;
-  db.query(sql, [limit, offset], (err, rows) => {
+  const sql =
+    role === 'teacher'
+      ? `
+        SELECT 
+          r.id,
+          COALESCE(t.title, 'Report')             AS report_type,
+          u.name                                  AS student_name,
+          CONCAT(c.first_name, ' ', c.last_name)  AS child_name,
+          r.submitted_at                          AS created_at
+        FROM reports r
+        JOIN users u     ON u.id = r.student_id
+        JOIN children c  ON c.child_id = r.child_id
+        LEFT JOIN templates t ON t.id = r.template_id
+        ORDER BY r.submitted_at DESC
+        LIMIT ? OFFSET ?
+      `
+      : `
+        SELECT 
+          r.id,
+          COALESCE(t.title, 'Report')             AS report_type,
+          u.name                                  AS student_name,
+          CONCAT(c.first_name, ' ', c.last_name)  AS child_name,
+          r.submitted_at                          AS created_at
+        FROM reports r
+        JOIN users u     ON u.id = r.student_id
+        JOIN children c  ON c.child_id = r.child_id
+        LEFT JOIN templates t ON t.id = r.template_id
+        WHERE r.student_id = ?
+        ORDER BY r.submitted_at DESC
+        LIMIT ? OFFSET ?
+      `;
+
+  const params =
+    role === 'teacher' ? [limit, offset] : [userId, limit, offset];
+
+  db.query(sql, params, (err, rows) => {
     if (err) {
       console.error('[REPORT_LIST_ALL] error:', err);
       return res.status(500).json({ error: 'Database error' });
@@ -213,10 +280,8 @@ router.delete('/:id', requireLogin, (req, res) => {
     return res.status(401).json({ error: 'Not logged in' });
   }
 
-  // Adjust role names to your app’s roles
   const canDeleteAny = ['admin', 'teacher'].includes(user.role);
 
-  // Confirm the report exists and ownership
   const selectSql = 'SELECT id, student_id FROM reports WHERE id = ?';
   db.query(selectSql, [id], (err, rows) => {
     if (err) {
@@ -235,7 +300,6 @@ router.delete('/:id', requireLogin, (req, res) => {
     db.query(delSql, [id], (err2) => {
       if (err2) {
         console.error('[REPORT_DELETE] delete error:', err2);
-        // If FK constraints block deletion, consider ON DELETE CASCADE or soft-deletes
         return res.status(500).json({ error: 'Failed to delete report' });
       }
       return res.status(204).end(); // No Content
@@ -246,12 +310,15 @@ router.delete('/:id', requireLogin, (req, res) => {
 /* ===============================
    GET /api/reports/:id
    Keep this LAST so it doesn't shadow /recent, /all, etc.
+   Teachers: can view any; Students: only reports they own
 ================================ */
 router.get('/:id', requireLogin, (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
     return res.status(400).json({ error: 'Invalid report ID' });
   }
+
+  const { role, id: userId } = req.session.user || {};
 
   const sql = `
     SELECT r.id, r.student_id, u.name AS student_name,
@@ -270,7 +337,12 @@ router.get('/:id', requireLogin, (req, res) => {
       return res.status(500).json({ error: 'Database error while fetching report' });
     }
     if (!rows.length) return res.status(404).json({ error: 'Report not found' });
-    res.json(rows[0]);
+
+    const report = rows[0];
+    if (role !== 'teacher' && report.student_id !== userId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    res.json(report);
   });
 });
 
