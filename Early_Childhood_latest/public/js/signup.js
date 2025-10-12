@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = 'Creating...';
       }
 
-      const res = await fetch(`${API_BASE_URL}/api/users`, {   // <-- changed here
+      const res = await fetch(`${API_BASE_URL}/users`, {   // <-- changed here
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role, name, email, password })
