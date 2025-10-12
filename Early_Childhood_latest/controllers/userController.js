@@ -1,6 +1,4 @@
-// controllers/userController.js
 const userModel = require('../models/userModel');
-const db = require('../config/db'); // Your MySQL connection
 
 // GET /api/users
 exports.getAllUsers = (req, res) => {
@@ -14,7 +12,6 @@ exports.getAllUsers = (req, res) => {
 };
 
 // POST /api/login
-// Plain-text password check (matches your current schema), sets req.session.user
 exports.loginUser = (req, res) => {
   const { email, password } = req.body || {};
 
@@ -34,20 +31,18 @@ exports.loginUser = (req, res) => {
 
     const user = results[0];
 
-    // Plain-text comparison (you said no bcrypt yet)
+    // Plain-text comparison (no bcrypt yet)
     if (user.password !== password) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Build the session payload your middleware expects
     const sessionUser = {
-      id: user.user_id || user.id || user.id_user, // adapt to your column names
-      role: user.role,                              // e.g., 'teacher' | 'parent' | 'admin'
+      id: user.user_id || user.id || user.id_user,
+      role: user.role,
       email: user.email,
-      name: user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim()
+      name: user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim(),
     };
 
-    // Regenerate session ID to avoid fixation, then save user into session
     req.session.regenerate((regenErr) => {
       if (regenErr) {
         console.error('Session regenerate error:', regenErr);
@@ -56,18 +51,16 @@ exports.loginUser = (req, res) => {
 
       req.session.user = sessionUser;
 
-      // Ensure session is persisted before responding
       req.session.save((saveErr) => {
         if (saveErr) {
           console.error('Session save error:', saveErr);
           return res.status(500).json({ message: 'Session error' });
         }
 
-        // Return minimal info to client
         return res.json({
           success: true,
           role: sessionUser.role,
-          name: sessionUser.name
+          name: sessionUser.name,
         });
       });
     });
@@ -81,24 +74,19 @@ exports.createUser = (req, res) => {
     return res.status(400).json({ success: false, message: 'Missing required fields' });
   }
 
-  db.query(
-    'INSERT INTO users (role, name, email, password) VALUES (?, ?, ?, ?)',
-    [role, name, email, password],
-    (err, results) => {
-      if (err) {
-        console.error('Create user error:', err);
-        if (err.code === 'ER_DUP_ENTRY') {
-          return res.status(409).json({ success: false, message: 'Email already exists' });
-        }
-        return res.status(500).json({ success: false, message: 'Database error' });
+  userModel.create({ role, name, email, password }, (err, results) => {
+    if (err) {
+      console.error('Create user error:', err);
+      if (err.code === 'ER_DUP_ENTRY') {
+        return res.status(409).json({ success: false, message: 'Email already exists' });
       }
-      res.status(201).json({ success: true, user_id: results.insertId });
+      return res.status(500).json({ success: false, message: 'Database error' });
     }
-  );
+    res.status(201).json({ success: true, user_id: results.insertId });
+  });
 };
 
-
-// (Optional) POST /api/logout
+// POST /api/logout
 exports.logoutUser = (req, res) => {
   req.session.destroy(() => {
     res.json({ success: true });

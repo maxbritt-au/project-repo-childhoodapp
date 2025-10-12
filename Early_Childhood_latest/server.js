@@ -3,76 +3,80 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
+const db = require('./config/db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN
-  || 'https://project-repo-childhoodapp.onrender.com';
+// --- Basic request log (helps on Render)
+app.use((req, _res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
-// ---------- Core middleware
+app.use(cors({
+  origin: 'https://project-repo-childhoodapp.onrender.com',
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ---------- CORS (allow frontend domain and cookies)
-app.use(cors({
-  origin: FRONTEND_ORIGIN,
-  credentials: true,
-  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// ---------- Sessions (cross-site cookies require SameSite=None; Secure)
-app.set('trust proxy', 1); // required on Render to set Secure cookies
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret',
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    sameSite: 'none',   // <-- cross-site
-    secure: true        // <-- Render uses HTTPS
+    sameSite: 'lax',
+    secure: true // Render is HTTPS; keep this true in prod
   }
 }));
 
-// ---------- Static
+// Static site
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ---------- Routes
-app.use('/api', require('./routes/userRoutes'));
-app.use('/api/children', require('./routes/childrenRoutes'));
-app.use('/api/reports', require('./routes/reportRoutes'));
-app.use('/api/feedbacks', require('./routes/feedbackRoutes'));
-
-// Page routes (keep)
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'login.html')));
-app.get('/signup', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'signup.html')));
-app.get('/student-dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'student-dashboard.html')));
-app.get('/teacher-dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'teacher-dashboard.html')));
-app.get('/student-report', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'student-report.html')));
-app.get('/children-dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'children-dashboard.html')));
-app.get('/individual-child-dash', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'individual-child-dash.html')));
-app.get('/observation-report', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'observation-report.html')));
-app.get('/anecdotal-record', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'anecdotal-record.html')));
-app.get('/summative-assessment', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'summative-assessment.html')));
-app.get('/report-list', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'report-list.html')));
-app.get('/report-view', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'report-view.html')));
-app.get('/teacher-feedback', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'teacher-feedback.html')));
-app.get('/feedback-view', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'feedback-view.html')));
-app.get('/add-child', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'add-child.html')));
-
-// in server.js, after routes:
-app.get('/api/health/db', async (req, res) => {
+// --- Health check (tests DB too)
+app.get('/api/healthz', async (_req, res) => {
   try {
-    const [rows] = await require('./config/db').query('SELECT 1 as ok');
-    res.json({ ok: rows?.[0]?.ok === 1 });
+    await db.query('SELECT 1');
+    res.json({ ok: true });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ ok: false, error: e.message });
+    console.error('Healthz DB error:', e.message);
+    res.status(500).json({ ok: false, error: 'db' });
   }
 });
 
-// Health endpoint (useful on Render)
-app.get('/api/health', (req, res) => res.json({ ok: true }));
+// Routes
+const userRoutes = require('./routes/userRoutes');
+const childrenRoutes = require('./routes/childrenRoutes');
+const reportRoutes = require('./routes/reportRoutes');
+const feedbackRoutes = require('./routes/feedbackRoutes');
 
-app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
+app.use('/api', userRoutes);
+app.use('/api/children', childrenRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/feedbacks', feedbackRoutes);
+
+// Page routes (keep your original mappings)
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'login.html')));
+app.get('/signup', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'signup.html')));
+app.get('/student-report', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'student-report.html')));
+app.get('/student-dashboard', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'student-dashboard.html')));
+app.get('/teacher-dashboard', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'teacher-dashboard.html')));
+app.get('/teacher-feedback', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'teacher-feedback.html')));
+app.get('/add-child', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'add-child.html')));
+app.get('/children-dashboard', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'children-dashboard.html')));
+app.get('/individual-child-dash', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'individual-child-dash.html')));
+app.get('/observation-report', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'observation-report.html')));
+app.get('/anecdotal-record', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'anecdotal-record.html')));
+app.get('/summative-assessment', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'summative-assessment.html')));
+app.get('/report-list', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'report-list.html')));
+app.get('/report-view', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'report-view.html')));
+app.get('/feedback-view', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'feedback-view.html')));
+
+// Global safety nets (avoid 502 from crashes)
+process.on('unhandledRejection', (err) => console.error('UnhandledRejection:', err));
+process.on('uncaughtException', (err) => console.error('UncaughtException:', err));
+
+app.listen(PORT, () => console.log(`Server listening on :${PORT}`));
