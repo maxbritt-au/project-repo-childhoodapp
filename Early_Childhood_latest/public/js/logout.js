@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
+
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('logout-modal');
   const openBtn = document.getElementById('open-logout-modal');

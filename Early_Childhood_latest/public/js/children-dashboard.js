@@ -1,6 +1,6 @@
 // public/js/children-dashboard.js
 // Works with either table (tbody) or card grid (.grid)
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
+
 (() => {
   const API_BASE = '/api/children';
   const $ = (s) => document.querySelector(s);

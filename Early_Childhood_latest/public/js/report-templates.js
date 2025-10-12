@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
+
 document.addEventListener('DOMContentLoaded', () => {
     const listEl = document.getElementById('recentReportsList');
     const searchEl = document.getElementById('recentSearch');

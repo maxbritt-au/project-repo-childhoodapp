@@ -1,5 +1,4 @@
 // public/js/add-child.js
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
 (() => {
   const form = document.querySelector('#addChildForm');
   const nameField = document.querySelector('#childName');

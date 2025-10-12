@@ -1,5 +1,4 @@
 // public/js/signup.js
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('signupForm');

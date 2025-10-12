@@ -1,5 +1,5 @@
 // individual-child-dash.js
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
+
 function getChildId() {
   const url = new URL(window.location.href);
   return (

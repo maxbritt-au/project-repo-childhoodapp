@@ -1,5 +1,5 @@
 // public/js/report-view.js
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
+
 // ---- Utilities
 function getUserFromStorage() {
   try {

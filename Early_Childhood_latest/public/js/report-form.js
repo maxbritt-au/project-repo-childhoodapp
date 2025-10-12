@@ -1,5 +1,5 @@
 // public/js/report-form.js
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const logoutModal = document.getElementById('logout-modal');

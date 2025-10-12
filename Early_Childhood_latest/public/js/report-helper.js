@@ -1,5 +1,5 @@
 // public/js/report-helper.js
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
+
 /**
  * POST to /api/reports
  * @param {Object} options

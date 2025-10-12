@@ -1,5 +1,5 @@
 // public/js/navbar.js
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
+
 document.addEventListener('DOMContentLoaded', async () => {
   const dashLink = document.getElementById('dashboardLink');
   const logoLink =
