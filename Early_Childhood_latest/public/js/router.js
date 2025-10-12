@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://project-repo-childhoodapp.onrender.com';
+
 document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelectorAll('.nav-links a');
     const roleBasedLinks = {

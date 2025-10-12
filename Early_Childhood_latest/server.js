@@ -61,6 +61,17 @@ app.get('/teacher-feedback', (req, res) => res.sendFile(path.join(__dirname, 'pu
 app.get('/feedback-view', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'feedback-view.html')));
 app.get('/add-child', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'add-child.html')));
 
+// in server.js, after routes:
+app.get('/api/health/db', async (req, res) => {
+  try {
+    const [rows] = await require('./config/db').query('SELECT 1 as ok');
+    res.json({ ok: rows?.[0]?.ok === 1 });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 // Health endpoint (useful on Render)
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
