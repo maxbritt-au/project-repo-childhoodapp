@@ -43,100 +43,111 @@
     <main class="main-content">
       <div class="form-layout">
         <section class="form-panel card">
-          <h1 class="page-title">Anecdotal Record</h1>
+          <h1 class="page-title">
+            Anecdotal Record
+          </h1>
           <p class="intro-text">
             Capture a brief narrative observation and link it to domains, EYLF, theory, and future planning.
           </p>
 
           <div class="form-container">
             <form id="anecdotalForm">
-              <!-- REQUIRED for backend: choose child -->
-              <div class="form-group">
-                <label for="childSelect">Select Child</label>
-                <select id="childSelect" required>
-                  <option value="">Loading children…</option>
-                </select>
-              </div>
-
-              <!-- REQUIRED for backend: template_id (Anecdotal = 2) -->
+              <!-- REQUIRED for backend: Anecdotal template_id = 2 -->
               <input type="hidden" id="templateId" value="2" />
 
-              <div class="form-group">
-                <label for="observationDate">Date</label>
-                <input type="date" id="observationDate" required>
-              </div>
+              <!-- Section 1: Child Details / Context -->
+              <fieldset class="form-fieldset child-details">
+                <legend>Child Details</legend>
 
-              <!-- Setting / Context -->
-              <div class="form-group">
-                <label for="settingContext">Setting / Context</label>
-                <input
-                  type="text"
-                  id="settingContext"
-                  placeholder="e.g., During free play, circle time, outdoor activities…"
-                  required
-                >
-              </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="childSelect">Select Child</label>
+                    <select id="childSelect" required>
+                      <option value="">Loading children…</option>
+                    </select>
+                  </div>
 
-              <!-- Observation -->
-              <div class="form-group">
-                <label for="observation">Observation</label>
-                <textarea
-                  id="observation"
-                  rows="6"
-                  placeholder="Write a clear, objective narrative of what you observed…"
-                  required
-                ></textarea>
-              </div>
+                  <div class="form-group">
+                    <label for="observationDate">Date</label>
+                    <input type="date" id="observationDate" required>
+                  </div>
+                </div>
 
-              <!-- NEW: Significance -->
-              <div class="form-group">
-                <label for="significance">Significance</label>
-                <textarea
-                  id="significance"
-                  rows="4"
-                  placeholder="What does this observation tell us about the child's development, interests, or needs?"
-                ></textarea>
-              </div>
+                <div class="form-group">
+                  <label for="settingContext">Setting / Context</label>
+                  <input
+                    type="text"
+                    id="settingContext"
+                    placeholder="e.g., During free play, circle time, outdoor activities…"
+                    required
+                  >
+                </div>
+              </fieldset>
 
-              <!-- Developmental Domain/s -->
-              <div class="form-group">
-                <label for="domains">Developmental Domain/s</label>
-                <textarea
-                  id="domains"
-                  rows="4"
-                  placeholder="e.g., Social-emotional, language, cognitive, physical, creative…"
-                ></textarea>
-              </div>
+              <!-- Section 2: Observation & Significance -->
+              <fieldset class="form-fieldset summary-section">
+                <legend>Observation & Significance</legend>
 
-              <!-- Early Years Learning Framework -->
-              <div class="form-group">
-                <label for="eylf">Early Years Learning Framework</label>
-                <textarea
-                  id="eylf"
-                  rows="4"
-                  placeholder="Reference relevant EYLF outcomes, principles, and practices…"
-                ></textarea>
-              </div>
+                <div class="form-group">
+                  <label for="observation">Observation</label>
+                  <textarea
+                    id="observation"
+                    rows="6"
+                    placeholder="Write a clear, objective narrative of what you observed…"
+                    required
+                  ></textarea>
+                </div>
 
-              <!-- Early Childhood Theory -->
-              <div class="form-group">
-                <label for="theory">Early Childhood Theory</label>
-                <textarea
-                  id="theory"
-                  rows="4"
-                  placeholder="e.g., Vygotsky (ZPD), Piaget, Bronfenbrenner, Montessori…"
-                ></textarea>
-              </div>
+                <div class="form-group">
+                  <label for="significance">Significance</label>
+                  <textarea
+                    id="significance"
+                    rows="4"
+                    placeholder="What does this observation tell us about the child's development, interests, or needs?"
+                  ></textarea>
+                </div>
+              </fieldset>
 
-              <!-- Future Planning Ideas -->
-              <div class="form-group">
-                <label for="planningIdeas">Future Planning Ideas</label>
-                <textarea
-                  id="planningIdeas"
-                  rows="4"
-                  placeholder="Suggested experiences, provocations, or adjustments to the environment…"
-                ></textarea>
-              </div>
+              <!-- Section 3: Links & Planning -->
+              <fieldset class="form-fieldset domains-section">
+                <legend>Developmental Domains & Links</legend>
+
+                <div class="form-group">
+                  <label for="domains">Developmental Domain/s</label>
+                  <textarea
+                    id="domains"
+                    rows="4"
+                    placeholder="e.g., Social-emotional, language, cognitive, physical, creative…"
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="eylf">Early Years Learning Framework</label>
+                  <textarea
+                    id="eylf"
+                    rows="4"
+                    placeholder="Reference relevant EYLF outcomes, principles, and practices…"
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="theory">Early Childhood Theory</label>
+                  <textarea
+                    id="theory"
+                    rows="4"
+                    placeholder="e.g., Vygotsky (ZPD), Piaget, Bronfenbrenner, Montessori…"
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="planningIdeas">Future Planning Ideas</label>
+                  <textarea
+                    id="planningIdeas"
+                    rows="4"
+                    placeholder="Suggested experiences, provocations, or adjustments to the environment…"
+                  ></textarea>
+                </div>
+              </fieldset>
 
               <div class="form-actions">
                 <button type="button" class="modal-btn secondary" id="cancelBtn">Cancel</button>
@@ -149,6 +160,7 @@
     </main>
   </div>
 
+  <!-- Logout modal -->
   <div id="logout-modal" class="modal">
     <div class="modal-content">
       <h3>Are you sure you want to log out?</h3>
