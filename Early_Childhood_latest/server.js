@@ -5,14 +5,13 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
-
 const db = require('./config/db'); // mysql2 pool
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 /* ----------------------------------------------------
- * Request logging (handy for Render logs)
+ * Request logging (for Render logs)
  * -------------------------------------------------- */
 app.use((req, _res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
@@ -20,17 +19,17 @@ app.use((req, _res, next) => {
 });
 
 /* ----------------------------------------------------
- * CORS setup
+ * CORS setup (Express 5 compatible)
  * -------------------------------------------------- */
 const allowedOrigins = [
   process.env.FRONTEND_ORIGIN?.trim(),
-  /^https?:\/\/[^/]+\.onrender\.com$/,  // any Render app
-  'http://localhost:3000',              // local dev
+  /^https?:\/\/[^/]+\.onrender\.com$/,
+  'http://localhost:3000',
 ].filter(Boolean);
 
 app.use(cors({
   origin(origin, cb) {
-    if (!origin) return cb(null, true); // allow same-origin / server-side
+    if (!origin) return cb(null, true);
     const ok = allowedOrigins.some(rule =>
       rule instanceof RegExp ? rule.test(origin) : rule === origin
     );
@@ -39,22 +38,22 @@ app.use(cors({
   credentials: true,
 }));
 
-// ✅ Explicitly handle preflight (important for Safari & JSON POSTs)
-app.options('*', cors());
+// ✅ Express v5 fix: use regex instead of "/*"
+app.options(/^\/api\/.*/, cors());
 
 /* ----------------------------------------------------
- * JSON and URL-encoded body parsers
+ * Body parsing
  * -------------------------------------------------- */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* ----------------------------------------------------
- * Trust Render's reverse proxy for secure cookies
+ * Trust proxy for HTTPS cookies
  * -------------------------------------------------- */
 app.set('trust proxy', 1);
 
 /* ----------------------------------------------------
- * Secure session cookies
+ * Secure session config
  * -------------------------------------------------- */
 app.use(session({
   name: 'sid',
@@ -63,19 +62,19 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: true,            // Render uses HTTPS
-    sameSite: 'lax',         // 'none' only if frontend hosted separately
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
+    secure: true,
+    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24,
   },
 }));
 
 /* ----------------------------------------------------
- * Static files
+ * Static assets
  * -------------------------------------------------- */
 app.use(express.static(path.join(__dirname, 'public')));
 
 /* ----------------------------------------------------
- * Health checks & DB test endpoints
+ * Health and debug endpoints
  * -------------------------------------------------- */
 app.get('/api/healthz', async (_req, res) => {
   try {
@@ -87,7 +86,6 @@ app.get('/api/healthz', async (_req, res) => {
   }
 });
 
-// Optional debugging route to confirm DB connectivity
 app.get('/api/debug/db', async (_req, res, next) => {
   try {
     const [rows] = await db.query('SELECT NOW() AS now');
@@ -95,7 +93,6 @@ app.get('/api/debug/db', async (_req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Simple test to confirm frontend ↔ backend path
 app.post('/api/test', (req, res) => {
   console.log('[TEST] received', req.body);
   res.json({ ok: true, msg: 'Server reachable!' });
@@ -115,7 +112,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/feedbacks', feedbackRoutes);
 
 /* ----------------------------------------------------
- * Page routes
+ * HTML page routes
  * -------------------------------------------------- */
 const html = (p) => path.join(__dirname, 'public', 'html', p);
 
@@ -136,7 +133,7 @@ app.get('/report-view', (_req, res) => res.sendFile(html('report-view.html')));
 app.get('/feedback-view', (_req, res) => res.sendFile(html('feedback-view.html')));
 
 /* ----------------------------------------------------
- * Global error handler
+ * Error handler
  * -------------------------------------------------- */
 app.use((err, _req, res, _next) => {
   console.error('API error:', err.stack || err);
