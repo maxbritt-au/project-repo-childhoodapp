@@ -97,6 +97,34 @@ app.post('/api/login-test', (req, res) => {
   res.json({ ok: true, role: 'teacher', userId: 1, name: 'Demo' });
 });
 
+// --- super verbose logging for one week of sanity ---
+app.use((req, res, next) => {
+  const t0 = Date.now();
+  console.log(`[REQ] ${req.method} ${req.url}`);
+  console.log('[REQ] headers:', {
+    origin: req.headers.origin,
+    cookie: !!req.headers.cookie,
+    'content-type': req.headers['content-type'],
+  });
+
+  let body = [];
+  req.on('data', c => body.push(c));
+  req.on('end', () => {
+    if (body.length) {
+      try { console.log('[REQ] body:', JSON.parse(Buffer.concat(body).toString())); }
+      catch { console.log('[REQ] body(raw):', Buffer.concat(body).toString()); }
+    }
+  });
+
+  res.on('finish', () => {
+    console.log(`[RES] ${req.method} ${req.url} -> ${res.statusCode} in ${Date.now()-t0}ms`);
+  });
+  next();
+});
+
+// quick ping for browser/console testing
+app.get('/api/ping', (_req,res)=>res.json({ok:true}));
+
 /* ----------------------------------------------------
  * API routes
  * -------------------------------------------------- */
@@ -136,6 +164,12 @@ app.get('/feedback-view', (_req, res) => res.sendFile(html('feedback-view.html')
 app.use((err, _req, res, _next) => {
   console.error('API error:', err.stack || err);
   res.status(500).json({ error: 'Server error', detail: err.message || String(err) });
+});
+
+app.post('/api/login-test', async (_req, res) => {
+  console.log('[LOGIN-TEST] reached');
+  await new Promise(r => setTimeout(r, 200)); // small delay
+  res.json({ ok: true, role: 'teacher', userId: 1, name: 'Demo' });
 });
 
 /* ----------------------------------------------------
