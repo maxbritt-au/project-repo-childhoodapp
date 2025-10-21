@@ -1,19 +1,24 @@
 // config/db.js
 require('dotenv').config();
-const mysql = require('mysql2/promise');
+const mysql = require('mysql2'); // <-- callback API (not promise)
 
 // Prefer a single DATABASE_URL (e.g. from Railway)
 const DATABASE_URL = process.env.DATABASE_URL || process.env.MYSQL_URL || '';
 
+/**
+ * SSL is required when connecting from Render to hosted MySQL (Railway, etc).
+ * DB_SSL=true enables it. Default to true if unset.
+ */
 const wantSSL = String(process.env.DB_SSL ?? 'true').toLowerCase() !== 'false';
 
 const baseOptions = {
   waitForConnections: true,
   connectionLimit: Number(process.env.DB_POOL_LIMIT || 8),
   queueLimit: 0,
-  connectTimeout: 20000,
-  acquireTimeout: 20000,
-  ssl: wantSSL ? { rejectUnauthorized: false } : undefined,
+  connectTimeout: 20_000,
+  acquireTimeout: 20_000,
+  // For callback API, set false when not using SSL
+  ssl: wantSSL ? { rejectUnauthorized: false } : false,
 };
 
 function makePoolFromUrl(url) {
@@ -30,7 +35,7 @@ function makePoolFromUrl(url) {
 
 let pool;
 
-// If DATABASE_URL exists (Railway)
+// If DATABASE_URL exists (Railway style), prefer it
 if (DATABASE_URL) {
   pool = makePoolFromUrl(DATABASE_URL);
 } else {
@@ -45,20 +50,19 @@ if (DATABASE_URL) {
   });
 }
 
-// Quick startup test (non-fatal)
-(async () => {
-  try {
-    const conn = await pool.getConnection();
+// One-time connection test (non-fatal)
+pool.getConnection((err, conn) => {
+  if (err) {
+    console.error('❌ MySQL connection failed:', err.code || err.message);
+  } else {
     console.log('✅ Connected to MySQL!');
     conn.release();
-  } catch (err) {
-    console.error('❌ MySQL connection failed:', err.message);
   }
-})();
+});
 
-// Optional keep-alive for free tiers
+// Keep-alive ping for free tiers
 setInterval(() => {
-  pool.query('SELECT 1').catch(() => {});
-}, 60000);
+  pool.query('SELECT 1', () => {});
+}, 60_000);
 
-module.exports = pool;
+module.exports = pool; // <-- callback-based pool
