@@ -1,6 +1,10 @@
 // public/js/config.js
 (function () {
-  const origin = window.location.origin;       // e.g. https://project-repo-childhoodapp-uuxl.onrender.com
+  // Always use same origin as the site, not a hard-coded Render domain
+  const origin = window.location.origin;
+
+  // Detect if backend path should include /api (it always should in your app)
   window.API_BASE_URL = `${origin}/api`;
+
   console.log('[config] API_BASE_URL =', window.API_BASE_URL);
 })();
