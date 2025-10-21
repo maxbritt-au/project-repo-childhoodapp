@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 /* ----------------------------------------------------
- * Request logging (for Render logs)
+ * Request logging (shows in Render logs)
  * -------------------------------------------------- */
 app.use((req, _res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
@@ -19,27 +19,28 @@ app.use((req, _res, next) => {
 });
 
 /* ----------------------------------------------------
- * CORS setup (Express 5 compatible)
+ * CORS (use the SAME options for .use and .options)
  * -------------------------------------------------- */
 const allowedOrigins = [
-  process.env.FRONTEND_ORIGIN?.trim(),
-  /^https?:\/\/[^/]+\.onrender\.com$/,
-  'http://localhost:3000',
+  process.env.FRONTEND_ORIGIN?.trim(),    // set this to lock down if you want
+  /^https?:\/\/[^/]+\.onrender\.com$/,    // any Render subdomain
+  'http://localhost:3000',                // local dev
 ].filter(Boolean);
 
-app.use(cors({
+const corsOptions = {
   origin(origin, cb) {
-    if (!origin) return cb(null, true);
+    if (!origin) return cb(null, true); // same-origin / curl / server-side
     const ok = allowedOrigins.some(rule =>
       rule instanceof RegExp ? rule.test(origin) : rule === origin
     );
-    return cb(ok ? null : new Error(`CORS blocked: ${origin}`), ok);
+    cb(ok ? null : new Error(`CORS blocked: ${origin}`), ok);
   },
   credentials: true,
-}));
+};
 
-// ✅ Express v5 fix: use regex instead of "/*"
-app.options(/^\/api\/.*/, cors());
+app.use(cors(corsOptions));
+// IMPORTANT: preflight must use identical options when credentials are used
+app.options(/^\/api\/.*/, cors(corsOptions));
 
 /* ----------------------------------------------------
  * Body parsing
@@ -48,12 +49,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* ----------------------------------------------------
- * Trust proxy for HTTPS cookies
+ * Trust Render's proxy so secure cookies work
  * -------------------------------------------------- */
 app.set('trust proxy', 1);
 
 /* ----------------------------------------------------
- * Secure session config
+ * Sessions
  * -------------------------------------------------- */
 app.use(session({
   name: 'sid',
@@ -62,20 +63,21 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
+    secure: true,            // HTTPS on Render
+    sameSite: 'lax',         // 'none' only if truly cross-site
     maxAge: 1000 * 60 * 60 * 24,
   },
 }));
 
 /* ----------------------------------------------------
- * Static assets
+ * Static files
  * -------------------------------------------------- */
 app.use(express.static(path.join(__dirname, 'public')));
 
 /* ----------------------------------------------------
- * Health and debug endpoints
+ * Health & quick diagnostics
  * -------------------------------------------------- */
+app.get('/api/ping', (_req, res) => res.json({ ok: true }));
 app.get('/api/healthz', async (_req, res) => {
   try {
     const [rows] = await db.query('SELECT 1 AS ok');
@@ -86,6 +88,7 @@ app.get('/api/healthz', async (_req, res) => {
   }
 });
 
+// DB debug
 app.get('/api/debug/db', async (_req, res, next) => {
   try {
     const [rows] = await db.query('SELECT NOW() AS now');
@@ -93,9 +96,9 @@ app.get('/api/debug/db', async (_req, res, next) => {
   } catch (e) { next(e); }
 });
 
-app.post('/api/test', (req, res) => {
-  console.log('[TEST] received', req.body);
-  res.json({ ok: true, msg: 'Server reachable!' });
+// Simple reachability test for POSTs (no auth)
+app.post('/api/login-test', (req, res) => {
+  res.json({ ok: true, role: 'teacher', userId: 1, name: 'Demo' });
 });
 
 /* ----------------------------------------------------
@@ -115,7 +118,6 @@ app.use('/api/feedbacks', feedbackRoutes);
  * HTML page routes
  * -------------------------------------------------- */
 const html = (p) => path.join(__dirname, 'public', 'html', p);
-
 app.get('/', (_req, res) => res.sendFile(html('login.html')));
 app.get('/signup', (_req, res) => res.sendFile(html('signup.html')));
 app.get('/student-report', (_req, res) => res.sendFile(html('student-report.html')));
