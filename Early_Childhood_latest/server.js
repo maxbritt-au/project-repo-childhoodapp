@@ -40,7 +40,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 // IMPORTANT: preflight must use identical options when credentials are used
-app.options(/^\/api\/.*/, cors(corsOptions));
+app.options('/api/*', cors(corsOptions)); 
 
 /* ----------------------------------------------------
  * Body parsing
