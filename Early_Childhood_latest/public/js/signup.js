@@ -1,4 +1,4 @@
-// public/js/signup.js
+const API_BASE_URL = '/api'; // must match backend prefix
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('signupForm');
@@ -11,10 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const VALID_ROLES = new Set(['student', 'teacher', 'parent']);
 
-  if (!form) {
-    console.error('signupForm not found');
-    return;
-  }
+  if (!form) return console.error('signupForm not found');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -45,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = 'Creating...';
       }
 
-      const res = await fetch(`${API_BASE_URL}/users`, {   // <-- changed here
+      const res = await fetch(`${API_BASE_URL}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role, name, email, password })
@@ -54,13 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await res.json().catch(() => ({}));
 
       if (!res.ok || !result.success) {
-        if (res.status === 409) {
-          alert('That email is already in use.');
-        } else if (res.status === 400) {
-          alert(result.message || 'Please check your details and try again.');
-        } else {
-          alert(result.message || 'Signup failed. Please try again.');
-        }
+        if (res.status === 409) alert('That email is already in use.');
+        else if (res.status === 400) alert(result.message || 'Please check your details.');
+        else alert(result.message || 'Signup failed. Please try again.');
         return;
       }
 
