@@ -4,69 +4,99 @@
     console.log('[login.js] DOM ready');
 
     const form = document.getElementById('loginForm');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
+    const emailEl = document.getElementById('email');
+    const passEl  = document.getElementById('password');
+    const submitBtn = form?.querySelector('button[type="submit"]');
 
-    if (!form) {
-      console.error('[login.js] loginForm not found');
+    if (!form || !emailEl || !passEl) {
+      console.error('[login.js] Missing required elements');
       return;
     }
 
+    // Always hit the same origin the page was served from
+    const API_BASE = `${window.location.origin}/api`;
+    console.log('[login.js] API_BASE =', API_BASE);
+
+    // Small helper to restore the button label/state
+    const setBusy = (busy) => {
+      if (!submitBtn) return;
+      submitBtn.disabled = !!busy;
+      submitBtn.textContent = busy ? 'Signing in…' : 'Login';
+    };
+
+    // Optional: basic email check
+    const isEmail = (v) => /\S+@\S+\.\S+/.test(v);
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = (emailInput?.value || '').trim().toLowerCase();
-      const password = (passwordInput?.value || '').trim();
+
+      const email = (emailEl.value || '').trim().toLowerCase();
+      const password = (passEl.value || '').trim();
+
       if (!email || !password) {
         alert('Please enter your email and password.');
         return;
       }
+      if (!isEmail(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
 
-      const btn = form.querySelector('button[type="submit"]');
-      const prev = btn?.textContent;
-      if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+      setBusy(true);
+
+      // Timeout guard so the UI never hangs forever
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 15000);
 
       try {
-        // Same-origin call; session cookie is set via Set-Cookie
-        const res = await fetch('/api/login', {
+        const res = await fetch(`${API_BASE}/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ email, password })
+          credentials: 'include',               // send/receive session cookie
+          body: JSON.stringify({ email, password }),
+          signal: ctrl.signal
         });
 
-        let data = {};
-        try { data = await res.json(); } catch {}
+        // Try to parse JSON, but don't crash if not JSON
+        let payload = null;
+        try { payload = await res.json(); } catch { payload = null; }
 
         if (!res.ok) {
-          console.error('[login.js] login failed', data);
-          alert(data.message || 'Login failed.');
+          const msg =
+            (payload && (payload.message || payload.error || payload.detail)) ||
+            `Login failed (HTTP ${res.status})`;
+          console.error('[login.js] login failed:', res.status, payload);
+          alert(msg);
           return;
         }
 
-        // Store minimal info; real auth is the session cookie
+        // Expecting shape: { userId, role, name, ... }
+        const user = payload || {};
         const safeUser = {
-          name: data.name,
-          role: data.role,
-          userId: data.userId,
+          userId: user.userId,
+          role: user.role,
+          name: user.name,
           email
         };
         localStorage.setItem('user', JSON.stringify(safeUser));
+        console.log('[login.js] login OK', safeUser);
 
-        // Redirect based on role (your server has page routes like /teacher-dashboard)
-        if (data.role === 'teacher') {
-          window.location.href = '/teacher-dashboard';
-        } else if (data.role === 'student') {
-          window.location.href = '/student-dashboard';
-        } else if (data.role === 'parent') {
-          window.location.href = '/';
-        } else {
-          window.location.href = '/';
-        }
+        // Redirect by role (fallback to home)
+        const byRole = {
+          teacher: '/teacher-dashboard',
+          student: '/student-dashboard',
+          parent:  '/',
+        };
+        window.location.href = byRole[safeUser.role] || '/';
       } catch (err) {
-        console.error('[login.js] network error', err);
-        alert('Unable to reach the server. Please try again.');
+        console.error('[login.js] network error:', err);
+        const msg = err?.name === 'AbortError'
+          ? 'Request timed out. Please try again.'
+          : 'Unable to reach the server. Please try again.';
+        alert(msg);
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = prev || 'Login'; }
+        clearTimeout(t);
+        setBusy(false);
       }
     });
   });
