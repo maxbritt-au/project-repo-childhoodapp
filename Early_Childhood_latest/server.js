@@ -22,25 +22,21 @@ app.use((req, _res, next) => {
  * CORS (use the SAME options for .use and .options)
  * -------------------------------------------------- */
 const allowedOrigins = [
-  process.env.FRONTEND_ORIGIN?.trim(),    // set this to lock down if you want
-  /^https?:\/\/[^/]+\.onrender\.com$/,    // any Render subdomain
-  'http://localhost:3000',                // local dev
-].filter(Boolean);
+  'https://project-repo-childhoodapp-uuxl.onrender.com',
+  'http://localhost:3000',
+];
 
 const corsOptions = {
   origin(origin, cb) {
-    if (!origin) return cb(null, true); // same-origin / curl / server-side
-    const ok = allowedOrigins.some(rule =>
-      rule instanceof RegExp ? rule.test(origin) : rule === origin
-    );
-    cb(ok ? null : new Error(`CORS blocked: ${origin}`), ok);
+    if (!origin) return cb(null, true);
+    cb(allowedOrigins.includes(origin) ? null : new Error('CORS not allowed'), true);
   },
   credentials: true,
 };
 
 app.use(cors(corsOptions));
-// IMPORTANT: preflight must use identical options when credentials are used
-app.options('/api/*', cors(corsOptions)); 
+// Express 5 requires regex, not wildcards:
+app.options(/^\/api\/.*$/, cors(corsOptions));
 
 /* ----------------------------------------------------
  * Body parsing
